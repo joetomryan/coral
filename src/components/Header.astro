@@ -1,0 +1,330 @@
+---
+import Logo from './Logo.astro';
+import { nav } from '../data/site';
+import { categories, products } from '../data/products';
+
+interface Props {
+  /** Transparent, light-text header that sits over a full-bleed hero. */
+  overlay?: boolean;
+}
+const { overlay = false } = Astro.props;
+const path = Astro.url.pathname;
+const isActive = (href: string) => path === href || path.startsWith(`${href}/`);
+---
+
+<header class:list={['header', { 'header--overlay': overlay }]} data-header>
+  <div class="container header__bar">
+    <a href="/" class="header__logo" aria-label="Coral Blinds — home"><Logo /></a>
+
+    <nav class="header__nav" aria-label="Main">
+      <ul role="list">
+        {
+          nav.map((item) =>
+            item.href === '/products' ? (
+              <li class="has-mega">
+                <a href={item.href} aria-current={isActive(item.href) ? 'page' : undefined}>
+                  {item.label}
+                </a>
+                <div class="mega">
+                  <div class="container mega__inner">
+                    {categories.map((c) => (
+                      <div>
+                        <p class="eyebrow">{c.label}</p>
+                        <ul role="list">
+                          {products
+                            .filter((p) => p.category === c.id)
+                            .map((p) => (
+                              <li>
+                                <a href={`/products/${p.slug}`}>{p.name}</a>
+                              </li>
+                            ))}
+                        </ul>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </li>
+            ) : (
+              <li>
+                <a href={item.href} aria-current={isActive(item.href) ? 'page' : undefined}>
+                  {item.label}
+                </a>
+              </li>
+            ),
+          )
+        }
+      </ul>
+    </nav>
+
+    <div class="header__actions">
+      <a class="header__contact" href="/contact">Contact</a>
+      <a class="btn header__cta" href="/contact#book">Free measurement</a>
+      <button class="header__toggle" type="button" aria-expanded="false" aria-controls="mobile-menu" data-menu-toggle>
+        <span class="visually-hidden">Menu</span>
+        <span class="header__burger" aria-hidden="true"></span>
+      </button>
+    </div>
+  </div>
+
+  <div class="mobile" id="mobile-menu" hidden data-menu>
+    <nav class="container" aria-label="Mobile">
+      <ul role="list">
+        {
+          nav.map((item) => (
+            <li>
+              <a href={item.href}>{item.label}</a>
+            </li>
+          ))
+        }
+        <li><a href="/contact">Contact</a></li>
+      </ul>
+      <a class="btn" href="/contact#book">Book a free measurement</a>
+    </nav>
+  </div>
+</header>
+
+<script>
+  const header = document.querySelector<HTMLElement>('[data-header]')!;
+  const toggle = header.querySelector<HTMLButtonElement>('[data-menu-toggle]')!;
+  const menu = header.querySelector<HTMLElement>('[data-menu]')!;
+
+  const onScroll = () => header.classList.toggle('is-scrolled', window.scrollY > 24);
+  onScroll();
+  window.addEventListener('scroll', onScroll, { passive: true });
+
+  const setOpen = (open: boolean) => {
+    toggle.setAttribute('aria-expanded', String(open));
+    menu.hidden = !open;
+    header.classList.toggle('is-open', open);
+    document.body.style.overflow = open ? 'hidden' : '';
+  };
+  toggle.addEventListener('click', () => setOpen(menu.hidden));
+  document.addEventListener('keydown', (e) => e.key === 'Escape' && setOpen(false));
+</script>
+
+<style>
+  .header {
+    position: fixed;
+    inset: 0 0 auto;
+    z-index: 50;
+    color: var(--ink);
+    background: rgb(246 243 238 / 0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid transparent;
+    transition:
+      background 0.35s var(--ease),
+      color 0.35s var(--ease),
+      border-color 0.35s var(--ease);
+  }
+
+  .header.is-scrolled {
+    border-bottom-color: var(--line);
+  }
+
+  .header--overlay:not(.is-scrolled):not(.is-open):not(:has(.has-mega:hover)) {
+    background: transparent;
+    backdrop-filter: none;
+    color: #fff;
+  }
+
+  .header--overlay:not(.is-scrolled):not(.is-open):not(:has(.has-mega:hover)) .header__cta {
+    background: transparent;
+    border-color: rgb(255 255 255 / 0.6);
+  }
+
+  .header__bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 2rem;
+    height: var(--header-h);
+  }
+
+  .header__nav {
+    display: none;
+  }
+
+  .header__nav > ul {
+    display: flex;
+    gap: 2.25rem;
+  }
+
+  /* Full-height items so the pointer can travel into the mega menu. */
+  .header__nav > ul > li {
+    display: flex;
+    align-items: center;
+    height: var(--header-h);
+  }
+
+  .header__nav a,
+  .header__contact {
+    font-size: 0.9375rem;
+    position: relative;
+  }
+
+  .header__nav > ul > li > a::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -6px;
+    height: 1px;
+    background: currentColor;
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.35s var(--ease);
+  }
+
+  .header__nav > ul > li > a:hover::after,
+  .header__nav > ul > li > a[aria-current='page']::after {
+    transform: scaleX(1);
+  }
+
+  .header__actions {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+  }
+
+  .header__contact,
+  .header__cta {
+    display: none;
+  }
+
+  .header__cta {
+    min-height: 40px;
+    padding: 0.6rem 1.1rem;
+    font-size: 0.875rem;
+  }
+
+  /* Mega menu */
+  .mega {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 100%;
+    background: var(--bg);
+    color: var(--ink);
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-6px);
+    transition: all 0.3s var(--ease);
+  }
+
+  .has-mega:hover .mega,
+  .has-mega:focus-within .mega {
+    opacity: 1;
+    visibility: visible;
+    transform: none;
+  }
+
+  .mega__inner {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 2rem;
+    padding-block: 2.5rem 3rem;
+  }
+
+  .mega ul {
+    display: grid;
+    gap: 0.55rem;
+    margin-top: 1rem;
+  }
+
+  .mega a {
+    font-family: var(--font-display);
+    font-size: 1.375rem;
+    line-height: 1.2;
+    transition: color 0.2s var(--ease);
+  }
+
+  .mega a:hover {
+    color: var(--coral);
+  }
+
+  /* Burger */
+  .header__toggle {
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    margin-right: -10px;
+    border: 0;
+    background: none;
+    color: inherit;
+    cursor: pointer;
+  }
+
+  .header__burger,
+  .header__burger::before {
+    display: block;
+    width: 22px;
+    height: 1.5px;
+    background: currentColor;
+    transition: transform 0.3s var(--ease);
+  }
+
+  .header__burger {
+    position: relative;
+    transform: translateY(-3px);
+  }
+
+  .header__burger::before {
+    content: '';
+    position: absolute;
+    top: 7px;
+  }
+
+  .is-open .header__burger {
+    transform: translateY(3px) rotate(45deg);
+  }
+
+  .is-open .header__burger::before {
+    transform: translateY(-7px) rotate(-90deg);
+  }
+
+  .mobile {
+    height: calc(100dvh - var(--header-h));
+    overflow-y: auto;
+    background: var(--bg);
+    padding-block: 2rem 3rem;
+  }
+
+  .mobile ul {
+    display: grid;
+    gap: 0.25rem;
+    margin-bottom: 2.5rem;
+  }
+
+  .mobile a:not(.btn) {
+    display: block;
+    padding-block: 0.4rem;
+    font-family: var(--font-display);
+    font-size: 2.25rem;
+    line-height: 1.15;
+  }
+
+  .mobile .btn {
+    width: 100%;
+  }
+
+  @media (min-width: 640px) {
+    .header__cta {
+      display: inline-flex;
+    }
+  }
+
+  @media (min-width: 1080px) {
+    .header__nav,
+    .header__contact {
+      display: block;
+    }
+
+    .header__toggle,
+    .mobile {
+      display: none !important;
+    }
+  }
+</style>

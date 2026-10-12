@@ -1,0 +1,137 @@
+---
+import Base from '../../layouts/Base.astro';
+import PageHero from '../../components/PageHero.astro';
+import ProductCard from '../../components/ProductCard.astro';
+import CtaBand from '../../components/CtaBand.astro';
+import { products, categories, rooms } from '../../data/products';
+---
+
+<Base
+  title="Blinds for every window"
+  description="Roller, zebra, Roman, vertical, wooden, bamboo, Venetian, skylight, panel, printed and outdoor blinds — made to measure in Bengaluru."
+>
+  <PageHero
+    eyebrow="Products"
+    title="Blinds for every <em>window</em>."
+    lead="Twelve systems, hundreds of fabrics, all made to measure. Filter by room, or browse by type."
+  />
+
+  <section class="section section--tight filter-wrap">
+    <div class="container">
+      <div class="filters" role="group" aria-label="Filter by room" data-filters>
+        <button type="button" aria-pressed="true" data-room="all">All</button>
+        {rooms.map((r) => <button type="button" aria-pressed="false" data-room={r.id}>{r.label}</button>)}
+      </div>
+
+      {
+        categories.map((c) => (
+          <section class="cat" data-cat>
+            <div class="cat__head">
+              <h2 class="h3">{c.label}</h2>
+              <p class="muted">{c.blurb}</p>
+            </div>
+            <div class="grid grid--3">
+              {products
+                .filter((p) => p.category === c.id)
+                .map((p) => (
+                  <div data-item data-rooms={p.rooms.join(' ')}>
+                    <ProductCard product={p} />
+                  </div>
+                ))}
+            </div>
+          </section>
+        ))
+      }
+    </div>
+  </section>
+
+  <CtaBand title="Not sure which blind?" text="Tell us about the room. We’ll bring the right samples and an honest recommendation." />
+</Base>
+
+<script>
+  const bar = document.querySelector<HTMLElement>('[data-filters]')!;
+  const buttons = [...bar.querySelectorAll<HTMLButtonElement>('button')];
+  const items = [...document.querySelectorAll<HTMLElement>('[data-item]')];
+  const cats = [...document.querySelectorAll<HTMLElement>('[data-cat]')];
+
+  const apply = (room: string) => {
+    buttons.forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.room === room)));
+    items.forEach((el) => {
+      el.hidden = room !== 'all' && !el.dataset.rooms!.split(' ').includes(room);
+    });
+    cats.forEach((c) => {
+      c.hidden = !c.querySelector('[data-item]:not([hidden])');
+    });
+    const url = new URL(location.href);
+    if (room === 'all') url.searchParams.delete('room');
+    else url.searchParams.set('room', room);
+    history.replaceState(null, '', url);
+  };
+
+  bar.addEventListener('click', (e) => {
+    const b = (e.target as HTMLElement).closest('button');
+    if (b) apply(b.dataset.room!);
+  });
+
+  const initial = new URLSearchParams(location.search).get('room');
+  if (initial && buttons.some((b) => b.dataset.room === initial)) apply(initial);
+</script>
+
+<style>
+  .filter-wrap {
+    padding-top: 0;
+  }
+
+  .filters {
+    position: sticky;
+    top: var(--header-h);
+    z-index: 5;
+    display: flex;
+    gap: 0.5rem;
+    overflow-x: auto;
+    margin-inline: calc(var(--gutter) * -1);
+    padding: 1rem var(--gutter);
+    background: var(--bg);
+    border-bottom: 1px solid var(--line);
+    scrollbar-width: none;
+  }
+
+  .filters button {
+    flex: none;
+    min-height: 40px;
+    padding: 0.5rem 1rem;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    background: transparent;
+    color: var(--ink-soft);
+    font: inherit;
+    font-size: 0.875rem;
+    cursor: pointer;
+    transition: all 0.2s var(--ease);
+  }
+
+  .filters button:hover {
+    border-color: var(--ink);
+  }
+
+  .filters button[aria-pressed='true'] {
+    background: var(--ink);
+    border-color: var(--ink);
+    color: var(--bg);
+  }
+
+  .cat {
+    padding-top: clamp(3rem, 2rem + 3vw, 5rem);
+  }
+
+  .cat__head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0.5rem 2rem;
+    padding-bottom: 1.5rem;
+    margin-bottom: 2rem;
+    border-bottom: 1px solid var(--line);
+  }
+</style>

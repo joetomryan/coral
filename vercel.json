@@ -1,0 +1,132 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "cleanUrls": true,
+  "trailingSlash": false,
+  "redirects": [
+    {
+      "source": "/index.html",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/Motorized.html",
+      "destination": "/motorisation",
+      "permanent": true
+    },
+    {
+      "source": "/motorized.html",
+      "destination": "/motorisation",
+      "permanent": true
+    },
+    {
+      "source": "/Bamboo.html",
+      "destination": "/products/bamboo-blinds",
+      "permanent": true
+    },
+    {
+      "source": "/bamboo.html",
+      "destination": "/products/bamboo-blinds",
+      "permanent": true
+    },
+    {
+      "source": "/Industrial.html",
+      "destination": "/products/industrial-strip-curtains",
+      "permanent": true
+    },
+    {
+      "source": "/industrial.html",
+      "destination": "/products/industrial-strip-curtains",
+      "permanent": true
+    },
+    {
+      "source": "/PVC.html",
+      "destination": "/products/outdoor-pvc-blinds",
+      "permanent": true
+    },
+    {
+      "source": "/pvc.html",
+      "destination": "/products/outdoor-pvc-blinds",
+      "permanent": true
+    },
+    {
+      "source": "/Panel.html",
+      "destination": "/products/panel-blinds",
+      "permanent": true
+    },
+    {
+      "source": "/panel.html",
+      "destination": "/products/panel-blinds",
+      "permanent": true
+    },
+    {
+      "source": "/Printed.html",
+      "destination": "/products/printed-blinds",
+      "permanent": true
+    },
+    {
+      "source": "/printed.html",
+      "destination": "/products/printed-blinds",
+      "permanent": true
+    },
+    {
+      "source": "/Roller.html",
+      "destination": "/products/roller-blinds",
+      "permanent": true
+    },
+    {
+      "source": "/roller.html",
+      "destination": "/products/roller-blinds",
+      "permanent": true
+    },
+    {
+      "source": "/Roman.html",
+      "destination": "/products/roman-blinds",
+      "permanent": true
+    },
+    {
+      "source": "/roman.html",
+      "destination": "/products/roman-blinds",
+      "permanent": true
+    },
+    {
+      "source": "/Skylight.html",
+      "destination": "/products/skylight-blinds",
+      "permanent": true
+    },
+    {
+      "source": "/skylight.html",
+      "destination": "/products/skylight-blinds",
+      "permanent": true
+    },
+    {
+      "source": "/Vertical.html",
+      "destination": "/products/vertical-blinds",
+      "permanent": true
+    },
+    {
+      "source": "/vertical.html",
+      "destination": "/products/vertical-blinds",
+      "permanent": true
+    },
+    {
+      "source": "/Wooden.html",
+      "destination": "/products/wooden-blinds",
+      "permanent": true
+    },
+    {
+      "source": "/wooden.html",
+      "destination": "/products/wooden-blinds",
+      "permanent": true
+    },
+    {
+      "source": "/Zebra.html",
+      "destination": "/products/zebra-blinds",
+      "permanent": true
+    },
+    {
+      "source": "/zebra.html",
+      "destination": "/products/zebra-blinds",
+      "permanent": true
+    }
+  ]
+}

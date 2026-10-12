@@ -1,0 +1,27 @@
+# Cloudflare Pages / Netlify redirects — keep in sync with vercel.json.
+# Old coralblinds.in URLs -> new pages.
+/index.html       /  301
+/Motorized.html   /motorisation  301
+/motorized.html   /motorisation  301
+/Bamboo.html      /products/bamboo-blinds  301
+/bamboo.html      /products/bamboo-blinds  301
+/Industrial.html  /products/industrial-strip-curtains  301
+/industrial.html  /products/industrial-strip-curtains  301
+/PVC.html         /products/outdoor-pvc-blinds  301
+/pvc.html         /products/outdoor-pvc-blinds  301
+/Panel.html       /products/panel-blinds  301
+/panel.html       /products/panel-blinds  301
+/Printed.html     /products/printed-blinds  301
+/printed.html     /products/printed-blinds  301
+/Roller.html      /products/roller-blinds  301
+/roller.html      /products/roller-blinds  301
+/Roman.html       /products/roman-blinds  301
+/roman.html       /products/roman-blinds  301
+/Skylight.html    /products/skylight-blinds  301
+/skylight.html    /products/skylight-blinds  301
+/Vertical.html    /products/vertical-blinds  301
+/vertical.html    /products/vertical-blinds  301
+/Wooden.html      /products/wooden-blinds  301
+/wooden.html      /products/wooden-blinds  301
+/Zebra.html       /products/zebra-blinds  301
+/zebra.html       /products/zebra-blinds  301

@@ -1,0 +1,75 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHero from '../components/PageHero.astro';
+import Photo from '../components/Photo.astro';
+import CtaBand from '../components/CtaBand.astro';
+import { site } from '../data/site';
+
+const values = [
+  { title: 'Made to measure', text: 'Nothing off the shelf. Every blind is made for the window it hangs in.' },
+  { title: 'One team', text: 'The people who measure are the people who fit. No hand-offs, no surprises.' },
+  { title: 'Proven parts', text: 'Mechanisms from Uni-Soleil, motors from Somfy and Lutron, fabrics from Europe and Asia.' },
+];
+---
+
+<Base
+  title="About us"
+  description={`Coral Blinds has made custom blinds, awnings and shutters for Bengaluru homes and businesses since ${site.since}.`}
+>
+  <PageHero
+    eyebrow="About"
+    title={`Making blinds in Bengaluru since <em>${site.since}</em>.`}
+    lead="We started with a simple idea: well-made, made-to-measure blinds shouldn’t be a luxury. Two decades and more than a thousand homes later, that’s still how we work."
+  />
+
+  <section class="section section--tight">
+    <div class="container">
+      <Photo alt="The Coral Blinds team at the Kothanur studio" hue={28} ratio="21 / 9" label="Team / studio in Kothanur" />
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container split">
+      <div class="stack reveal">
+        <p class="eyebrow">Our story</p>
+        <h2 class="h2">Custom blinds, awnings and shutters — for homes and businesses.</h2>
+      </div>
+      <div class="stack reveal">
+        <p class="lead">
+          {site.name} specialises in custom-made, quality blinds, awnings and shutters for domestic and commercial
+          customers. From our studio on Hennur–Bagalur Road we serve homes, offices, hotels and factories across the
+          city.
+        </p>
+        <p class="lead">
+          Every project starts with a visit: we measure, bring samples to see in your own light, and recommend only
+          what suits the room. Then we make it and fit it ourselves.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--sand">
+    <div class="container grid grid--3">
+      {
+        values.map((v) => (
+          <div class="value reveal">
+            <h3 class="h3">{v.title}</h3>
+            <p class="muted">{v.text}</p>
+          </div>
+        ))
+      }
+    </div>
+  </section>
+
+  <CtaBand title="Come and see the samples." text="Visit our Kothanur studio, or we’ll bring the samples to you." />
+</Base>
+
+<style>
+  .value {
+    display: grid;
+    gap: 0.75rem;
+    align-content: start;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--ink);
+  }
+</style>

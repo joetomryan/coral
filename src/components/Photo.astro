@@ -1,0 +1,82 @@
+---
+// Renders a real photo when `src` is given; otherwise a designed placeholder
+// (light through blind slats) labelled with the shot we still need.
+interface Props {
+  src?: string;
+  alt: string;
+  hue?: number;
+  ratio?: string;
+  label?: string;
+  class?: string;
+  eager?: boolean;
+  dark?: boolean;
+}
+const { src, alt, hue = 32, ratio = '4 / 5', label, class: cls, eager = false, dark = false } = Astro.props;
+---
+
+<figure class:list={['photo', { 'photo--dark': dark }, cls]} style={`--ratio:${ratio};--h:${hue}`}>
+  {
+    src ? (
+      <img src={src} alt={alt} loading={eager ? 'eager' : 'lazy'} decoding="async" />
+    ) : (
+      <div class="photo__ph" role="img" aria-label={alt}>
+        {label && <span class="photo__label">Photo · {label}</span>}
+      </div>
+    )
+  }
+</figure>
+
+<style>
+  .photo {
+    position: relative;
+    aspect-ratio: var(--ratio);
+    overflow: hidden;
+    background: hsl(var(--h) 18% 82%);
+  }
+
+  .photo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 1.2s var(--ease);
+  }
+
+  .photo__ph {
+    position: absolute;
+    inset: 0;
+    background:
+      repeating-linear-gradient(
+        180deg,
+        hsl(var(--h) 30% 96% / 0.55) 0 2px,
+        transparent 2px 22px
+      ),
+      radial-gradient(120% 90% at 78% 18%, hsl(var(--h) 45% 94%) 0%, transparent 60%),
+      linear-gradient(160deg, hsl(var(--h) 22% 80%) 0%, hsl(var(--h) 16% 64%) 100%);
+    transition: transform 1.2s var(--ease);
+  }
+
+  .photo--dark .photo__ph {
+    background:
+      repeating-linear-gradient(
+        180deg,
+        hsl(var(--h) 30% 85% / 0.18) 0 2px,
+        transparent 2px 22px
+      ),
+      radial-gradient(110% 80% at 75% 20%, hsl(var(--h) 35% 62%) 0%, transparent 60%),
+      linear-gradient(160deg, hsl(var(--h) 18% 34%) 0%, hsl(var(--h) 14% 18%) 100%);
+  }
+
+  .photo__label {
+    position: absolute;
+    left: 1rem;
+    bottom: 1rem;
+    max-width: calc(100% - 2rem);
+    padding: 0.35rem 0.6rem;
+    background: rgb(255 255 255 / 0.72);
+    color: var(--ink-soft);
+    font-size: 0.6875rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    backdrop-filter: blur(6px);
+  }
+</style>

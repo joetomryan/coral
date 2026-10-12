@@ -1,0 +1,333 @@
+---
+import Base from '../layouts/Base.astro';
+import Photo from '../components/Photo.astro';
+import ProductCard from '../components/ProductCard.astro';
+import CtaBand from '../components/CtaBand.astro';
+import { site } from '../data/site';
+import { products, rooms } from '../data/products';
+
+const featured = products.filter((p) => p.featured);
+const roomHues: Record<string, number> = {
+  living: 32,
+  bedroom: 220,
+  kids: 350,
+  kitchen: 90,
+  bathroom: 190,
+  office: 210,
+  balcony: 45,
+};
+const steps = [
+  { title: 'Visit', text: 'We come to you, measure every window and bring fabric samples to see in your own light.' },
+  { title: 'Choose', text: 'Pick fabrics, colours and operation — manual or motorised — with honest advice and a clear quote.' },
+  { title: 'Make', text: 'Each blind is made to measure for your window, typically ready in about five days.' },
+  { title: 'Fit', text: 'Our own team installs, tests and tidies up. We stay on call if anything needs adjusting.' },
+];
+---
+
+<Base
+  title={site.name}
+  description="Made-to-measure roller, zebra, Roman, vertical, wooden and motorised blinds for homes and offices in Bengaluru. Free home measurement. Since 2002."
+  overlayHeader
+>
+  <!-- Hero -->
+  <section class="hero">
+    <Photo
+      class="hero__bg"
+      alt="Living room with soft light through roller blinds"
+      hue={28}
+      ratio="auto"
+      label="Hero — living room, afternoon light"
+      eager
+      dark
+    />
+    <div class="container hero__content">
+      <p class="eyebrow hero__eyebrow">Made-to-measure blinds · Bengaluru · Since {site.since}</p>
+      <h1 class="display hero__title">Light, shaped for the way you&nbsp;<em>live</em>.</h1>
+      <div class="btn-row">
+        <a class="btn btn--light" href="/contact#book">Book a free measurement</a>
+        <a class="btn btn--outline-light" href="/products">Explore products</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Intro + proof -->
+  <section class="section">
+    <div class="container intro reveal">
+      <p class="h2 intro__statement">
+        For over two decades we’ve made blinds for Bengaluru homes and workplaces — measured, made and fitted by
+        <em>one team</em>.
+      </p>
+      <dl class="proof">
+        {
+          site.proof.map((p) => (
+            <div>
+              <dt class="muted">{p.label}</dt>
+              <dd>{p.value}</dd>
+            </div>
+          ))
+        }
+      </dl>
+    </div>
+  </section>
+
+  <!-- Products -->
+  <section class="section section--tight">
+    <div class="container">
+      <div class="section-head reveal">
+        <div class="stack">
+          <p class="eyebrow">Collection</p>
+          <h2 class="h2">Every window, considered.</h2>
+        </div>
+        <a class="link-arrow" href="/products">View all {products.length} products <span aria-hidden="true">→</span></a>
+      </div>
+      <div class="grid grid--3">
+        {featured.map((p) => <div class="reveal"><ProductCard product={p} /></div>)}
+      </div>
+    </div>
+  </section>
+
+  <!-- Rooms -->
+  <section class="section">
+    <div class="container">
+      <div class="section-head reveal">
+        <div class="stack">
+          <p class="eyebrow">Shop by room</p>
+          <h2 class="h2">Start with the room.</h2>
+        </div>
+        <p class="lead">Every room asks for something different — darkness to sleep, glare-free screens, fabric that copes with steam.</p>
+      </div>
+      <ul role="list" class="rooms">
+        {
+          rooms.map((r) => (
+            <li class="reveal">
+              <a href={`/products?room=${r.id}`} class="room">
+                <Photo alt={r.label} hue={roomHues[r.id]} ratio="3 / 4" />
+                <span class="room__label">{r.label}</span>
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <!-- Motorisation -->
+  <section class="section section--sand">
+    <div class="container split">
+      <div class="reveal">
+        <Photo alt="Motorised blinds controlled from a phone" hue={24} ratio="4 / 5" label="Motorised blinds — phone / remote in hand" />
+      </div>
+      <div class="stack reveal">
+        <p class="eyebrow">Motorisation</p>
+        <h2 class="h2">Touch a button. <em>Or don’t</em> — set a schedule.</h2>
+        <p class="lead">
+          Motors from Somfy and Lutron, controlled by remote, wall switch, phone or voice. Schedule blinds to close
+          before the afternoon sun hits, or reach skylights you’d never get to by hand.
+        </p>
+        <a class="link-arrow" href="/motorisation">Explore motorisation <span aria-hidden="true">→</span></a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Homes / Commercial -->
+  <section class="section">
+    <div class="container grid grid--2">
+      <a class="audience reveal" href="/products">
+        <Photo alt="Bedroom with blackout Roman blinds" hue={15} ratio="5 / 4" label="Homes — bedroom" />
+        <div class="audience__body">
+          <p class="eyebrow">For homes</p>
+          <h3 class="h3">Calm, private, made for how you live.</h3>
+          <span class="link-arrow">Browse products <span aria-hidden="true">→</span></span>
+        </div>
+      </a>
+      <a class="audience reveal" href="/commercial">
+        <Photo alt="Office with vertical blinds" hue={210} ratio="5 / 4" label="Commercial — office floor" />
+        <div class="audience__body">
+          <p class="eyebrow">For workplaces</p>
+          <h3 class="h3">Offices, hotels, hospitals and factories.</h3>
+          <span class="link-arrow">Commercial projects <span aria-hidden="true">→</span></span>
+        </div>
+      </a>
+    </div>
+  </section>
+
+  <!-- Process -->
+  <section class="section section--tight">
+    <div class="container">
+      <div class="section-head reveal">
+        <div class="stack">
+          <p class="eyebrow">How it works</p>
+          <h2 class="h2">From first visit to final fit.</h2>
+        </div>
+      </div>
+      <ol class="steps grid grid--4">
+        {
+          steps.map((s, i) => (
+            <li class="step reveal">
+              <span class="step__num">0{i + 1}</span>
+              <h3 class="h3">{s.title}</h3>
+              <p class="muted">{s.text}</p>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </section>
+
+  <CtaBand />
+</Base>
+
+<style>
+  .hero {
+    position: relative;
+    min-height: max(640px, 100svh);
+    display: flex;
+    align-items: flex-end;
+    color: #fff;
+  }
+
+  .hero :global(.hero__bg) {
+    position: absolute;
+    inset: 0;
+    aspect-ratio: auto;
+  }
+
+  .hero::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgb(0 0 0 / 0.25) 0%, transparent 30%, rgb(0 0 0 / 0.45) 100%);
+    pointer-events: none;
+  }
+
+  .hero :global(.photo__label) {
+    top: calc(var(--header-h) + 1rem);
+    bottom: auto;
+    right: 1rem;
+    left: auto;
+  }
+
+  .hero__content {
+    position: relative;
+    z-index: 1;
+    padding-bottom: clamp(3rem, 2rem + 5vw, 6.5rem);
+  }
+
+  .hero__eyebrow {
+    color: rgb(255 255 255 / 0.8);
+    margin-bottom: 1.25rem;
+  }
+
+  .hero__title {
+    max-width: 13ch;
+    margin-bottom: 2.25rem;
+  }
+
+  .intro {
+    display: grid;
+    gap: 3.5rem;
+  }
+
+  .intro__statement {
+    max-width: 24ch;
+  }
+
+  .proof {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.25rem;
+    border-top: 1px solid var(--line);
+    padding-top: 2rem;
+  }
+
+  .proof dt {
+    font-size: var(--step--1);
+    letter-spacing: 0.04em;
+  }
+
+  .proof dd {
+    font-family: var(--font-display);
+    font-size: var(--step-3);
+    line-height: 1.1;
+    margin-top: 0.25rem;
+  }
+
+  .rooms {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 9.5rem), 1fr));
+    gap: 1rem;
+  }
+
+  .room {
+    position: relative;
+    display: block;
+    overflow: hidden;
+  }
+
+  .room :global(.photo__ph) {
+    transition: transform 1s var(--ease);
+  }
+
+  .room:hover :global(.photo__ph) {
+    transform: scale(1.05);
+  }
+
+  .room__label {
+    position: absolute;
+    left: 1rem;
+    bottom: 0.9rem;
+    font-family: var(--font-display);
+    font-size: 1.375rem;
+    color: #fff;
+    text-shadow: 0 1px 12px rgb(0 0 0 / 0.25);
+  }
+
+  .audience {
+    display: block;
+  }
+
+  .audience__body {
+    display: grid;
+    gap: 0.75rem;
+    justify-items: start;
+    padding-top: 1.5rem;
+  }
+
+  .audience:hover .link-arrow {
+    gap: 0.8rem;
+    color: var(--coral);
+  }
+
+  .steps {
+    padding: 0;
+    list-style: none;
+  }
+
+  .step {
+    display: grid;
+    gap: 0.75rem;
+    align-content: start;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--ink);
+  }
+
+  .step__num {
+    font-size: var(--step--1);
+    letter-spacing: 0.1em;
+    color: var(--coral);
+  }
+
+  @media (min-width: 900px) {
+    .intro {
+      grid-template-columns: 1.5fr 1fr;
+      align-items: end;
+    }
+
+    .proof {
+      grid-template-columns: 1fr;
+      border-top: 0;
+      border-left: 1px solid var(--line);
+      padding: 0 0 0 2.5rem;
+    }
+  }
+</style>

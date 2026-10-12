@@ -1,0 +1,97 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHero from '../components/PageHero.astro';
+import Photo from '../components/Photo.astro';
+import ProductCard from '../components/ProductCard.astro';
+import CtaBand from '../components/CtaBand.astro';
+import { getProduct } from '../data/products';
+
+const sectors = [
+  { title: 'Offices', text: 'Glare control for screens, consistent façades across floors, and fabrics that meet fire-safety needs.', hue: 210 },
+  { title: 'Hospitality', text: 'Blackout for guest rooms and soft, tailored fabrics for lobbies and restaurants.', hue: 25 },
+  { title: 'Healthcare & education', text: 'Easy-clean, durable systems for wards, clinics and classrooms.', hue: 180 },
+  { title: 'Factories & warehouses', text: 'PVC strip curtains for doorways that hold back heat, dust and insects.', hue: 170 },
+];
+const picks = ['vertical-blinds', 'roller-blinds', 'printed-blinds', 'industrial-strip-curtains']
+  .map((s) => getProduct(s)!)
+  .filter(Boolean);
+---
+
+<Base
+  title="Commercial blinds"
+  description="Blinds for offices, hotels, hospitals, schools and factories in Bengaluru — vertical, roller, fire-retardant fabrics, printed branding and PVC strip curtains."
+>
+  <PageHero
+    eyebrow="Commercial"
+    title="Blinds for places that <em>work</em> hard."
+    lead="From a single cabin to whole office floors — measured, supplied and installed by one team, on your schedule."
+  >
+    <div class="btn-row">
+      <a class="btn" href="/contact?type=commercial#book">Request a site visit</a>
+    </div>
+  </PageHero>
+
+  <section class="section section--tight">
+    <div class="container grid grid--2">
+      {
+        sectors.map((s) => (
+          <div class="sector reveal">
+            <Photo alt={s.title} hue={s.hue} ratio="16 / 10" label={s.title} />
+            <h2 class="h3">{s.title}</h2>
+            <p class="muted">{s.text}</p>
+          </div>
+        ))
+      }
+    </div>
+  </section>
+
+  <section class="section section--sand">
+    <div class="container split">
+      <div class="stack reveal">
+        <p class="eyebrow">For architects, builders & facility teams</p>
+        <h2 class="h2">Specified once. Fitted right.</h2>
+      </div>
+      <ul role="list" class="list reveal">
+        <li>Site survey and measurement across every floor</li>
+        <li>Fire-retardant, blackout, dim-out and solar-reflective fabrics</li>
+        <li>Brand-printed blinds for receptions and shopfronts</li>
+        <li>Motorised and centrally controlled systems</li>
+        <li>Phased installation around your working hours</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="section-head">
+        <h2 class="h2">Popular for commercial spaces</h2>
+      </div>
+      <div class="grid grid--4">
+        {picks.map((p) => <ProductCard product={p} />)}
+      </div>
+    </div>
+  </section>
+
+  <CtaBand title="Planning a fit-out?" text="Share drawings or a window count and we’ll arrange a site visit and an itemised quote." />
+</Base>
+
+<style>
+  .sector {
+    display: grid;
+    gap: 0.75rem;
+  }
+
+  .sector :global(.photo) {
+    margin-bottom: 0.75rem;
+  }
+
+  .list li {
+    padding-block: 1.1rem;
+    border-bottom: 1px solid rgb(29 28 26 / 0.15);
+    font-size: var(--step-1);
+  }
+
+  .list li:first-child {
+    border-top: 1px solid rgb(29 28 26 / 0.15);
+  }
+</style>

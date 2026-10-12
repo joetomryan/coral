@@ -1,0 +1,68 @@
+---
+import Photo from './Photo.astro';
+import type { Product } from '../data/products';
+
+interface Props {
+  product: Product;
+  ratio?: string;
+}
+const { product, ratio = '4 / 5' } = Astro.props;
+---
+
+<a class="card" href={`/products/${product.slug}`} data-rooms={product.rooms.join(' ')}>
+  <Photo alt={product.name} hue={product.hue} ratio={ratio} label={product.name} />
+  <div class="card__body">
+    <h3 class="card__title">{product.name}</h3>
+    <p class="card__summary">{product.summary}</p>
+  </div>
+</a>
+
+<style>
+  .card {
+    display: block;
+  }
+
+  .card :global(.photo__ph),
+  .card :global(img) {
+    will-change: transform;
+  }
+
+  .card:hover :global(.photo__ph),
+  .card:hover :global(img) {
+    transform: scale(1.035);
+  }
+
+  .card__body {
+    padding-top: 1.1rem;
+  }
+
+  .card__title {
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: 1.625rem;
+    line-height: 1.15;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .card__title::after {
+    content: '→';
+    font-family: var(--font-body);
+    font-size: 1rem;
+    opacity: 0;
+    transform: translateX(-6px);
+    transition: all 0.3s var(--ease);
+  }
+
+  .card:hover .card__title::after {
+    opacity: 1;
+    transform: none;
+  }
+
+  .card__summary {
+    margin-top: 0.35rem;
+    color: var(--muted);
+    font-size: 0.9375rem;
+  }
+</style>

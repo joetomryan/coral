@@ -1,0 +1,200 @@
+---
+import Base from '../../layouts/Base.astro';
+import Photo from '../../components/Photo.astro';
+import ProductCard from '../../components/ProductCard.astro';
+import CtaBand from '../../components/CtaBand.astro';
+import { products, roomLabel, categories, type Product } from '../../data/products';
+import { site, whatsappLink } from '../../data/site';
+
+export function getStaticPaths() {
+  return products.map((product) => ({ params: { slug: product.slug }, props: { product } }));
+}
+
+interface Props {
+  product: Product;
+}
+const { product } = Astro.props;
+const category = categories.find((c) => c.id === product.category)!;
+const related = products
+  .filter((p) => p.slug !== product.slug && (p.category === product.category || p.rooms.some((r) => product.rooms.includes(r))))
+  .slice(0, 3);
+const schema = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'Product',
+    name: product.name,
+    description: product.intro,
+    brand: { '@type': 'Brand', name: site.name },
+    category: category.label,
+  },
+];
+---
+
+<Base
+  title={`${product.name} in Bengaluru`}
+  description={`${product.summary} Made-to-measure ${product.name.toLowerCase()} by ${site.name}, Bengaluru — free home measurement.`}
+  schema={schema}
+>
+  <section class="pd">
+    <div class="container pd__grid">
+      <div class="pd__media">
+        <Photo alt={product.name} hue={product.hue} ratio="4 / 5" label={`${product.name} — in a room`} eager />
+      </div>
+
+      <div class="pd__info">
+        <nav class="crumbs" aria-label="Breadcrumb">
+          <a href="/products">Products</a> <span aria-hidden="true">/</span> <span>{category.label}</span>
+        </nav>
+        <h1 class="display pd__title">{product.name}</h1>
+        <p class="lead">{product.intro}</p>
+
+        <div class="btn-row">
+          <a class="btn" href={`/contact?product=${product.slug}#book`}>Book a free measurement</a>
+          <a
+            class="btn btn--ghost"
+            href={whatsappLink(`Hi Coral Blinds, I’m interested in ${product.name}.`)}
+            target="_blank"
+            rel="noopener">WhatsApp</a
+          >
+        </div>
+
+        <dl class="facts">
+          <div>
+            <dt>Best for</dt>
+            <dd>{product.rooms.map(roomLabel).join(', ')}</dd>
+          </div>
+          <div>
+            <dt>Operation</dt>
+            <dd>{product.motorised ? 'Manual or motorised' : 'Manual'}</dd>
+          </div>
+          {
+            product.specs?.map((s) => (
+              <div>
+                <dt>{s.label}</dt>
+                <dd>{s.value}</dd>
+              </div>
+            ))
+          }
+        </dl>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--sand">
+    <div class="container split">
+      <div class="stack reveal">
+        <p class="eyebrow">Why {product.name.toLowerCase()}</p>
+        <h2 class="h2">{product.summary}</h2>
+      </div>
+      <ul role="list" class="features reveal">
+        {product.features.map((f) => <li>{f}</li>)}
+      </ul>
+    </div>
+  </section>
+
+  <section class="section section--tight">
+    <div class="container grid grid--3 gallery">
+      <Photo alt={`${product.name} detail`} hue={product.hue} ratio="1 / 1" label="Fabric close-up" />
+      <Photo alt={`${product.name} installed`} hue={product.hue + 10} ratio="1 / 1" label="Installed — wide shot" />
+      <Photo alt={`${product.name} mechanism`} hue={product.hue - 10} ratio="1 / 1" label="Headrail / control detail" />
+    </div>
+  </section>
+
+  {
+    related.length > 0 && (
+      <section class="section section--tight">
+        <div class="container">
+          <div class="section-head">
+            <h2 class="h2">You might also consider</h2>
+          </div>
+          <div class="grid grid--3">
+            {related.map((p) => (
+              <ProductCard product={p} />
+            ))}
+          </div>
+        </div>
+      </section>
+    )
+  }
+
+  <CtaBand title={`See ${product.name.toLowerCase()} in your window.`} />
+</Base>
+
+<style>
+  .pd {
+    padding-top: calc(var(--header-h) + clamp(1.5rem, 1rem + 2vw, 3rem));
+    padding-bottom: var(--section);
+  }
+
+  .pd__grid {
+    display: grid;
+    gap: clamp(2rem, 1rem + 4vw, 5rem);
+  }
+
+  .pd__info {
+    display: grid;
+    gap: 1.75rem;
+    align-content: start;
+  }
+
+  .crumbs {
+    font-size: var(--step--1);
+    color: var(--muted);
+    letter-spacing: 0.04em;
+  }
+
+  .crumbs a:hover {
+    color: var(--coral);
+  }
+
+  .pd__title {
+    font-size: clamp(2.75rem, 1.8rem + 3.5vw, 4.75rem);
+  }
+
+  .facts {
+    border-top: 1px solid var(--line);
+  }
+
+  .facts > div {
+    display: grid;
+    grid-template-columns: 9rem 1fr;
+    gap: 1rem;
+    padding-block: 0.9rem;
+    border-bottom: 1px solid var(--line);
+    font-size: 0.9375rem;
+  }
+
+  .facts dt {
+    color: var(--muted);
+  }
+
+  .features {
+    display: grid;
+  }
+
+  .features li {
+    padding-block: 1.1rem;
+    border-bottom: 1px solid rgb(29 28 26 / 0.15);
+    font-size: var(--step-1);
+  }
+
+  .features li:first-child {
+    border-top: 1px solid rgb(29 28 26 / 0.15);
+  }
+
+  @media (min-width: 960px) {
+    .pd__grid {
+      grid-template-columns: 1.1fr 1fr;
+    }
+
+    .pd__media {
+      position: sticky;
+      top: calc(var(--header-h) + 1.5rem);
+      align-self: start;
+    }
+
+    .pd__info {
+      padding-top: 2rem;
+    }
+  }
+</style>

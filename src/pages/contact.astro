@@ -1,0 +1,212 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHero from '../components/PageHero.astro';
+import { site, whatsappLink } from '../data/site';
+import { products } from '../data/products';
+
+// Optional: set PUBLIC_FORM_ENDPOINT (e.g. a Web3Forms or Formspree URL) to receive
+// enquiries by email. Without it, the form composes a WhatsApp message instead.
+const endpoint = import.meta.env.PUBLIC_FORM_ENDPOINT as string | undefined;
+const formKey = import.meta.env.PUBLIC_FORM_KEY as string | undefined;
+---
+
+<Base
+  title="Contact & free measurement"
+  description="Book a free home measurement with Coral Blinds, Kothanur, Bengaluru. Call +91 63629 04441, WhatsApp, or visit our studio on Hennur–Bagalur Road."
+>
+  <PageHero
+    eyebrow="Contact"
+    title="Let’s look at your <em>windows</em>."
+    lead="Book a free measurement and we’ll bring samples to your home — or visit our studio in Kothanur."
+  />
+
+  <section class="section section--tight">
+    <div class="container contact">
+      <div class="contact__form" id="book">
+        <h2 class="h3">Book a free measurement</h2>
+        <form
+          class="form"
+          method="post"
+          action={endpoint}
+          data-form
+          data-endpoint={endpoint ? 'true' : undefined}
+        >
+          {formKey && <input type="hidden" name="access_key" value={formKey} />}
+          <input type="hidden" name="subject" value="New measurement request — coralblinds.in" />
+          <div class="field">
+            <label for="name">Name</label>
+            <input id="name" name="name" autocomplete="name" required />
+          </div>
+          <div class="field">
+            <label for="phone">Phone</label>
+            <input id="phone" name="phone" type="tel" autocomplete="tel" inputmode="tel" required />
+          </div>
+          <div class="field">
+            <label for="area">Area / locality</label>
+            <input id="area" name="area" placeholder="e.g. Hennur, Hebbal, Whitefield" />
+          </div>
+          <div class="field">
+            <label for="product">Interested in</label>
+            <select id="product" name="product">
+              <option value="">Not sure yet</option>
+              {products.map((p) => <option value={p.slug}>{p.name}</option>)}
+              <option value="motorisation">Motorisation</option>
+              <option value="commercial">Commercial project</option>
+            </select>
+          </div>
+          <div class="field field--full">
+            <label for="message">Anything else? (number of windows, timing…)</label>
+            <textarea id="message" name="message" rows="4"></textarea>
+          </div>
+          <div class="field--full form__foot">
+            <button class="btn" type="submit">{endpoint ? 'Send request' : 'Send on WhatsApp'}</button>
+            <p class="muted form__note" data-note>We usually reply within a working day.</p>
+          </div>
+        </form>
+      </div>
+
+      <aside class="contact__info">
+        <div class="info-block">
+          <p class="eyebrow">Call</p>
+          <a href={`tel:${site.phones.office.tel}`}>{site.phones.office.display}</a>
+          <a href={`tel:${site.phones.mobile.tel}`}>{site.phones.mobile.display}</a>
+        </div>
+        <div class="info-block">
+          <p class="eyebrow">WhatsApp</p>
+          <a href={whatsappLink()} target="_blank" rel="noopener">Chat with us</a>
+        </div>
+        {
+          site.email && (
+            <div class="info-block">
+              <p class="eyebrow">Email</p>
+              <a href={`mailto:${site.email}`}>{site.email}</a>
+            </div>
+          )
+        }
+        <div class="info-block">
+          <p class="eyebrow">Studio</p>
+          <address>
+            {site.address.line1}<br />
+            {site.address.line2}<br />
+            {site.address.city} {site.address.postalCode}
+          </address>
+          <a class="link-arrow" href={site.mapsUrl} target="_blank" rel="noopener">Get directions <span aria-hidden="true">→</span></a>
+        </div>
+        <div class="info-block">
+          <p class="eyebrow">Hours</p>
+          {site.hours.map((h) => <p>{h.days}<br /><span class="muted">{h.time}</span></p>)}
+        </div>
+      </aside>
+    </div>
+  </section>
+</Base>
+
+<script>
+  import { site } from '../data/site';
+
+  const form = document.querySelector<HTMLFormElement>('[data-form]')!;
+
+  // Preselect product from ?product= or ?type=commercial links.
+  const params = new URLSearchParams(location.search);
+  const pre = params.get('product') ?? (params.get('type') === 'commercial' ? 'commercial' : null);
+  const select = form.querySelector<HTMLSelectElement>('#product')!;
+  if (pre && [...select.options].some((o) => o.value === pre)) select.value = pre;
+
+  if (!form.dataset.endpoint) {
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const data = new FormData(form);
+      const productLabel = select.selectedOptions[0]?.text ?? '';
+      const lines = [
+        'Hi Coral Blinds, I’d like a free measurement.',
+        `Name: ${data.get('name')}`,
+        `Phone: ${data.get('phone')}`,
+        data.get('area') && `Area: ${data.get('area')}`,
+        `Interested in: ${productLabel}`,
+        data.get('message') && `Notes: ${data.get('message')}`,
+      ].filter(Boolean);
+      window.open(`https://wa.me/${site.whatsapp}?text=${encodeURIComponent(lines.join('\n'))}`, '_blank', 'noopener');
+    });
+  }
+</script>
+
+<style>
+  .contact {
+    display: grid;
+    gap: clamp(3rem, 2rem + 4vw, 6rem);
+  }
+
+  .contact__form {
+    display: grid;
+    gap: 2rem;
+    align-content: start;
+    scroll-margin-top: calc(var(--header-h) + 1.5rem);
+  }
+
+  .form {
+    display: grid;
+    gap: 1.75rem 2rem;
+  }
+
+  .form__foot {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1rem 1.5rem;
+    padding-top: 0.5rem;
+  }
+
+  .form__note {
+    font-size: 0.875rem;
+  }
+
+  .contact__info {
+    display: grid;
+    gap: 2rem;
+    align-content: start;
+  }
+
+  .info-block {
+    display: grid;
+    gap: 0.4rem;
+    justify-items: start;
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--line);
+  }
+
+  .info-block .eyebrow {
+    margin-bottom: 0.35rem;
+  }
+
+  .info-block > a:not(.link-arrow) {
+    font-family: var(--font-display);
+    font-size: 1.625rem;
+    line-height: 1.2;
+    transition: color 0.2s var(--ease);
+  }
+
+  .info-block > a:not(.link-arrow):hover {
+    color: var(--coral);
+  }
+
+  address {
+    font-style: normal;
+    margin-bottom: 0.5rem;
+  }
+
+  @media (min-width: 700px) {
+    .form {
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .field--full {
+      grid-column: 1 / -1;
+    }
+  }
+
+  @media (min-width: 1000px) {
+    .contact {
+      grid-template-columns: 1.6fr 1fr;
+    }
+  }
+</style>
