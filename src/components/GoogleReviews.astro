@@ -22,51 +22,45 @@ const mapsSearch = `https://www.google.com/maps/search/?api=1&query=${encodeURIC
         <p class="eyebrow">Reviews on Google</p>
         <h2 class="h2">What our customers say.</h2>
       </div>
-      <div class="summary" data-summary>
-        <span class="summary__score" data-score></span>
-        <span class="summary__meta">
-          <span class="stars" data-stars style="--r: 0" aria-hidden="true">★★★★★</span>
-          <span class="muted" data-count>{live ? 'Loading reviews' : 'Your Google rating appears here'}</span>
-        </span>
-      </div>
+      {
+        live && (
+          <div class="summary">
+            <span class="summary__score" data-score />
+            <span class="summary__meta">
+              <span class="stars" data-stars style="--r: 0" aria-hidden="true">★★★★★</span>
+              <span class="muted" data-count>Loading reviews</span>
+            </span>
+          </div>
+        )
+      }
     </div>
 
-    <ul role="list" class="photos" data-photos>
-      {
-        Array.from({ length: 6 }, (_, i) => (
-          <li class="photo-ph" style={`--h:${[200, 30, 160, 45, 215, 15][i]}`}>
-            <span>Customer photo</span>
-          </li>
-        ))
-      }
-    </ul>
-
-    <ul role="list" class="cards" data-cards>
-      {
-        Array.from({ length: 3 }, () => (
-          <li class="card card--ph">
-            <div class="card__head">
-              <span class="avatar" />
-              <div>
-                <p class="card__name">Customer name</p>
-                <p class="muted card__when">Review date</p>
-              </div>
-            </div>
-            <p class="stars" style="--r: 0" aria-hidden="true">★★★★★</p>
-            <p class="card__text muted">
-              Your top Google reviews appear here automatically once the site is connected to your Google Business
-              Profile.
-            </p>
-          </li>
-        ))
-      }
-    </ul>
+    {
+      live ? (
+        <>
+          <ul role="list" class="photos" data-photos>
+            {Array.from({ length: 6 }, () => (
+              <li class="skeleton" />
+            ))}
+          </ul>
+          <ul role="list" class="cards" data-cards>
+            {Array.from({ length: 3 }, () => (
+              <li class="card skeleton skeleton--card" />
+            ))}
+          </ul>
+        </>
+      ) : (
+        <div class="offline reveal">
+          <p class="h3">Read what our customers say about their blinds, their fitting and our team, in their own words.</p>
+        </div>
+      )
+    }
 
     <div class="reviews__foot">
       <a class="link-arrow" href={mapsSearch} target="_blank" rel="noopener" data-all>
         Read all reviews on Google <span aria-hidden="true">→</span>
       </a>
-      <p class="muted reviews__credit">Reviews and photos from Google</p>
+      {live && <p class="muted reviews__credit">Reviews and photos from Google</p>}
     </div>
   </div>
 </section>
@@ -184,6 +178,7 @@ const mapsSearch = `https://www.google.com/maps/search/?api=1&query=${encodeURIC
         io.disconnect();
         render(root).catch(() => {
           root.querySelector('[data-count]')!.textContent = 'See our reviews on Google';
+          root.querySelectorAll('[data-photos], [data-cards]').forEach((n) => n.remove());
         });
       },
       { rootMargin: '400px 0px' },
@@ -255,6 +250,35 @@ const mapsSearch = `https://www.google.com/maps/search/?api=1&query=${encodeURIC
     background: rgb(255 255 255 / 0.85);
     font-size: 0.6875rem;
     color: var(--ink-soft);
+  }
+
+  .skeleton {
+    background: linear-gradient(90deg, var(--sand) 0%, #fafbfc 50%, var(--sand) 100%) 0 0 / 200% 100%;
+    animation: shimmer 1.4s linear infinite;
+  }
+
+  .skeleton--card {
+    min-height: 14rem;
+    border: 0 !important;
+  }
+
+  @keyframes shimmer {
+    to {
+      background-position: -200% 0;
+    }
+  }
+
+  .offline {
+    display: grid;
+    gap: 1rem;
+    max-width: 44rem;
+    padding: clamp(1.5rem, 1rem + 2vw, 2.5rem);
+    border: 1px solid var(--line);
+    border-left: 3px solid var(--yellow);
+  }
+
+  .offline__stars {
+    font-size: 1.375rem !important;
   }
 
   .photo-ph {

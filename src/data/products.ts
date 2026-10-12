@@ -2,6 +2,8 @@
 // (vertical, wooden, skylight, industrial); elsewhere it is deliberately general
 // until the owner confirms fabrics, sizes and prices.
 
+import type { BlindKind } from '../components/BlindArt.astro';
+
 export type Room = 'living' | 'bedroom' | 'kids' | 'kitchen' | 'bathroom' | 'office' | 'balcony';
 
 export const rooms: { id: Room; label: string }[] = [
@@ -33,8 +35,12 @@ export interface Product {
   features: string[];
   specs?: { label: string; value: string }[];
   motorised: boolean;
-  /** Hue (0–360) for the placeholder panel until real photography lands. */
+  /** Hue (0–360), kept for older call sites. */
   hue: number;
+  /** Which illustration to draw until real photography lands. */
+  art: BlindKind;
+  /** Real photo, e.g. '/images/products/roller-blinds.jpg'. */
+  image?: string;
   /** Old site URL(s) this page replaces — used for redirects. */
   legacy?: string[];
   featured?: boolean;
@@ -43,6 +49,7 @@ export interface Product {
 export const products: Product[] = [
   {
     slug: 'roller-blinds',
+    art: 'roller',
     name: 'Roller Blinds',
     category: 'fabric',
     summary: 'Clean, flat fabric that rolls away to nothing.',
@@ -61,6 +68,7 @@ export const products: Product[] = [
   },
   {
     slug: 'zebra-blinds',
+    art: 'zebra',
     name: 'Zebra Blinds',
     category: 'fabric',
     summary: 'Two layers of alternating bands for day and night control.',
@@ -79,6 +87,7 @@ export const products: Product[] = [
   },
   {
     slug: 'roman-blinds',
+    art: 'roman',
     name: 'Roman Blinds',
     category: 'fabric',
     summary: 'Soft, tailored folds with the feel of a curtain.',
@@ -98,6 +107,7 @@ export const products: Product[] = [
   },
   {
     slug: 'vertical-blinds',
+    art: 'vertical',
     name: 'Vertical Blinds',
     category: 'fabric',
     summary: 'Tall, turning louvres for wide windows and sliding doors.',
@@ -122,6 +132,7 @@ export const products: Product[] = [
   },
   {
     slug: 'wooden-blinds',
+    art: 'wooden',
     name: 'Wooden Blinds',
     category: 'natural',
     summary: 'Woven wood with real grain and warmth.',
@@ -146,6 +157,7 @@ export const products: Product[] = [
   },
   {
     slug: 'bamboo-blinds',
+    art: 'bamboo',
     name: 'Bamboo Blinds',
     category: 'natural',
     summary: 'Light, natural and made for open air spaces.',
@@ -165,6 +177,7 @@ export const products: Product[] = [
   },
   {
     slug: 'venetian-blinds',
+    art: 'venetian',
     name: 'Venetian Blinds',
     category: 'slatted',
     summary: 'Tilting slats for exact control of light.',
@@ -182,6 +195,7 @@ export const products: Product[] = [
   },
   {
     slug: 'skylight-blinds',
+    art: 'skylight',
     name: 'Skylight Blinds',
     category: 'fabric',
     summary: 'Motorised shading for glass you can’t reach.',
@@ -199,6 +213,7 @@ export const products: Product[] = [
   },
   {
     slug: 'panel-blinds',
+    art: 'panel',
     name: 'Panel Blinds',
     category: 'fabric',
     summary: 'Wide sliding panels for big glass and room dividers.',
@@ -216,6 +231,7 @@ export const products: Product[] = [
   },
   {
     slug: 'printed-blinds',
+    art: 'printed',
     name: 'Printed Blinds',
     category: 'fabric',
     summary: 'Your artwork, photograph or brand on a blind.',
@@ -233,6 +249,7 @@ export const products: Product[] = [
   },
   {
     slug: 'outdoor-pvc-blinds',
+    art: 'outdoor',
     name: 'Outdoor PVC Blinds',
     category: 'outdoor',
     summary: 'Keep the rain out, keep the balcony.',
@@ -249,6 +266,7 @@ export const products: Product[] = [
   },
   {
     slug: 'industrial-strip-curtains',
+    art: 'industrial',
     name: 'Industrial Strip Curtains',
     category: 'outdoor',
     summary: 'PVC strip curtains for busy doorways.',

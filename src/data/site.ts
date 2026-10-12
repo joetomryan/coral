@@ -43,6 +43,5 @@ export const nav = [
   { href: '/products', label: 'Products' },
   { href: '/motorisation', label: 'Motorisation' },
   { href: '/commercial', label: 'Commercial' },
-  { href: '/projects', label: 'Projects' },
   { href: '/about', label: 'About' },
 ] as const;

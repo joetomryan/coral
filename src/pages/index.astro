@@ -23,21 +23,21 @@ const steps = [
 >
   <!-- Hero -->
   <section class="hero">
-    <Photo
-      class="hero__bg"
-      alt="Living room with soft light through roller blinds"
-      hue={210}
-      ratio="auto"
-      label="Hero: living room, afternoon light"
-      eager
-      dark
-    />
-    <div class="container hero__content">
-      <p class="eyebrow hero__eyebrow">Made to measure blinds · Bengaluru · Since {site.since}</p>
-      <h1 class="display hero__title">Light, shaped for the way you&nbsp;<em>live</em>.</h1>
-      <div class="btn-row">
-        <a class="btn" href="/contact#book">Book a free visit</a>
-        <a class="btn btn--outline-light" href="/products">Explore products</a>
+    <div class="container hero__grid">
+      <div class="hero__copy">
+        <p class="eyebrow">Made to measure blinds · Bengaluru · Since {site.since}</p>
+        <h1 class="display hero__title">Light, shaped for the way you&nbsp;<em>live</em>.</h1>
+        <p class="lead">
+          Roller, zebra, Roman, wooden and motorised blinds, measured in your home and fitted by our own team.
+        </p>
+        <div class="btn-row">
+          <a class="btn" href="/contact#book">Book a free visit</a>
+          <a class="btn btn--ghost" href="/products">Explore products</a>
+        </div>
+      </div>
+      <div class="hero__art">
+        <Photo alt="A window with a half lowered roller blind" art="zebra" ratio="4 / 5" eager />
+        <span class="hero__tag"><b>Free home visit</b> We measure and bring samples</span>
       </div>
     </div>
   </section>
@@ -110,48 +110,64 @@ const steps = [
 
 <style>
   .hero {
-    position: relative;
-    min-height: max(640px, 100svh);
-    display: flex;
-    align-items: flex-end;
-    color: #fff;
+    padding-top: calc(var(--header-h) + clamp(2rem, 1rem + 4vw, 5rem));
+    padding-bottom: clamp(3rem, 2rem + 4vw, 6rem);
   }
 
-  .hero :global(.hero__bg) {
-    position: absolute;
-    inset: 0;
-    aspect-ratio: auto;
+  .hero__grid {
+    display: grid;
+    gap: clamp(2.5rem, 1.5rem + 4vw, 5rem);
+    align-items: center;
   }
 
-  .hero::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(180deg, rgb(0 0 0 / 0.25) 0%, transparent 30%, rgb(0 0 0 / 0.45) 100%);
-    pointer-events: none;
-  }
-
-  .hero :global(.photo__label) {
-    top: calc(var(--header-h) + 1rem);
-    bottom: auto;
-    right: 1rem;
-    left: auto;
-  }
-
-  .hero__content {
-    position: relative;
-    z-index: 1;
-    padding-bottom: clamp(3rem, 2rem + 5vw, 6.5rem);
-  }
-
-  .hero__eyebrow {
-    color: var(--yellow);
-    margin-bottom: 1.25rem;
+  .hero__copy {
+    display: grid;
+    gap: 1.5rem;
+    justify-items: start;
   }
 
   .hero__title {
-    max-width: 13ch;
-    margin-bottom: 2.25rem;
+    max-width: 12ch;
+  }
+
+  .hero__copy .btn-row {
+    margin-top: 0.5rem;
+  }
+
+  .hero__art {
+    position: relative;
+  }
+
+  .hero__tag {
+    position: absolute;
+    left: clamp(-1.5rem, -2vw, -0.5rem);
+    bottom: 2rem;
+    display: grid;
+    gap: 0.15rem;
+    max-width: 15rem;
+    padding: 1rem 1.25rem;
+    background: var(--bg);
+    border-left: 3px solid var(--yellow);
+    box-shadow: 0 18px 40px -20px rgb(35 38 45 / 0.35);
+    font-size: 0.875rem;
+    color: var(--muted);
+  }
+
+  .hero__tag b {
+    color: var(--ink);
+    font-weight: 600;
+  }
+
+  @media (max-width: 899px) {
+    .hero__tag {
+      left: 1rem;
+    }
+  }
+
+  @media (min-width: 900px) {
+    .hero__grid {
+      grid-template-columns: 1.05fr 1fr;
+    }
   }
 
   .intro {

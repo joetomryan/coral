@@ -10,7 +10,7 @@ const { product, ratio = '4 / 5' } = Astro.props;
 ---
 
 <a class="card" href={`/products/${product.slug}`} data-rooms={product.rooms.join(' ')}>
-  <Photo alt={product.name} hue={product.hue} ratio={ratio} label={product.name} />
+  <Photo src={product.image} art={product.art} alt={product.name} ratio={ratio} />
   <div class="card__body">
     <h3 class="card__title">{product.name}</h3>
     <p class="card__summary">{product.summary}</p>

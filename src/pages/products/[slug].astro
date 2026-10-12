@@ -38,7 +38,7 @@ const schema = [
   <section class="pd">
     <div class="container pd__grid">
       <div class="pd__media">
-        <Photo alt={product.name} hue={product.hue} ratio="4 / 5" label={`${product.name} in a room`} eager />
+        <Photo src={product.image} art={product.art} alt={product.name} ratio="4 / 5" eager />
       </div>
 
       <div class="pd__info">
@@ -92,13 +92,6 @@ const schema = [
     </div>
   </section>
 
-  <section class="section section--tight">
-    <div class="container grid grid--3 gallery">
-      <Photo alt={`${product.name} detail`} hue={product.hue} ratio="1 / 1" label="Fabric close up" />
-      <Photo alt={`${product.name} installed`} hue={product.hue + 10} ratio="1 / 1" label="Installed, wide shot" />
-      <Photo alt={`${product.name} mechanism`} hue={product.hue - 10} ratio="1 / 1" label="Headrail and control detail" />
-    </div>
-  </section>
 
   {
     related.length > 0 && (
@@ -117,7 +110,7 @@ const schema = [
     )
   }
 
-  <CtaBand title={`See ${product.name.toLowerCase()} in your window.`} />
+  <CtaBand title={`See ${product.name} in your window.`} />
 </Base>
 
 <style>

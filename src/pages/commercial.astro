@@ -7,10 +7,10 @@ import CtaBand from '../components/CtaBand.astro';
 import { getProduct } from '../data/products';
 
 const sectors = [
-  { title: 'Offices', text: 'Glare control for screens, consistent façades across floors, and fabrics that meet fire safety needs.', hue: 210 },
-  { title: 'Hospitality', text: 'Blackout for guest rooms and soft, tailored fabrics for lobbies and restaurants.', hue: 25 },
-  { title: 'Healthcare & education', text: 'Easy to clean, durable systems for wards, clinics and classrooms.', hue: 180 },
-  { title: 'Factories & warehouses', text: 'PVC strip curtains for doorways that hold back heat, dust and insects.', hue: 170 },
+  { title: 'Offices', text: 'Glare control for screens, consistent façades across floors, and fabrics that meet fire safety needs.', hue: 210, art: 'vertical' as const },
+  { title: 'Hospitality', text: 'Blackout for guest rooms and soft, tailored fabrics for lobbies and restaurants.', hue: 25, art: 'roman' as const },
+  { title: 'Healthcare & education', text: 'Easy to clean, durable systems for wards, clinics and classrooms.', hue: 180, art: 'venetian' as const },
+  { title: 'Factories & warehouses', text: 'PVC strip curtains for doorways that hold back heat, dust and insects.', hue: 170, art: 'industrial' as const },
 ];
 const picks = ['vertical-blinds', 'roller-blinds', 'printed-blinds', 'industrial-strip-curtains']
   .map((s) => getProduct(s)!)
@@ -36,7 +36,7 @@ const picks = ['vertical-blinds', 'roller-blinds', 'printed-blinds', 'industrial
       {
         sectors.map((s) => (
           <div class="sector reveal">
-            <Photo alt={s.title} hue={s.hue} ratio="16 / 10" label={s.title} />
+            <Photo alt={s.title} art={s.art} ratio="16 / 10" />
             <h2 class="h3">{s.title}</h2>
             <p class="muted">{s.text}</p>
           </div>
