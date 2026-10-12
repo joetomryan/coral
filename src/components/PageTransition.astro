@@ -32,11 +32,15 @@ import Logo from './Logo.astro';
     position: absolute;
     top: 50%;
     left: 50%;
-    transform: translate(-50%, -50%) scale(0.96);
+    transform: translate(-50%, -50%) scale(0.8);
     opacity: 0;
     transition:
-      opacity 0.2s ease,
-      transform 0.3s ease;
+      opacity 0.3s ease,
+      transform 0.45s cubic-bezier(0.2, 0.7, 0.2, 1);
+  }
+  .pt__logo img {
+    width: clamp(180px, 24vw, 320px);
+    height: auto;
   }
   /* Leaving: fade to white, logo in. */
   .pt-out .pt {
@@ -59,7 +63,10 @@ import Logo from './Logo.astro';
   }
   .pt-open .pt__logo {
     opacity: 0;
-    transition: opacity 0.18s ease;
+    transform: translate(-50%, -50%) scale(1.12);
+    transition:
+      opacity 0.28s ease,
+      transform 0.45s cubic-bezier(0.2, 0.7, 0.2, 1);
   }
   .pt-open .pt__panel--l {
     transform: translateX(-100%);
@@ -105,7 +112,7 @@ import Logo from './Logo.astro';
     } catch {}
     html.classList.remove('pt-in', 'pt-open');
     html.classList.add('pt-out');
-    setTimeout(() => location.assign(url.href), 240);
+    setTimeout(() => location.assign(url.href), 320);
     // If the browser never leaves (blocked, offline), give the page back.
     setTimeout(finish, 4000);
   });
