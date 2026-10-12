@@ -1,9 +1,18 @@
 ---
 import Base from '../../layouts/Base.astro';
 import PageHero from '../../components/PageHero.astro';
-import ProductCard from '../../components/ProductCard.astro';
+import ProductRows from '../../components/ProductRows.astro';
 import CtaBand from '../../components/CtaBand.astro';
 import { products, categories, rooms } from '../../data/products';
+
+// Row numbers run 01–12 across the categories.
+let running = 1;
+const groups = categories.map((c) => {
+  const items = products.filter((p) => p.category === c.id);
+  const start = running;
+  running += items.length;
+  return { ...c, items, start };
+});
 ---
 
 <Base
@@ -24,21 +33,13 @@ import { products, categories, rooms } from '../../data/products';
       </div>
 
       {
-        categories.map((c) => (
+        groups.map((c) => (
           <section class="cat" data-cat>
             <div class="cat__head">
               <h2 class="h3">{c.label}</h2>
               <p class="muted">{c.blurb}</p>
             </div>
-            <div class="grid grid--3">
-              {products
-                .filter((p) => p.category === c.id)
-                .map((p) => (
-                  <div data-item data-rooms={p.rooms.join(' ')}>
-                    <ProductCard product={p} />
-                  </div>
-                ))}
-            </div>
+            <ProductRows items={c.items} start={c.start} images />
           </section>
         ))
       }
@@ -130,8 +131,6 @@ import { products, categories, rooms } from '../../data/products';
     align-items: baseline;
     justify-content: space-between;
     gap: 0.5rem 2rem;
-    padding-bottom: 1.5rem;
-    margin-bottom: 2rem;
-    border-bottom: 1px solid var(--line);
+    margin-bottom: 1.5rem;
   }
 </style>

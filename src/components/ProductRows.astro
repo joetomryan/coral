@@ -1,0 +1,146 @@
+---
+// Products as an index of hairline rows: number, name, one line, where it suits, arrow.
+// Rows with a photo show it on wide screens when `images` is set.
+import Photo from './Photo.astro';
+import { bestFor, type Product } from '../data/products';
+
+interface Props {
+  items: Product[];
+  /** First row number (1-based), so numbering can run on across sections. */
+  start?: number;
+  images?: boolean;
+}
+const { items, start = 1, images = false } = Astro.props;
+const pad = (n: number) => String(n).padStart(2, '0');
+---
+
+<ol role="list" class:list={['rows', { 'rows--images': images }]}>
+  {
+    items.map((p, i) => (
+      <li data-item data-rooms={p.rooms.join(' ')}>
+        <a class="row" href={`/products/${p.slug}`}>
+          <span class="row__num">{pad(start + i)}</span>
+          <span class="row__main">
+            <span class="row__name">{p.name}</span>
+            <span class="row__summary">{p.summary}</span>
+          </span>
+          <span class="row__for muted">{bestFor(p)}</span>
+          {images && p.image && (
+            <span class="row__photo">
+              <Photo photo={p.image} />
+            </span>
+          )}
+          <span class="row__arrow" aria-hidden="true">→</span>
+        </a>
+      </li>
+    ))
+  }
+</ol>
+
+<style>
+  .rows {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    border-top: 1px solid var(--line);
+  }
+
+  .rows li {
+    border-bottom: 1px solid var(--line);
+  }
+
+  .row {
+    display: grid;
+    grid-template-columns: 2.5rem 1fr auto;
+    align-items: center;
+    gap: 1rem 1.5rem;
+    margin-inline: -1rem;
+    padding: 1.4rem 1rem;
+    transition: background 0.3s var(--ease);
+  }
+
+  .row:hover {
+    background: var(--sand);
+  }
+
+  .row__num {
+    font-size: var(--step--1);
+    letter-spacing: 0.08em;
+    color: var(--green);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .row__main {
+    display: grid;
+    gap: 0.3rem;
+    min-width: 0;
+  }
+
+  .row__name {
+    font-family: var(--font-display);
+    font-size: var(--step-2);
+    line-height: 1.1;
+    color: var(--ink);
+    letter-spacing: -0.01em;
+  }
+
+  .row__summary {
+    font-size: 0.9375rem;
+    color: var(--muted);
+  }
+
+  .row__for {
+    display: none;
+    font-size: 0.875rem;
+    text-align: right;
+  }
+
+  .row__photo {
+    display: none;
+    width: 9rem;
+  }
+
+  .row__arrow {
+    font-size: 1.25rem;
+    color: var(--ink);
+    transition: transform 0.35s var(--ease);
+  }
+
+  .row:hover .row__arrow {
+    transform: translateX(6px);
+  }
+
+  @media (min-width: 900px) {
+    .row {
+      grid-template-columns: 3rem 1.4fr 1fr auto;
+      padding: 1.6rem 1.25rem;
+      margin-inline: -1.25rem;
+    }
+
+    .row__for {
+      display: block;
+    }
+
+    .rows--images .row {
+      grid-template-columns: 3rem 1.4fr 1fr 9rem auto;
+    }
+
+    .rows--images .row__photo {
+      display: block;
+    }
+
+    /* Keep rows the same height whether or not they carry a photo. */
+    .rows--images .row__photo :global(.photo) {
+      aspect-ratio: 3 / 2 !important;
+      display: grid;
+      place-items: center;
+      overflow: hidden;
+    }
+
+    .rows--images .row__photo :global(img) {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+  }
+</style>

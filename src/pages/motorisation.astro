@@ -1,8 +1,7 @@
 ---
 import Base from '../layouts/Base.astro';
 import PageHero from '../components/PageHero.astro';
-import Photo from '../components/Photo.astro';
-import ProductCard from '../components/ProductCard.astro';
+import ProductRows from '../components/ProductRows.astro';
 import CtaBand from '../components/CtaBand.astro';
 import { products } from '../data/products';
 
@@ -24,12 +23,6 @@ const controls = [
     title="Blinds that <em>move</em> for you."
     lead="Motors from Somfy (France) and Lutron (USA), fitted to roller, zebra, Roman, vertical, skylight and printed blinds. Quiet, reliable and easy to live with."
   />
-
-  <section class="section section--tight">
-    <div class="container">
-      <Photo alt="Motorised roller blinds across a wide window" art="roller" ratio="21 / 9" />
-    </div>
-  </section>
 
   <section class="section">
     <div class="container">
@@ -53,8 +46,8 @@ const controls = [
   </section>
 
   <section class="section section--sand">
-    <div class="container split">
-      <div class="stack reveal">
+    <div class="container">
+      <div class="stack reveal sky">
         <p class="eyebrow">Where it matters most</p>
         <h2 class="h2">Skylights, double height glass and windows out of reach.</h2>
         <p class="lead">
@@ -62,9 +55,6 @@ const controls = [
           run from a remote, a wall switch or your phone.
         </p>
         <a class="link-arrow" href="/products/skylight-blinds">Skylight blinds <span aria-hidden="true">→</span></a>
-      </div>
-      <div class="reveal">
-        <Photo alt="Skylight with a motorised blind" art="skylight" ratio="4 / 5" />
       </div>
     </div>
   </section>
@@ -77,9 +67,7 @@ const controls = [
           <h2 class="h2">Choose a blind, add a motor.</h2>
         </div>
       </div>
-      <div class="grid grid--3">
-        {motorisable.map((p) => <ProductCard product={p} />)}
-      </div>
+      <ProductRows items={motorisable} />
     </div>
   </section>
 
@@ -87,6 +75,10 @@ const controls = [
 </Base>
 
 <style>
+  .sky {
+    max-width: 44rem;
+  }
+
   .ctl {
     display: grid;
     gap: 0.75rem;

@@ -2,7 +2,7 @@
 // (vertical, wooden, skylight, industrial); elsewhere it is deliberately general
 // until the owner confirms fabrics, sizes and prices.
 
-import type { BlindKind } from '../components/BlindArt.astro';
+import { photos, type Photo } from './photos';
 
 export type Room = 'living' | 'bedroom' | 'kids' | 'kitchen' | 'bathroom' | 'office' | 'balcony';
 
@@ -35,12 +35,8 @@ export interface Product {
   features: string[];
   specs?: { label: string; value: string }[];
   motorised: boolean;
-  /** Hue (0–360), kept for older call sites. */
-  hue: number;
-  /** Which illustration to draw until real photography lands. */
-  art: BlindKind;
-  /** Real photo, e.g. '/images/products/roller-blinds.jpg'. */
-  image?: string;
+  /** Real photo of this blind type, from src/data/photos.ts. */
+  image?: Photo;
   /** Old site URL(s) this page replaces — used for redirects. */
   legacy?: string[];
   featured?: boolean;
@@ -49,7 +45,7 @@ export interface Product {
 export const products: Product[] = [
   {
     slug: 'roller-blinds',
-    art: 'roller',
+    image: photos.rollerLiving,
     name: 'Roller Blinds',
     category: 'fabric',
     summary: 'Clean, flat fabric that rolls away to nothing.',
@@ -63,12 +59,11 @@ export const products: Product[] = [
       'Fits inside or outside the window recess',
     ],
     motorised: true,
-    hue: 30,
     featured: true,
   },
   {
     slug: 'zebra-blinds',
-    art: 'zebra',
+    image: photos.zebraOffice,
     name: 'Zebra Blinds',
     category: 'fabric',
     summary: 'Two layers of alternating bands for day and night control.',
@@ -82,12 +77,10 @@ export const products: Product[] = [
       'Compact headrail with matching cassette',
     ],
     motorised: true,
-    hue: 210,
     featured: true,
   },
   {
     slug: 'roman-blinds',
-    art: 'roman',
     name: 'Roman Blinds',
     category: 'fabric',
     summary: 'Soft, tailored folds with the feel of a curtain.',
@@ -101,13 +94,11 @@ export const products: Product[] = [
       'Cord or chain operation',
     ],
     motorised: true,
-    hue: 15,
     legacy: ['/Roman.html'],
     featured: true,
   },
   {
     slug: 'vertical-blinds',
-    art: 'vertical',
     name: 'Vertical Blinds',
     category: 'fabric',
     summary: 'Tall, turning louvres for wide windows and sliding doors.',
@@ -126,13 +117,11 @@ export const products: Product[] = [
       { label: 'Mechanism', value: 'Uni-Soleil (Taiwan)' },
     ],
     motorised: true,
-    hue: 200,
     legacy: ['/Vertical.html'],
     featured: true,
   },
   {
     slug: 'wooden-blinds',
-    art: 'wooden',
     name: 'Wooden Blinds',
     category: 'natural',
     summary: 'Woven wood with real grain and warmth.',
@@ -151,13 +140,12 @@ export const products: Product[] = [
       { label: 'Operation', value: 'Roll up or Roman style' },
     ],
     motorised: false,
-    hue: 35,
     legacy: ['/Wooden.html'],
     featured: true,
   },
   {
     slug: 'bamboo-blinds',
-    art: 'bamboo',
+    image: photos.bambooCafe,
     name: 'Bamboo Blinds',
     category: 'natural',
     summary: 'Light, natural and made for open air spaces.',
@@ -171,13 +159,11 @@ export const products: Product[] = [
       'Indoor and covered outdoor use',
     ],
     motorised: false,
-    hue: 45,
     legacy: ['/Bamboo.html'],
     featured: true,
   },
   {
     slug: 'venetian-blinds',
-    art: 'venetian',
     name: 'Venetian Blinds',
     category: 'slatted',
     summary: 'Tilting slats for exact control of light.',
@@ -191,11 +177,9 @@ export const products: Product[] = [
       'Cord or wand operation',
     ],
     motorised: false,
-    hue: 0,
   },
   {
     slug: 'skylight-blinds',
-    art: 'skylight',
     name: 'Skylight Blinds',
     category: 'fabric',
     summary: 'Motorised shading for glass you can’t reach.',
@@ -208,12 +192,10 @@ export const products: Product[] = [
       'Blackout or light filtering fabrics',
     ],
     motorised: true,
-    hue: 190,
     legacy: ['/Skylight.html'],
   },
   {
     slug: 'panel-blinds',
-    art: 'panel',
     name: 'Panel Blinds',
     category: 'fabric',
     summary: 'Wide sliding panels for big glass and room dividers.',
@@ -226,12 +208,10 @@ export const products: Product[] = [
       'Mix sheer and solid panels',
     ],
     motorised: false,
-    hue: 160,
     legacy: ['/panel.html'],
   },
   {
     slug: 'printed-blinds',
-    art: 'printed',
     name: 'Printed Blinds',
     category: 'fabric',
     summary: 'Your artwork, photograph or brand on a blind.',
@@ -244,12 +224,10 @@ export const products: Product[] = [
       'Blackout or light filtering base fabric',
     ],
     motorised: true,
-    hue: 330,
     legacy: ['/printed.html'],
   },
   {
     slug: 'outdoor-pvc-blinds',
-    art: 'outdoor',
     name: 'Outdoor PVC Blinds',
     category: 'outdoor',
     summary: 'Keep the rain out, keep the balcony.',
@@ -262,11 +240,9 @@ export const products: Product[] = [
       'Roll up neatly when not needed',
     ],
     motorised: false,
-    hue: 180,
   },
   {
     slug: 'industrial-strip-curtains',
-    art: 'industrial',
     name: 'Industrial Strip Curtains',
     category: 'outdoor',
     summary: 'PVC strip curtains for busy doorways.',
@@ -279,10 +255,10 @@ export const products: Product[] = [
       'Transparent soft PVC lets light through and limits UV',
     ],
     motorised: false,
-    hue: 175,
     legacy: ['/industrial.html'],
   },
 ];
 
 export const getProduct = (slug: string) => products.find((p) => p.slug === slug);
 export const roomLabel = (id: Room) => rooms.find((r) => r.id === id)?.label ?? id;
+export const bestFor = (p: Product) => p.rooms.map(roomLabel).join(', ');

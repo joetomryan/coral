@@ -1,9 +1,9 @@
 ---
 import Base from '../../layouts/Base.astro';
 import Photo from '../../components/Photo.astro';
-import ProductCard from '../../components/ProductCard.astro';
+import ProductRows from '../../components/ProductRows.astro';
 import CtaBand from '../../components/CtaBand.astro';
-import { products, roomLabel, categories, type Product } from '../../data/products';
+import { products, roomLabel, bestFor, categories, type Product } from '../../data/products';
 import { site, whatsappLink } from '../../data/site';
 
 export function getStaticPaths() {
@@ -36,23 +36,28 @@ const schema = [
   schema={schema}
 >
   <section class="pd">
-    <div class="container pd__grid">
-      <div class="pd__media">
-        <Photo src={product.image} art={product.art} alt={product.name} ratio="4 / 5" eager />
-      </div>
+    <div class:list={['container', 'pd__grid', { 'pd__grid--text': !product.image }]}>
+      {
+        product.image && (
+          <div class="pd__media">
+            <Photo photo={product.image} eager />
+          </div>
+        )
+      }
 
       <div class="pd__info">
         <nav class="crumbs" aria-label="Breadcrumb">
           <a href="/products">Products</a> <span aria-hidden="true">/</span> <span>{category.label}</span>
         </nav>
         <h1 class="display pd__title">{product.name}</h1>
+        {!product.image && <p class="h2 pd__summary"><em>{product.summary}</em></p>}
         <p class="lead">{product.intro}</p>
 
         <div class="btn-row">
           <a class="btn" href={`/contact?product=${product.slug}#book`}>Book a free visit</a>
           <a
             class="btn btn--ghost"
-            href={whatsappLink(`Hi Coral Blinds, I’m interested in ${product.name}.`)}
+            href={whatsappLink(`Hi Coral Interiors, I’m interested in ${product.name}.`)}
             target="_blank"
             rel="noopener">WhatsApp</a
           >
@@ -100,11 +105,7 @@ const schema = [
           <div class="section-head">
             <h2 class="h2">You might also consider</h2>
           </div>
-          <div class="grid grid--3">
-            {related.map((p) => (
-              <ProductCard product={p} />
-            ))}
-          </div>
+          <ProductRows items={related} />
         </div>
       </section>
     )
@@ -122,6 +123,21 @@ const schema = [
   .pd__grid {
     display: grid;
     gap: clamp(2rem, 1rem + 4vw, 5rem);
+  }
+
+  /* No photo yet: a typographic hero instead of a fake image. */
+  .pd__grid--text {
+    grid-template-columns: 1fr !important;
+  }
+
+  .pd__grid--text .pd__info {
+    max-width: 52rem;
+    padding-top: 0 !important;
+  }
+
+  .pd__summary {
+    color: var(--muted);
+    max-width: 22ch;
   }
 
   .pd__info {
@@ -142,6 +158,10 @@ const schema = [
 
   .pd__title {
     font-size: clamp(2.75rem, 1.8rem + 3.5vw, 4.75rem);
+  }
+
+  .pd__grid--text .pd__title {
+    font-size: var(--step-4);
   }
 
   .facts {

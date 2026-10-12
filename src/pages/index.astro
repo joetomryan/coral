@@ -1,14 +1,21 @@
 ---
 import Base from '../layouts/Base.astro';
 import Photo from '../components/Photo.astro';
-import ProductCard from '../components/ProductCard.astro';
+import ProductRows from '../components/ProductRows.astro';
 import BrandMarquee from '../components/BrandMarquee.astro';
 import GoogleReviews from '../components/GoogleReviews.astro';
 import CtaBand from '../components/CtaBand.astro';
 import { site } from '../data/site';
-import { products } from '../data/products';
+import { products, categories, getProduct, bestFor } from '../data/products';
+import { photos } from '../data/photos';
 
-const featured = products.filter((p) => p.featured);
+const hero = photos.bambooCafe;
+const featured = [
+  { product: getProduct('bamboo-blinds')!, photo: photos.bambooCafe },
+  { product: getProduct('zebra-blinds')!, photo: photos.zebraOffice },
+  { product: getProduct('roller-blinds')!, photo: photos.rollerLiving },
+];
+const categoryLabel = (id: string) => categories.find((c) => c.id === id)?.label ?? '';
 const steps = [
   { title: 'Visit', text: 'We come to you, measure every window and bring fabric samples to see in your own light.' },
   { title: 'Choose', text: 'Pick fabrics, colours and manual or motorised operation, with honest advice and a clear quote.' },
@@ -20,29 +27,31 @@ const steps = [
 <Base
   title={site.name}
   description="Made to measure roller, zebra, Roman, vertical, wooden and motorised blinds for homes and offices in Bengaluru. Free home visit. Since 2002."
+  overlayHeader
 >
   <!-- Hero -->
   <section class="hero">
-    <div class="container hero__grid">
-      <div class="hero__copy">
-        <p class="eyebrow">Made to measure blinds · Bengaluru · Since {site.since}</p>
-        <h1 class="display hero__title">Light, shaped for the way you&nbsp;<em>live</em>.</h1>
-        <p class="lead">
-          Roller, zebra, Roman, wooden and motorised blinds, measured in your home and fitted by our own team.
-        </p>
-        <div class="btn-row">
-          <a class="btn" href="/contact#book">Book a free visit</a>
-          <a class="btn btn--ghost" href="/products">Explore products</a>
-        </div>
-      </div>
-      <div class="hero__art">
-        <Photo alt="A window with a zebra blind" art="zebra" ratio="1 / 1" eager />
-        <span class="hero__tag"><b>Free home visit</b> We measure and bring samples</span>
+    <img
+      class="hero__img"
+      src={hero.src}
+      alt={hero.alt}
+      width={hero.width}
+      height={hero.height}
+      loading="eager"
+      decoding="async"
+      fetchpriority="high"
+    />
+    <div class="container hero__content">
+      <p class="eyebrow hero__eyebrow">Made to measure blinds · Bengaluru · Since {site.since}</p>
+      <h1 class="display hero__title">Light, shaped for the way you&nbsp;<em>live</em>.</h1>
+      <div class="btn-row">
+        <a class="btn btn--light" href="/contact#book">Book a free visit</a>
+        <a class="btn btn--outline-light" href="/products">Explore the collection</a>
       </div>
     </div>
   </section>
 
-  <!-- Intro + proof -->
+  <!-- Statement + proof -->
   <section class="section">
     <div class="container intro reveal">
       <p class="h2 intro__statement">
@@ -62,18 +71,40 @@ const steps = [
     </div>
   </section>
 
-  <!-- Products -->
-  <section class="section section--tight">
+  <!-- Featured, editorial -->
+  <section class="section section--tight featured">
+    {
+      featured.map(({ product, photo }, i) => (
+        <div class:list={['container', 'split', 'featured__row', { 'split--reverse': i % 2 === 1 }]}>
+          <div class="reveal">
+            <Photo photo={photo} />
+          </div>
+          <div class="stack reveal featured__copy">
+            <p class="eyebrow">{categoryLabel(product.category)}</p>
+            <h2 class="h2">{product.name}</h2>
+            <p class="lead">{product.intro}</p>
+            <p class="muted featured__for">Best for {bestFor(product).toLowerCase()}</p>
+            <a class="link-arrow" href={`/products/${product.slug}`}>
+              Explore {product.name.toLowerCase()} <span aria-hidden="true">→</span>
+            </a>
+          </div>
+        </div>
+      ))
+    }
+  </section>
+
+  <!-- Collection index -->
+  <section class="section">
     <div class="container">
       <div class="section-head reveal">
         <div class="stack">
-          <p class="eyebrow">Collection</p>
-          <h2 class="h2">Every window, considered.</h2>
+          <p class="eyebrow">The collection</p>
+          <h2 class="h2">Twelve systems. Every window, considered.</h2>
         </div>
-        <a class="link-arrow" href="/products">View all {products.length} products <span aria-hidden="true">→</span></a>
+        <a class="link-arrow" href="/products">Browse by room <span aria-hidden="true">→</span></a>
       </div>
-      <div class="grid grid--3">
-        {featured.map((p) => <div class="reveal"><ProductCard product={p} /></div>)}
+      <div class="reveal">
+        <ProductRows items={products} />
       </div>
     </div>
   </section>
@@ -109,74 +140,75 @@ const steps = [
 </Base>
 
 <style>
+  /* ----- Hero ----- */
   .hero {
-    padding-top: calc(var(--header-h) + clamp(1.5rem, 1rem + 2vw, 3rem));
-    padding-bottom: clamp(3rem, 2rem + 4vw, 6rem);
+    position: relative;
+    display: flex;
+    align-items: flex-end;
+    width: 100%;
+    min-height: 640px;
+    min-height: max(640px, 88svh);
+    overflow: hidden;
+    background: var(--slate);
+    color: #fff;
   }
 
-  .hero__grid {
-    display: grid;
-    gap: clamp(2.5rem, 1.5rem + 4vw, 5rem);
-    align-items: center;
+  .hero__img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: 38% 45%;
   }
 
-  .hero__copy {
+  /* Scrims: one for the header, one for the headline. */
+  .hero::before,
+  .hero::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+  }
+
+  .hero::before {
+    background: linear-gradient(180deg, rgb(0 0 0 / 0.45) 0%, rgb(0 0 0 / 0) 28%);
+  }
+
+  .hero::after {
+    background: linear-gradient(180deg, rgb(0 0 0 / 0) 40%, rgb(0 0 0 / 0.6) 100%);
+  }
+
+  .hero__content {
+    position: relative;
+    z-index: 1;
     display: grid;
     gap: 1.5rem;
     justify-items: start;
+    padding-bottom: clamp(3rem, 2rem + 5vw, 6.5rem);
+  }
+
+  .hero__eyebrow {
+    color: var(--yellow);
   }
 
   .hero__title {
-    max-width: 12ch;
+    max-width: 15ch;
+    color: #fff;
   }
 
-  .hero__copy .btn-row {
-    margin-top: 0.5rem;
+  .hero__content .btn-row {
+    margin-top: 0.75rem;
   }
 
-  .hero__art {
-    position: relative;
-  }
-
-  .hero__tag {
-    position: absolute;
-    left: clamp(-1.5rem, -2vw, -0.5rem);
-    bottom: 2rem;
-    display: grid;
-    gap: 0.15rem;
-    max-width: 15rem;
-    padding: 1rem 1.25rem;
-    background: var(--bg);
-    border-left: 3px solid var(--yellow);
-    box-shadow: 0 18px 40px -20px rgb(35 38 45 / 0.35);
-    font-size: 0.875rem;
-    color: var(--muted);
-  }
-
-  .hero__tag b {
-    color: var(--ink);
-    font-weight: 600;
-  }
-
-  @media (max-width: 899px) {
-    .hero__tag {
-      left: 1rem;
-    }
-  }
-
-  @media (min-width: 900px) {
-    .hero__grid {
-      grid-template-columns: 1.05fr 1fr;
-    }
-  }
-
+  /* ----- Statement ----- */
   .intro {
     display: grid;
     gap: 3.5rem;
   }
 
   .intro__statement {
-    max-width: 24ch;
+    max-width: 22ch;
   }
 
   .proof {
@@ -197,9 +229,24 @@ const steps = [
     font-size: var(--step-3);
     line-height: 1.1;
     margin-top: 0.25rem;
-    color: var(--green);
+    color: var(--ink);
   }
 
+  /* ----- Featured ----- */
+  .featured {
+    display: grid;
+    gap: clamp(4rem, 3rem + 5vw, 8rem);
+  }
+
+  .featured__copy {
+    max-width: 30rem;
+  }
+
+  .featured__for {
+    font-size: 0.9375rem;
+  }
+
+  /* ----- Process ----- */
   .steps {
     padding: 0;
     list-style: none;
@@ -207,16 +254,16 @@ const steps = [
 
   .step {
     display: grid;
-    gap: 0.75rem;
+    gap: 0.9rem;
     align-content: start;
-    padding-top: 1.5rem;
-    border-top: 2px solid var(--green);
+    padding-top: 1.75rem;
+    border-top: 1px solid var(--ink);
   }
 
   .step__num {
     font-size: var(--step--1);
     letter-spacing: 0.1em;
-    color: var(--blue-ink);
+    color: var(--green);
     font-weight: 500;
   }
 
@@ -231,6 +278,10 @@ const steps = [
       border-top: 0;
       border-left: 1px solid var(--line);
       padding: 0 0 0 2.5rem;
+    }
+
+    .featured__copy {
+      padding-inline: clamp(0rem, -2rem + 4vw, 3rem);
     }
   }
 </style>

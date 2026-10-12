@@ -1,48 +1,41 @@
 ---
-// A real photo when `src` is given; otherwise a drawn illustration of the blind type.
-import BlindArt, { type BlindKind } from './BlindArt.astro';
+// A real photograph, shown at its own aspect ratio. Never cropped.
+import type { Photo } from '../data/photos';
 
 interface Props {
-  src?: string;
-  alt: string;
-  art?: BlindKind;
-  ratio?: string;
-  class?: string;
+  photo?: Photo;
   eager?: boolean;
-  // Accepted for older call sites; unused now that placeholders are illustrations.
-  hue?: number;
-  label?: string;
-  dark?: boolean;
+  class?: string;
 }
-const { src, alt, art = 'roller', ratio = '4 / 5', class: cls, eager = false } = Astro.props;
-const [rw, rh] = ratio.split('/').map((n) => parseFloat(n));
-const numeric = rw && rh ? rw / rh : 0.8;
+const { photo, eager = false, class: cls } = Astro.props;
 ---
 
-<figure class:list={['photo', cls]} style={`--ratio:${ratio}`}>
-  {
-    src ? (
-      <img src={src} alt={alt} loading={eager ? 'eager' : 'lazy'} decoding="async" />
-    ) : (
-      <BlindArt kind={art} ratio={numeric} title={alt} />
-    )
-  }
-</figure>
+{
+  photo ? (
+    <figure class:list={['photo', cls]} style={`aspect-ratio: ${photo.width} / ${photo.height}`}>
+      <img
+        src={photo.src}
+        alt={photo.alt}
+        width={photo.width}
+        height={photo.height}
+        loading={eager ? 'eager' : 'lazy'}
+        decoding="async"
+        fetchpriority={eager ? 'high' : undefined}
+      />
+    </figure>
+  ) : (
+    <slot />
+  )
+}
 
 <style>
   .photo {
-    position: relative;
-    aspect-ratio: var(--ratio);
     max-width: 100%;
-    overflow: hidden;
     background: var(--sand);
   }
 
-  .photo img,
-  .photo :global(svg) {
+  .photo img {
     width: 100%;
-    height: 100%;
-    object-fit: cover;
-    transition: transform 1.2s var(--ease);
+    height: auto;
   }
 </style>

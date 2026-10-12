@@ -1,4 +1,4 @@
-@import '@fontsource-variable/inter';
+@import '@fontsource-variable/instrument-sans';
 @import '@fontsource/instrument-serif/400.css';
 @import '@fontsource/instrument-serif/400-italic.css';
 
@@ -20,17 +20,17 @@
   --accent: var(--green);
 
   --font-display: 'Instrument Serif', 'Times New Roman', serif;
-  --font-body: 'Inter Variable', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-body: 'Instrument Sans Variable', system-ui, -apple-system, 'Segoe UI', sans-serif;
 
   --step--1: 0.8125rem;
   --step-0: 1rem;
   --step-1: 1.125rem;
   --step-2: clamp(1.5rem, 1.2rem + 1.2vw, 2rem);
-  --step-3: clamp(2rem, 1.4rem + 2.4vw, 3.25rem);
-  --step-4: clamp(2.75rem, 1.6rem + 4.6vw, 5.5rem);
+  --step-3: clamp(2.25rem, 1.4rem + 3vw, 4rem);
+  --step-4: clamp(3rem, 1.6rem + 5.6vw, 6.5rem);
 
   --gutter: clamp(1rem, 0.5rem + 2.5vw, 2.5rem);
-  --section: clamp(4.5rem, 3rem + 6vw, 9rem);
+  --section: clamp(5.5rem, 3.5rem + 7vw, 11rem);
   --max: 1360px;
   --header-h: 72px;
   --ease: cubic-bezier(0.2, 0.7, 0.2, 1);
@@ -51,7 +51,7 @@ html {
 body {
   margin: 0;
   background: var(--bg);
-  color: var(--ink);
+  color: var(--ink-soft);
   font-family: var(--font-body);
   font-size: var(--step-0);
   line-height: 1.6;
@@ -81,6 +81,13 @@ dl,
 dd,
 figure {
   margin: 0;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  color: var(--ink);
 }
 
 ul[role='list'] {
@@ -129,16 +136,18 @@ ul[role='list'] {
   font-family: var(--font-display);
   font-weight: 400;
   font-size: var(--step-4);
-  line-height: 1.02;
-  letter-spacing: -0.015em;
+  line-height: 0.98;
+  letter-spacing: -0.02em;
+  text-wrap: balance;
 }
 
 .h2 {
   font-family: var(--font-display);
   font-weight: 400;
   font-size: var(--step-3);
-  line-height: 1.08;
-  letter-spacing: -0.01em;
+  line-height: 1.06;
+  letter-spacing: -0.015em;
+  text-wrap: balance;
 }
 
 .h3 {
@@ -146,6 +155,7 @@ ul[role='list'] {
   font-weight: 400;
   font-size: var(--step-2);
   line-height: 1.15;
+  text-wrap: balance;
 }
 
 .display em,
@@ -189,8 +199,8 @@ ul[role='list'] {
   gap: 0.6rem;
   min-height: 48px;
   padding: 0.85rem 1.6rem;
-  border: 1px solid var(--green);
-  background: var(--green);
+  border: 1px solid var(--ink);
+  background: var(--ink);
   color: #fff;
   font: 500 0.9375rem/1 var(--font-body);
   letter-spacing: 0.01em;
@@ -202,8 +212,8 @@ ul[role='list'] {
 }
 
 .btn:hover {
-  background: var(--green-ink);
-  border-color: var(--green-ink);
+  background: var(--green);
+  border-color: var(--green);
 }
 
 .btn--ghost {

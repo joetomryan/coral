@@ -1,7 +1,7 @@
 // Single source of truth for business details. ⚠ items still need the owner's confirmation
 // (see docs/01-site-audit.md §7).
 export const site = {
-  name: 'Coral Blinds',
+  name: 'Coral Interiors',
   legalName: 'Coral Interiors',
   url: 'https://www.coralblinds.in',
   since: 2002,
@@ -42,7 +42,7 @@ export const site = {
   ],
 } as const;
 
-export const whatsappLink = (text = 'Hi Coral Blinds, I would like to book a free visit.') =>
+export const whatsappLink = (text = 'Hi Coral Interiors, I would like to book a free visit.') =>
   `https://wa.me/${site.whatsapp}?text=${encodeURIComponent(text)}`;
 
 export const nav = [

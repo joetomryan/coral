@@ -4,6 +4,7 @@ import PageHero from '../components/PageHero.astro';
 import Photo from '../components/Photo.astro';
 import CtaBand from '../components/CtaBand.astro';
 import { site } from '../data/site';
+import { photos } from '../data/photos';
 
 const values = [
   { title: 'Made to measure', text: 'Nothing off the shelf. Every blind is made for the window it hangs in.' },
@@ -14,7 +15,7 @@ const values = [
 
 <Base
   title="About us"
-  description={`Coral Blinds has made custom blinds, awnings and shutters for Bengaluru homes and businesses since ${site.since}.`}
+  description={`Coral Interiors has made custom blinds, awnings and shutters for Bengaluru homes and businesses since ${site.since}.`}
 >
   <PageHero
     eyebrow="About"
@@ -23,18 +24,13 @@ const values = [
   />
 
   <section class="section section--tight">
-    <div class="container">
-      <Photo alt="Panel blinds across a wide window" art="panel" ratio="21 / 9" />
-    </div>
-  </section>
-
-  <section class="section">
     <div class="container split">
+      <div class="reveal">
+        <Photo photo={photos.rollerOffice} />
+      </div>
       <div class="stack reveal">
         <p class="eyebrow">Our story</p>
         <h2 class="h2">Custom blinds, awnings and shutters for homes and businesses.</h2>
-      </div>
-      <div class="stack reveal">
         <p class="lead">
           {site.name} specialises in custom made, quality blinds, awnings and shutters for domestic and commercial
           customers. From our studio on Hennur Bagalur Road we serve homes, offices, hotels and factories across the

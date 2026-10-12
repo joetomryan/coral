@@ -1,4 +1,4 @@
-# Coral Blinds — website
+# Coral Interiors — website
 
 The new www.coralblinds.in: a static [Astro](https://astro.build) site. No server and no
 database. It builds to plain HTML/CSS in `dist/`, so it can be hosted anywhere for free.
@@ -21,6 +21,7 @@ Requires Node 22.12+.
 | What | File |
 |---|---|
 | Phone numbers, address, hours, WhatsApp, email | `src/data/site.ts` |
+| Photos (file, alt text, real width and height) | `src/data/photos.ts` |
 | Products (names, copy, specs, rooms, old URLs) | `src/data/products.ts` |
 | Colours, fonts, spacing | `src/styles/global.css` (`:root` tokens) |
 | Pages | `src/pages/` (one file per URL; products come from `products/[slug].astro`) |
@@ -29,12 +30,16 @@ Requires Node 22.12+.
 
 ## Adding real photos
 
-Until real photos exist, each product shows a drawn illustration of that blind type
-(`src/components/BlindArt.astro`). To use a real photo:
+Photos are never cropped: every one is shown at its own ratio, so the site needs each
+photo's real width and height. To add one:
 
-1. Put the image in `public/images/products/` (JPG or WebP, about 1600px on the long side).
-2. Set `image: '/images/products/<file>'` on the product in `src/data/products.ts`.
-   For other pages, pass `src="/images/…"` to the `<Photo>` component.
+1. Put the original file in `public/images/…` (no re-encoding).
+2. Add it to `src/data/photos.ts` with its `width` and `height`.
+3. Point a product at it (`image: photos.<name>` in `src/data/products.ts`) or pass
+   `photo={photos.<name>}` to the `<Photo>` component on a page.
+
+Products without a photo show a typographic entry instead of a fake image.
+What's still needed is in [`docs/02-photo-shotlist.md`](docs/02-photo-shotlist.md).
 
 ## Brands strip
 
@@ -43,9 +48,9 @@ and set `logo` on each entry. Brands without a logo show as text.
 
 ## Google reviews (live)
 
-The home page shows your Google rating, top reviews and customer photos, loaded live from
-Google every time someone views the page (nothing is copied or stored, as Google's terms require).
-Until it's connected, the section shows a link to your reviews on Google.
+The home page shows your Google rating, top reviews and customer photos. Today these are
+copied into `src/data/reviews.ts` and rotate on their own. Optionally they can load live from
+Google instead, so new reviews appear without editing the site:
 
 1. In [Google Cloud Console](https://console.cloud.google.com), create a project, turn on
    billing, and enable **Maps JavaScript API** and **Places API (New)**.

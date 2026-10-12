@@ -14,7 +14,7 @@ const isActive = (href: string) => path === href || path.startsWith(`${href}/`);
 
 <header class:list={['header', { 'header--overlay': overlay }]} data-header>
   <div class="container header__bar">
-    <a href="/" class="header__logo" aria-label="Coral Blinds home"><Logo /></a>
+    <a href="/" class="header__logo" aria-label="Coral Interiors home"><Logo /></a>
 
     <nav class="header__nav" aria-label="Main">
       <ul role="list">
@@ -158,6 +158,7 @@ const isActive = (href: string) => path === href || path.startsWith(`${href}/`);
   .header__nav a,
   .header__contact {
     font-size: 0.9375rem;
+    font-weight: 400;
     position: relative;
   }
 

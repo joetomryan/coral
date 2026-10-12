@@ -12,7 +12,7 @@ const formKey = import.meta.env.PUBLIC_FORM_KEY as string | undefined;
 
 <Base
   title="Contact and free home visit"
-  description="Book a free home visit with Coral Blinds, Kothanur, Bengaluru. Call +91 63629 04441, WhatsApp us, or visit our studio on Hennur Bagalur Road."
+  description="Book a free home visit with Coral Interiors, Kothanur, Bengaluru. Call +91 63629 04441, WhatsApp us, or visit our studio on Hennur Bagalur Road."
 >
   <PageHero
     eyebrow="Contact"
@@ -118,7 +118,7 @@ const formKey = import.meta.env.PUBLIC_FORM_KEY as string | undefined;
       const data = new FormData(form);
       const productLabel = select.selectedOptions[0]?.text ?? '';
       const lines = [
-        'Hi Coral Blinds, I’d like to book a free visit.',
+        'Hi Coral Interiors, I’d like to book a free visit.',
         `Name: ${data.get('name')}`,
         `Phone: ${data.get('phone')}`,
         data.get('area') && `Area: ${data.get('area')}`,
