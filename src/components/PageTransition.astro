@@ -1,0 +1,115 @@
+---
+// Page change: on a click, the page goes white with the logo in the middle; on the next
+// page the white parts from the centre to the edges, like curtains, and the logo fades.
+// The head script in Base.astro adds `pt-in` before first paint when we arrive this way.
+import Logo from './Logo.astro';
+---
+
+<style is:inline>
+  .pt {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    visibility: hidden;
+    opacity: 0;
+    pointer-events: none;
+  }
+  .pt__panel {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: calc(50% + 1px);
+    background: #fff;
+    transition: transform 0.45s cubic-bezier(0.7, 0, 0.2, 1);
+  }
+  .pt__panel--l {
+    left: 0;
+  }
+  .pt__panel--r {
+    right: 0;
+  }
+  .pt__logo {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0.96);
+    opacity: 0;
+    transition:
+      opacity 0.2s ease,
+      transform 0.3s ease;
+  }
+  /* Leaving: fade to white, logo in. */
+  .pt-out .pt {
+    visibility: visible;
+    opacity: 1;
+    transition: opacity 0.22s ease;
+  }
+  .pt-out .pt__logo {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  /* Arriving: already white, then the halves slide out and the logo goes. */
+  .pt-in .pt {
+    visibility: visible;
+    opacity: 1;
+  }
+  .pt-in .pt__logo {
+    opacity: 1;
+    transform: translate(-50%, -50%);
+  }
+  .pt-open .pt__logo {
+    opacity: 0;
+    transition: opacity 0.18s ease;
+  }
+  .pt-open .pt__panel--l {
+    transform: translateX(-100%);
+  }
+  .pt-open .pt__panel--r {
+    transform: translateX(100%);
+  }
+</style>
+
+<div class="pt" data-pt aria-hidden="true">
+  <div class="pt__panel pt__panel--l"></div>
+  <div class="pt__panel pt__panel--r"></div>
+  <div class="pt__logo"><Logo height={40} /></div>
+</div>
+
+<script>
+  const html = document.documentElement;
+  const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const finish = () => html.classList.remove('pt-in', 'pt-open', 'pt-out');
+
+  // Arriving: open once the page underneath has painted.
+  if (html.classList.contains('pt-in')) {
+    requestAnimationFrame(() =>
+      requestAnimationFrame(() => {
+        html.classList.add('pt-open');
+        setTimeout(finish, 600);
+      }),
+    );
+  }
+
+  // Leaving: only plain left clicks on links to other pages of this site.
+  document.addEventListener('click', (e) => {
+    if (reduced || e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+    const a = (e.target as Element).closest<HTMLAnchorElement>('a[href]');
+    if (!a || (a.target && a.target !== '_self') || a.hasAttribute('download')) return;
+    const url = new URL(a.href, location.href);
+    if (url.origin !== location.origin || !/^https?:$/.test(url.protocol)) return;
+    if (url.hash && url.pathname === location.pathname && url.search === location.search) return;
+
+    e.preventDefault();
+    try {
+      sessionStorage.setItem('pt', '1');
+    } catch {}
+    html.classList.remove('pt-in', 'pt-open');
+    html.classList.add('pt-out');
+    setTimeout(() => location.assign(url.href), 240);
+    // If the browser never leaves (blocked, offline), give the page back.
+    setTimeout(finish, 4000);
+  });
+
+  // Coming back through the browser cache: nothing should be covering the page.
+  addEventListener('pageshow', (e) => e.persisted && finish());
+</script>
