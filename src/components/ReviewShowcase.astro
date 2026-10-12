@@ -1,0 +1,442 @@
+---
+// Copied Google reviews rotating as a card stack (left) beside customer photos (right).
+import { site } from '../data/site';
+import { reviews, reviewPhotos } from '../data/reviews';
+
+const n = reviews.length;
+// Initial stack position of each card relative to the first one.
+const pos = (i: number) => (i === 0 ? '0' : i === 1 ? '1' : i === 2 ? '2' : i === n - 1 ? 'out' : 'hidden');
+---
+
+<div class="showcase" data-showcase>
+  <div class="rv" data-rv aria-roledescription="carousel" aria-label="Customer reviews">
+    <div class="rv__stack">
+      {
+        reviews.map((r, i) => (
+          <article
+            class="rv__card"
+            data-pos={pos(i)}
+            aria-roledescription="slide"
+            aria-label={`Review ${i + 1} of ${n}`}
+            aria-hidden={i === 0 ? undefined : 'true'}
+          >
+            <p class="stars" style={`--r: ${r.rating}`} aria-label={`${r.rating} out of 5 stars`}>
+              ★★★★★
+            </p>
+            <blockquote class="rv__text">{r.text}</blockquote>
+            <footer class="rv__who">
+              <span class="rv__avatar" aria-hidden="true">{r.name.trim()[0]}</span>
+              <span>
+                <b>{r.name}</b>
+                <span class="muted">Google review · {r.when}</span>
+              </span>
+            </footer>
+          </article>
+        ))
+      }
+    </div>
+
+    <div class="rv__controls">
+      <button type="button" class="rv__btn" data-prev aria-label="Previous review">←</button>
+      <span class="rv__count" aria-live="polite"><span data-current>1</span> / {n}</span>
+      <button type="button" class="rv__btn" data-next aria-label="Next review">→</button>
+      <span class="rv__progress" aria-hidden="true"><span data-progress></span></span>
+    </div>
+  </div>
+
+  {
+    reviewPhotos.length > 0 && (
+      <div class="gal" data-gal>
+        <div class="gal__frame">
+          {reviewPhotos.map((p, i) => (
+            <figure class:list={['gal__slide', { 'is-active': i === 0 }]}>
+              <img src={p.src} alt={p.alt} loading={i === 0 ? 'eager' : 'lazy'} decoding="async" />
+              <figcaption>{p.caption}</figcaption>
+            </figure>
+          ))}
+        </div>
+        <div class="gal__thumbs" role="group" aria-label="Customer photos">
+          {reviewPhotos.map((p, i) => (
+            <button type="button" class:list={['gal__thumb', { 'is-active': i === 0 }]} aria-label={`Show photo: ${p.caption}`} aria-pressed={i === 0 ? 'true' : 'false'}>
+              <img src={p.src} alt="" loading="lazy" decoding="async" />
+            </button>
+          ))}
+        </div>
+        <a class="gal__credit muted" href={site.google.reviewsUrl} target="_blank" rel="noopener">Customer photos from Google</a>
+      </div>
+    )
+  }
+</div>
+
+<script>
+  const REVIEW_MS = 7000;
+  const PHOTO_MS = 4500;
+  const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  document.querySelectorAll<HTMLElement>('[data-showcase]').forEach((root) => {
+    // Pause both rotations while off screen or while the visitor is interacting.
+    let visible = false;
+    new IntersectionObserver(([e]) => (visible = e.isIntersecting)).observe(root);
+
+    // ----- Review card stack -----
+    const rv = root.querySelector<HTMLElement>('[data-rv]')!;
+    const stack = rv.querySelector<HTMLElement>('.rv__stack')!;
+    const cards = [...rv.querySelectorAll<HTMLElement>('.rv__card')];
+    const current = rv.querySelector('[data-current]')!;
+    const bar = rv.querySelector<HTMLElement>('[data-progress]')!;
+    let active = 0;
+    let hovering = false;
+    let elapsed = 0;
+
+    const show = (i: number) => {
+      const n = cards.length;
+      active = (i + n) % n;
+      cards.forEach((card, j) => {
+        const d = (j - active + n) % n;
+        card.dataset.pos = d === 0 ? '0' : d === 1 ? '1' : d === 2 ? '2' : d === n - 1 ? 'out' : 'hidden';
+        card.setAttribute('aria-hidden', d === 0 ? 'false' : 'true');
+      });
+      current.textContent = String(active + 1);
+      elapsed = 0;
+      bar.style.transform = 'scaleX(0)';
+      fit();
+    };
+    // Size the stack to the review currently on top.
+    const fit = () => stack.style.setProperty('--card-h', `${cards[active].offsetHeight}px`);
+    fit();
+    addEventListener('resize', fit);
+    document.fonts?.ready.then(fit);
+    rv.querySelector('[data-prev]')!.addEventListener('click', () => show(active - 1));
+    rv.querySelector('[data-next]')!.addEventListener('click', () => show(active + 1));
+    rv.addEventListener('pointerenter', () => (hovering = true));
+    rv.addEventListener('pointerleave', () => (hovering = false));
+    rv.addEventListener('focusin', () => (hovering = true));
+    rv.addEventListener('focusout', () => (hovering = false));
+
+    // Swipe on touch screens.
+    let startX = 0;
+    rv.addEventListener('touchstart', (e) => (startX = e.touches[0].clientX), { passive: true });
+    rv.addEventListener('touchend', (e) => {
+      const dx = e.changedTouches[0].clientX - startX;
+      if (Math.abs(dx) > 40) show(active + (dx < 0 ? 1 : -1));
+    });
+
+    // ----- Photo gallery -----
+    const gal = root.querySelector<HTMLElement>('[data-gal]');
+    const slides = gal ? [...gal.querySelectorAll<HTMLElement>('.gal__slide')] : [];
+    const thumbs = gal ? [...gal.querySelectorAll<HTMLButtonElement>('.gal__thumb')] : [];
+    let photo = 0;
+    let photoElapsed = 0;
+    const showPhoto = (i: number) => {
+      photo = (i + slides.length) % slides.length;
+      slides.forEach((s, j) => s.classList.toggle('is-active', j === photo));
+      thumbs.forEach((t, j) => {
+        t.classList.toggle('is-active', j === photo);
+        t.setAttribute('aria-pressed', String(j === photo));
+      });
+      photoElapsed = 0;
+    };
+    thumbs.forEach((t, i) => t.addEventListener('click', () => showPhoto(i)));
+
+    if (reduced) return;
+
+    // One clock drives both rotations.
+    let last = performance.now();
+    const tick = (now: number) => {
+      const dt = now - last;
+      last = now;
+      if (visible && !document.hidden) {
+        if (!hovering) {
+          elapsed += dt;
+          bar.style.transform = `scaleX(${Math.min(1, elapsed / REVIEW_MS)})`;
+          if (elapsed >= REVIEW_MS) show(active + 1);
+        }
+        if (slides.length > 1) {
+          photoElapsed += dt;
+          if (photoElapsed >= PHOTO_MS) showPhoto(photo + 1);
+        }
+      }
+      requestAnimationFrame(tick);
+    };
+    requestAnimationFrame(tick);
+  });
+</script>
+
+<style>
+  .showcase {
+    display: grid;
+    gap: clamp(2.5rem, 1.5rem + 3vw, 4.5rem);
+    align-items: start;
+  }
+
+  @media (min-width: 960px) {
+    .showcase {
+      grid-template-columns: 1fr 1.05fr;
+      align-items: center;
+    }
+  }
+
+  /* ----- Review stack ----- */
+  .rv__stack {
+    display: grid;
+    padding-bottom: 2rem; /* room for the cards peeking out below */
+  }
+
+  /* With JS, the stack follows the height of the review on top, and the cards
+     behind take that same height so their edges peek out evenly. */
+  :global(.js) .rv__stack {
+    position: relative;
+    display: block;
+    height: calc(var(--card-h, 24rem) + 2rem);
+    transition: height 0.6s var(--ease);
+  }
+
+  :global(.js) .rv__card {
+    position: absolute;
+    inset: 0 0 auto;
+    height: var(--card-h, auto);
+  }
+
+  :global(.js) .rv__card[data-pos='0'] {
+    height: auto;
+  }
+
+  .rv__card {
+    grid-area: 1 / 1;
+    display: grid;
+    gap: 1.25rem;
+    align-content: start;
+    padding: clamp(1.5rem, 1rem + 2vw, 2.5rem);
+    background: var(--bg);
+    border: 1px solid var(--line);
+    border-top: 3px solid var(--green);
+    box-shadow: 0 24px 50px -30px rgb(35 38 45 / 0.35);
+    transform-origin: 50% 0;
+    transition:
+      transform 0.7s var(--ease),
+      opacity 0.7s var(--ease);
+  }
+
+  .rv__card[data-pos='0'] {
+    z-index: 3;
+  }
+
+  .rv__card[data-pos='1'] {
+    z-index: 2;
+    transform: translateY(14px) scale(0.96);
+    opacity: 0.7;
+  }
+
+  .rv__card[data-pos='2'] {
+    z-index: 1;
+    transform: translateY(28px) scale(0.92);
+    opacity: 0.4;
+  }
+
+  .rv__card[data-pos='out'] {
+    z-index: 4;
+    transform: translateX(-30px) rotate(-2deg);
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .rv__card[data-pos='hidden'] {
+    z-index: 0;
+    transform: translateY(28px) scale(0.92);
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  /* Hide the text of cards that are only peeking, so they read as paper edges. */
+  .rv__card:not([data-pos='0']) > * {
+    visibility: hidden;
+  }
+
+  .rv__text {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: clamp(1.125rem, 1rem + 0.45vw, 1.3125rem);
+    line-height: 1.45;
+    white-space: pre-line;
+  }
+
+  .rv__who {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+    font-size: 0.9375rem;
+  }
+
+  .rv__who > span:last-child {
+    display: grid;
+  }
+
+  .rv__who b {
+    font-weight: 600;
+  }
+
+  .rv__who .muted {
+    font-size: 0.8125rem;
+  }
+
+  .rv__avatar {
+    display: grid;
+    place-items: center;
+    flex: none;
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    background: var(--green);
+    color: #fff;
+    font-weight: 600;
+  }
+
+  .rv__controls {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 1.5rem;
+  }
+
+  .rv__btn {
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    border: 1px solid var(--ink);
+    border-radius: 50%;
+    background: transparent;
+    color: var(--ink);
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: all 0.25s var(--ease);
+  }
+
+  .rv__btn:hover {
+    background: var(--green);
+    border-color: var(--green);
+    color: #fff;
+  }
+
+  .rv__count {
+    min-width: 3.5rem;
+    text-align: center;
+    font-variant-numeric: tabular-nums;
+    font-size: 0.875rem;
+    color: var(--muted);
+  }
+
+  .rv__progress {
+    flex: 1;
+    height: 2px;
+    background: var(--line);
+    overflow: hidden;
+  }
+
+  .rv__progress span {
+    display: block;
+    height: 100%;
+    background: var(--yellow);
+    transform: scaleX(0);
+    transform-origin: left;
+  }
+
+  /* ----- Photo gallery ----- */
+  .gal {
+    display: grid;
+    gap: 0.75rem;
+  }
+
+  .gal__frame {
+    display: grid;
+    aspect-ratio: 4 / 3;
+    max-width: 100%;
+    overflow: hidden;
+    background: var(--sand);
+  }
+
+  .gal__slide {
+    grid-area: 1 / 1;
+    position: relative;
+    margin: 0;
+    opacity: 0;
+    transition: opacity 1s var(--ease);
+  }
+
+  .gal__slide.is-active {
+    opacity: 1;
+  }
+
+  .gal__slide img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transform: scale(1.04);
+    transition: transform 6s linear;
+  }
+
+  .gal__slide.is-active img {
+    transform: scale(1);
+  }
+
+  .gal__slide figcaption {
+    position: absolute;
+    left: 1rem;
+    bottom: 1rem;
+    padding: 0.4rem 0.75rem;
+    background: rgb(255 255 255 / 0.9);
+    font-size: 0.8125rem;
+    color: var(--ink);
+  }
+
+  .gal__thumbs {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 0.5rem;
+  }
+
+  .gal__thumb {
+    padding: 0;
+    aspect-ratio: 1;
+    border: 2px solid transparent;
+    background: var(--sand);
+    overflow: hidden;
+    cursor: pointer;
+    opacity: 0.6;
+    transition:
+      opacity 0.25s var(--ease),
+      border-color 0.25s var(--ease);
+  }
+
+  .gal__thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .gal__thumb:hover,
+  .gal__thumb.is-active {
+    opacity: 1;
+  }
+
+  .gal__thumb.is-active {
+    border-color: var(--green);
+  }
+
+  .gal__credit {
+    justify-self: end;
+    font-size: 0.8125rem;
+  }
+
+  .gal__credit:hover {
+    color: var(--blue-ink);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .rv__card,
+    .gal__slide,
+    .gal__slide img {
+      transition: none;
+    }
+  }
+</style>

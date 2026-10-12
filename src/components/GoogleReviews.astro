@@ -9,12 +9,12 @@
 // Without them, the section shows the reviews copied into src/data/reviews.ts,
 // or a link to the Google listing if that file is empty.
 import { site } from '../data/site';
-import { reviews as copied, reviewPhotos, googleSummary } from '../data/reviews';
+import ReviewShowcase from './ReviewShowcase.astro';
+import { reviews as copied, googleSummary } from '../data/reviews';
 
 const apiKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY as string | undefined;
 const placeId = (import.meta.env.PUBLIC_GOOGLE_PLACE_ID as string | undefined) || site.google.placeId;
 const live = Boolean(apiKey && placeId);
-const photos = [...copied.flatMap((r) => (r.photo ? [r.photo] : [])), ...reviewPhotos];
 ---
 
 <section class="section reviews" data-reviews data-key={apiKey} data-place={placeId} data-live={live ? 'true' : undefined}>
@@ -63,41 +63,7 @@ const photos = [...copied.flatMap((r) => (r.photo ? [r.photo] : [])), ...reviewP
           </ul>
         </>
       ) : copied.length ? (
-        <>
-          {photos.length > 0 && (
-            <ul role="list" class="photos">
-              {photos.map((src) => (
-                <li class="photo">
-                  <img src={src} alt="Customer photo from Google" loading="lazy" />
-                </li>
-              ))}
-            </ul>
-          )}
-          <ul role="list" class="cards">
-            {copied.map((r) => (
-              <li class="card reveal">
-                <div class="card__head">
-                  <span class="avatar avatar--initial" aria-hidden="true">{r.name.trim()[0]}</span>
-                  <div>
-                    <p class="card__name">{r.name}</p>
-                    <p class="muted card__when">{r.when}</p>
-                  </div>
-                </div>
-                <p class="stars" style={`--r: ${r.rating}`} aria-label={`${r.rating} out of 5 stars`}>★★★★★</p>
-                <p class="card__text card__text--copied" data-clamp>{r.text}</p>
-                <button type="button" class="card__more" hidden data-more>Read more</button>
-              </li>
-            ))}
-            <li class="card card--all reveal">
-              <a href={site.google.reviewsUrl} target="_blank" rel="noopener">
-                {googleSummary && <span class="card--all__score">{googleSummary.rating.toFixed(1)}</span>}
-                <span class="stars" style="--r: 5" aria-hidden="true">★★★★★</span>
-                <span class="h3">{googleSummary ? `See all ${googleSummary.count} reviews on Google` : 'See all our reviews on Google'}</span>
-                <span class="link-arrow">Open Google <span aria-hidden="true">→</span></span>
-              </a>
-            </li>
-          </ul>
-        </>
+        <ReviewShowcase />
       ) : (
         <div class="offline reveal">
           <p class="h3">Read what our customers say about their blinds, their fitting and our team, in their own words.</p>
@@ -110,7 +76,7 @@ const photos = [...copied.flatMap((r) => (r.photo ? [r.photo] : [])), ...reviewP
         <a class="btn" href={site.google.reviewsUrl} target="_blank" rel="noopener">Read all reviews on Google</a>
         <a class="btn btn--ghost" href={site.google.writeReviewUrl} target="_blank" rel="noopener">Write a review</a>
       </div>
-      {(live || copied.length > 0) && <p class="muted reviews__credit">Reviews and photos from Google</p>}
+      {live && <p class="muted reviews__credit">Reviews and photos from Google</p>}
     </div>
   </div>
 </section>
@@ -218,16 +184,6 @@ const photos = [...copied.flatMap((r) => (r.photo ? [r.photo] : [])), ...reviewP
       );
     } else strip.remove();
   }
-
-  // "Read more" on long copied reviews.
-  document.querySelectorAll<HTMLElement>('[data-clamp]').forEach((text) => {
-    const btn = text.parentElement!.querySelector<HTMLButtonElement>('[data-more]')!;
-    if (text.scrollHeight > text.clientHeight + 4) btn.hidden = false;
-    btn.addEventListener('click', () => {
-      const open = text.parentElement!.classList.toggle('is-open');
-      btn.textContent = open ? 'Show less' : 'Read more';
-    });
-  });
 
   if (root?.dataset.live) {
     // Only call Google when the section is about to scroll into view (saves API usage).

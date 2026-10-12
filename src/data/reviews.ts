@@ -57,5 +57,11 @@ A big appreciation to the installation team as well, the entire process was hand
   },
 ];
 
-/** Extra photos from the listing, e.g. '/images/reviews/photo-1.jpg'. */
-export const reviewPhotos: string[] = [];
+/** Photos from the listing, shown beside the reviews. */
+export const reviewPhotos: { src: string; alt: string; caption: string }[] = [
+  { src: '/images/reviews/roller-courtyard.webp', alt: 'Beige roller blinds over a courtyard window with plants', caption: 'Roller blinds, home courtyard' },
+  { src: '/images/reviews/bamboo-cafe.webp', alt: 'Bamboo blinds along the windows of a café and bookstore', caption: 'Bamboo blinds, café' },
+  { src: '/images/reviews/zebra-office.webp', alt: 'Black and white zebra blinds across a meeting room', caption: 'Zebra blinds, meeting room' },
+  { src: '/images/reviews/roller-office.webp', alt: 'Grey roller blinds in a conference room', caption: 'Roller blinds, conference room' },
+  { src: '/images/reviews/roller-living.webp', alt: 'Orange roller blinds in a living room with cane chairs', caption: 'Roller blinds, living room' },
+];
