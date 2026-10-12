@@ -1,0 +1,12 @@
+// Cloudflare Workers config: serve the static Astro build from dist/.
+// The name must match the Worker created in the Cloudflare dashboard.
+{
+  "name": "coral",
+  "compatibility_date": "2025-09-01",
+  "assets": {
+    "directory": "./dist",
+    // /about serves about.html, /about.html redirects to /about.
+    "html_handling": "auto-trailing-slash",
+    "not_found_handling": "404-page"
+  }
+}

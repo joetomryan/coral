@@ -96,7 +96,14 @@ To set it up again from scratch:
 `vercel.json` provides clean URLs (`/about` instead of `/about.html`) and the 301 redirects
 from the old site.
 
-### Cloudflare Pages (fallback, same repo, no code changes)
+### Cloudflare Workers (static assets)
+`wrangler.jsonc` serves `dist/` as a Worker named `coral`. In the Cloudflare dashboard:
+Workers & Pages → Create → import `joetomryan/coral`, build command `npm run build`,
+deploy command `npx wrangler deploy`, variable `NODE_VERSION=22`. Then add
+`www.coralblinds.in` and `coralblinds.in` under the Worker's Settings → Domains & Routes.
+`public/_redirects` handles the old-site redirects.
+
+### Cloudflare Pages (alternative, same repo, no code changes)
 1. Cloudflare dashboard → Workers & Pages → Create → Pages → connect this repo.
 2. Build command `npm run build`, output directory `dist`, environment variable `NODE_VERSION=22`.
 3. Add the custom domain and update DNS as above.
