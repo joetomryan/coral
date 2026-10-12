@@ -29,12 +29,12 @@ Requires Node 22.12+.
 
 ## Adding real photos
 
-Every grey striped panel says which shot belongs there, for example "Photo · Hero — living room".
-To use a real photo:
+Until real photos exist, each product shows a drawn illustration of that blind type
+(`src/components/BlindArt.astro`). To use a real photo:
 
-1. Put the image in `public/images/…` (JPG/WebP, about 2400px on the long side for the hero and
-   about 1600px elsewhere).
-2. Pass `src="/images/…"` to that `<Photo>` component. The placeholder disappears.
+1. Put the image in `public/images/products/` (JPG or WebP, about 1600px on the long side).
+2. Set `image: '/images/products/<file>'` on the product in `src/data/products.ts`.
+   For other pages, pass `src="/images/…"` to the `<Photo>` component.
 
 ## Brands strip
 
@@ -45,7 +45,7 @@ and set `logo` on each entry. Brands without a logo show as text.
 
 The home page shows your Google rating, top reviews and customer photos, loaded live from
 Google every time someone views the page (nothing is copied or stored, as Google's terms require).
-Until it's connected, the section shows labelled placeholders.
+Until it's connected, the section shows a link to your reviews on Google.
 
 1. In [Google Cloud Console](https://console.cloud.google.com), create a project, turn on
    billing, and enable **Maps JavaScript API** and **Places API (New)**.
@@ -78,7 +78,11 @@ PUBLIC_FORM_KEY=<your access key>
 
 ## Deploying
 
-### Vercel (current plan)
+### Vercel (live)
+The site is the `coral-blinds` project in the **Runklub** Vercel team, connected to this repo.
+Every push to the production branch redeploys it: https://coral-blinds.vercel.app
+
+To set it up again from scratch:
 1. Import this GitHub repo at vercel.com/new. Vercel detects Astro automatically.
 2. Add the domain `www.coralblinds.in` (and `coralblinds.in` → redirect to www) under Project → Domains.
 3. At the domain registrar (GoDaddy), set the DNS records Vercel shows. **Leave the MX records

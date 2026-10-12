@@ -15,7 +15,9 @@ interface Props {
 const { title, description, overlayHeader = false, schema = [] } = Astro.props;
 const logoUrl = new URL('/images/logo.png', site.url).href;
 const fullTitle = title === site.name ? `${site.name} | Made to measure blinds in Bengaluru` : `${title} | ${site.name}`;
-const canonical = new URL(Astro.url.pathname, site.url).href;
+// Clean URLs: the host serves /about for about.html, so drop the extension.
+const cleanPath = Astro.url.pathname.replace(/(index)?\.html$/, '').replace(/(.)\/$/, '$1');
+const canonical = new URL(cleanPath || '/', site.url).href;
 
 const business = {
   '@context': 'https://schema.org',
