@@ -130,7 +130,13 @@ Each product page: hero photo → 3-line pitch → where it suits → fabric/col
 - **Email check before moving:** if `@coralblinds.in` email runs on GoDaddy, keep the MX records when changing DNS, or email breaks.
 - **Contact form** on static hosting: a free form service (Web3Forms / Formspree) or just WhatsApp + `tel:` links.
 
-Migration = build new site → deploy to Cloudflare Pages → point domain DNS → 301 old `.html` URLs to new URLs → cancel GoDaddy hosting (keep domain until transferred).
+Migration = build new site → deploy → point domain DNS → 301 old `.html` URLs to new URLs → cancel GoDaddy hosting (keep domain until transferred).
+
+**Decision (12 Oct 2026):** start on **Vercel Hobby**, accepting the non-commercial-use risk; if Vercel pauses or removes the project, move to **Cloudflare Pages**. To keep that move under an hour:
+- Pure static build (no Vercel functions, image optimisation, analytics, or `vercel.json`-only features). Redirects live in a host-neutral file that we convert per host.
+- Contact form posts to a third-party form service, not a serverless function.
+- Domain stays registered outside Vercel; DNS records (including email MX) are documented in the repo so they can be re-pointed.
+- The GitHub repo is the source of truth — nothing lives only on the host.
 
 ---
 
