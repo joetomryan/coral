@@ -26,6 +26,12 @@ export const site = {
   hours: [{ days: 'Monday to Friday', time: '9:30 am to 6:30 pm' }],
   mapsUrl:
     'https://www.google.com/maps/search/?api=1&query=Coral+Blinds+Hennur+Bagalur+Road+Kothanur+Bengaluru',
+  // Google listing "Coral Window Blinds" (from the Maps link the owner shared).
+  google: {
+    placeId: 'ChIJF6cg9FUXrjsRhoLrpFOav9E',
+    reviewsUrl: 'https://search.google.com/local/reviews?placeid=ChIJF6cg9FUXrjsRhoLrpFOav9E',
+    writeReviewUrl: 'https://search.google.com/local/writereview?placeid=ChIJF6cg9FUXrjsRhoLrpFOav9E',
+  },
   social: {
     facebook: 'https://www.facebook.com/Coralblinds/',
   },

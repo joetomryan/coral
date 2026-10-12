@@ -56,7 +56,7 @@ Until it's connected, the section shows a link to your reviews on Google.
 4. On the host, set:
    ```
    PUBLIC_GOOGLE_MAPS_API_KEY=<the key>
-   PUBLIC_GOOGLE_PLACE_ID=<the place id>
+   PUBLIC_GOOGLE_PLACE_ID=<optional; defaults to the listing in src/data/site.ts>
    ```
    and redeploy.
 

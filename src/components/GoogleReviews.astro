@@ -10,9 +10,8 @@
 import { site } from '../data/site';
 
 const apiKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY as string | undefined;
-const placeId = import.meta.env.PUBLIC_GOOGLE_PLACE_ID as string | undefined;
+const placeId = (import.meta.env.PUBLIC_GOOGLE_PLACE_ID as string | undefined) || site.google.placeId;
 const live = Boolean(apiKey && placeId);
-const mapsSearch = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${site.name} ${site.address.line2} ${site.address.city}`)}`;
 ---
 
 <section class="section reviews" data-reviews data-key={apiKey} data-place={placeId} data-live={live ? 'true' : undefined}>
@@ -57,9 +56,10 @@ const mapsSearch = `https://www.google.com/maps/search/?api=1&query=${encodeURIC
     }
 
     <div class="reviews__foot">
-      <a class="link-arrow" href={mapsSearch} target="_blank" rel="noopener" data-all>
-        Read all reviews on Google <span aria-hidden="true">→</span>
-      </a>
+      <div class="btn-row">
+        <a class="btn" href={site.google.reviewsUrl} target="_blank" rel="noopener">Read all reviews on Google</a>
+        <a class="btn btn--ghost" href={site.google.writeReviewUrl} target="_blank" rel="noopener">Write a review</a>
+      </div>
       {live && <p class="muted reviews__credit">Reviews and photos from Google</p>}
     </div>
   </div>
@@ -108,14 +108,13 @@ const mapsSearch = `https://www.google.com/maps/search/?api=1&query=${encodeURIC
     await loadMaps(key!);
     const { Place } = await (window as any).google.maps.importLibrary('places');
     const place = new Place({ id: placeId });
-    await place.fetchFields({ fields: ['rating', 'userRatingCount', 'reviews', 'photos', 'googleMapsURI'] });
+    await place.fetchFields({ fields: ['rating', 'userRatingCount', 'reviews', 'photos'] });
 
     // Summary
     const rating: number = place.rating ?? 0;
     rootEl.querySelector('[data-score]')!.textContent = rating.toFixed(1);
     (rootEl.querySelector('[data-stars]') as HTMLElement).style.setProperty('--r', String(rating));
     rootEl.querySelector('[data-count]')!.textContent = `${place.userRatingCount ?? 0} Google reviews`;
-    if (place.googleMapsURI) rootEl.querySelector<HTMLAnchorElement>('[data-all]')!.href = place.googleMapsURI;
 
     // Top reviews: best rated first, then the more detailed ones.
     const reviews: Review[] = [...(place.reviews ?? [])]
