@@ -6,12 +6,15 @@
 // Needs two public env vars on the host:
 //   PUBLIC_GOOGLE_MAPS_API_KEY  browser key, restricted to the site's domain and the Maps JavaScript API + Places API (New)
 //   PUBLIC_GOOGLE_PLACE_ID      the business's Place ID
-// Without them, the section shows labelled placeholders.
+// Without them, the section shows the reviews copied into src/data/reviews.ts,
+// or a link to the Google listing if that file is empty.
 import { site } from '../data/site';
+import { reviews as copied, reviewPhotos, googleSummary } from '../data/reviews';
 
 const apiKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY as string | undefined;
 const placeId = (import.meta.env.PUBLIC_GOOGLE_PLACE_ID as string | undefined) || site.google.placeId;
 const live = Boolean(apiKey && placeId);
+const photos = [...copied.flatMap((r) => (r.photo ? [r.photo] : [])), ...reviewPhotos];
 ---
 
 <section class="section reviews" data-reviews data-key={apiKey} data-place={placeId} data-live={live ? 'true' : undefined}>
@@ -21,6 +24,17 @@ const live = Boolean(apiKey && placeId);
         <p class="eyebrow">Reviews on Google</p>
         <h2 class="h2">What our customers say.</h2>
       </div>
+      {
+        !live && googleSummary && (
+          <div class="summary">
+            <span class="summary__score">{googleSummary.rating.toFixed(1)}</span>
+            <span class="summary__meta">
+              <span class="stars" style={`--r: ${googleSummary.rating}`} aria-hidden="true">★★★★★</span>
+              <span class="muted">{googleSummary.count} Google reviews</span>
+            </span>
+          </div>
+        )
+      }
       {
         live && (
           <div class="summary">
@@ -48,6 +62,33 @@ const live = Boolean(apiKey && placeId);
             ))}
           </ul>
         </>
+      ) : copied.length ? (
+        <>
+          {photos.length > 0 && (
+            <ul role="list" class="photos">
+              {photos.map((src) => (
+                <li class="photo">
+                  <img src={src} alt="Customer photo from Google" loading="lazy" />
+                </li>
+              ))}
+            </ul>
+          )}
+          <ul role="list" class="cards">
+            {copied.map((r) => (
+              <li class="card reveal">
+                <div class="card__head">
+                  <span class="avatar avatar--initial" aria-hidden="true">{r.name.trim()[0]}</span>
+                  <div>
+                    <p class="card__name">{r.name}</p>
+                    <p class="muted card__when">{r.when}</p>
+                  </div>
+                </div>
+                <p class="stars" style={`--r: ${r.rating}`} aria-label={`${r.rating} out of 5 stars`}>★★★★★</p>
+                <p class="card__text">{r.text}</p>
+              </li>
+            ))}
+          </ul>
+        </>
       ) : (
         <div class="offline reveal">
           <p class="h3">Read what our customers say about their blinds, their fitting and our team, in their own words.</p>
@@ -60,7 +101,7 @@ const live = Boolean(apiKey && placeId);
         <a class="btn" href={site.google.reviewsUrl} target="_blank" rel="noopener">Read all reviews on Google</a>
         <a class="btn btn--ghost" href={site.google.writeReviewUrl} target="_blank" rel="noopener">Write a review</a>
       </div>
-      {live && <p class="muted reviews__credit">Reviews and photos from Google</p>}
+      {(live || copied.length > 0) && <p class="muted reviews__credit">Reviews and photos from Google</p>}
     </div>
   </div>
 </section>
@@ -325,6 +366,14 @@ const live = Boolean(apiKey && placeId);
     border-radius: 50%;
     background: var(--sand);
     object-fit: cover;
+  }
+
+  .avatar--initial {
+    display: grid;
+    place-items: center;
+    background: var(--green) !important;
+    color: #fff;
+    font-weight: 600;
   }
 
   .reviews :global(.card__name) {
