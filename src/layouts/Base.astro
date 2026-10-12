@@ -9,11 +9,11 @@ interface Props {
   title: string;
   description: string;
   overlayHeader?: boolean;
-  darkHeader?: boolean;
+  headerBand?: boolean;
   /** Extra JSON-LD objects for this page. */
   schema?: Record<string, unknown>[];
 }
-const { title, description, overlayHeader = false, darkHeader = false, schema = [] } = Astro.props;
+const { title, description, overlayHeader = false, headerBand = false, schema = [] } = Astro.props;
 const logoUrl = new URL('/images/logo.png', site.url).href;
 const fullTitle = title === site.name ? `${site.name} | Made to measure blinds in Bengaluru` : `${title} | ${site.name}`;
 // Clean URLs: the host serves /about for about.html, so drop the extension.
@@ -75,7 +75,7 @@ const business = {
   </head>
   <body>
     <a class="visually-hidden" href="#main">Skip to content</a>
-    <Header overlay={overlayHeader} dark={darkHeader} />
+    <Header overlay={overlayHeader} band={headerBand} />
     <main id="main">
       <slot />
     </main>

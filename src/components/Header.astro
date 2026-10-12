@@ -6,15 +6,15 @@ import { categories, products } from '../data/products';
 interface Props {
   /** Transparent, light-text header that sits over a full-bleed hero. */
   overlay?: boolean;
-  /** Solid dark band with white text (used on the home page). */
-  dark?: boolean;
+  /** Solid off-white band that stands apart from the page (used on the home page). */
+  band?: boolean;
 }
-const { overlay = false, dark = false } = Astro.props;
+const { overlay = false, band = false } = Astro.props;
 const path = Astro.url.pathname;
 const isActive = (href: string) => path === href || path.startsWith(`${href}/`);
 ---
 
-<header class:list={['header', { 'header--overlay': overlay, 'header--dark': dark }]} data-header>
+<header class:list={['header', { 'header--overlay': overlay, 'header--band': band }]} data-header>
   <div class="container header__bar">
     <a href="/" class="header__logo" aria-label="Coral Interiors home"><Logo /></a>
 
@@ -122,45 +122,16 @@ const isActive = (href: string) => path === href || path.startsWith(`${href}/`);
     border-bottom-color: var(--line);
   }
 
-  /* Dark band */
-  .header--dark,
-  .header--dark.is-scrolled {
-    background: var(--slate);
-    color: #fff;
-    border-bottom-color: rgb(255 255 255 / 0.1);
-  }
-
-  .header--dark .header__cta {
-    background: #fff;
-    border-color: #fff;
+  /* Off-white band */
+  .header--band,
+  .header--band.is-scrolled {
+    background: var(--band);
     color: var(--ink);
+    border-bottom-color: var(--line);
   }
 
-  .header--dark .header__cta:hover {
-    background: var(--yellow);
-    border-color: var(--yellow);
-  }
-
-  .header--dark .mobile {
-    background: var(--slate);
-    color: #fff;
-  }
-
-  .header--dark .mobile .btn {
-    background: #fff;
-    border-color: #fff;
-    color: var(--ink);
-  }
-
-  .header--overlay:not(.is-scrolled):not(.is-open):not(:has(.has-mega:hover)) {
-    background: transparent;
-    backdrop-filter: none;
-    color: #fff;
-  }
-
-  .header--overlay:not(.is-scrolled):not(.is-open):not(:has(.has-mega:hover)) .header__cta {
-    background: transparent;
-    border-color: rgb(255 255 255 / 0.6);
+  .header--band .mobile {
+    background: var(--band);
   }
 
   .header__bar {
