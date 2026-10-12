@@ -1,0 +1,313 @@
+---
+// A sliding row of uniform product cards: picture, name, one line and a "More" button,
+// with arrows at the top right and a thin progress bar underneath.
+// Products without a photo yet show a quiet typographic card in its place.
+import type { Product } from '../data/products';
+
+interface Props {
+  items: Product[];
+  eyebrow?: string;
+  title?: string;
+}
+const {
+  items,
+  eyebrow = 'The collection',
+  title = 'Blinds, curtains and shades, made&nbsp;to&nbsp;measure.',
+} = Astro.props;
+const arrow = 'M5 12h14M13 6l6 6-6 6';
+---
+
+<section class="section slider" data-slider>
+  <div class="container slider__head reveal">
+    <div class="stack">
+      <p class="eyebrow">{eyebrow}</p>
+      <h2 class="h2" set:html={title} />
+    </div>
+    <div class="slider__controls">
+      <a class="link-arrow slider__all" href="/products">View all <span aria-hidden="true">→</span></a>
+      <button class="slider__btn slider__btn--prev" type="button" aria-label="Previous products" data-prev disabled>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d={arrow} /></svg>
+      </button>
+      <button class="slider__btn" type="button" aria-label="Next products" data-next>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d={arrow} /></svg>
+      </button>
+    </div>
+  </div>
+
+  <ul role="list" class="slider__track reveal" data-track>
+    {
+      items.map((p) => {
+        const href = `/products/${p.slug}`;
+        return (
+          <li class="card">
+            <a class="card__media" href={href} tabindex="-1" aria-hidden="true">
+              {p.image ? (
+                <img src={p.image.src} alt="" width={p.image.width} height={p.image.height} loading="lazy" decoding="async" />
+              ) : (
+                <span class:list={['card__ph', { 'card__ph--folds': p.category === 'curtains' }]}>
+                  <span class="card__ph-name">{p.name}</span>
+                </span>
+              )}
+            </a>
+            <div class="card__body">
+              <h3 class="card__name">
+                <a href={href}>{p.name}</a>
+              </h3>
+              <p class="card__summary muted">{p.summary}</p>
+              <a class="btn btn--ghost card__more" href={href} aria-label={`More about ${p.name}`}>
+                More
+              </a>
+            </div>
+          </li>
+        );
+      })
+    }
+  </ul>
+
+  <div class="container">
+    <div class="slider__bar" aria-hidden="true"><span data-thumb></span></div>
+  </div>
+</section>
+
+<script>
+  const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  document.querySelectorAll<HTMLElement>('[data-slider]').forEach((root) => {
+    const track = root.querySelector<HTMLElement>('[data-track]')!;
+    const prev = root.querySelector<HTMLButtonElement>('[data-prev]')!;
+    const next = root.querySelector<HTMLButtonElement>('[data-next]')!;
+    const thumb = root.querySelector<HTMLElement>('[data-thumb]')!;
+
+    // One step is a card plus the gap; the arrows move by as many cards as fit.
+    const page = () => {
+      const card = track.querySelector<HTMLElement>('.card');
+      if (!card) return track.clientWidth;
+      const step = card.offsetWidth + parseFloat(getComputedStyle(track).columnGap || '0');
+      const style = getComputedStyle(track);
+      const inner = track.clientWidth - parseFloat(style.paddingLeft) - parseFloat(style.paddingRight);
+      return Math.max(1, Math.floor((inner + 1) / step)) * step;
+    };
+
+    let frame = 0;
+    const update = () => {
+      frame = 0;
+      const max = track.scrollWidth - track.clientWidth;
+      const ratio = track.scrollWidth ? Math.min(1, track.clientWidth / track.scrollWidth) : 1;
+      const progress = max > 0 ? track.scrollLeft / max : 0;
+      thumb.style.setProperty('--w', `${ratio * 100}%`);
+      thumb.style.setProperty('--p', String(progress));
+      prev.disabled = track.scrollLeft <= 2;
+      next.disabled = track.scrollLeft >= max - 2;
+    };
+    const queue = () => (frame ||= requestAnimationFrame(update));
+
+    const go = (dir: number) => track.scrollBy({ left: dir * page(), behavior: reduced ? 'auto' : 'smooth' });
+    prev.addEventListener('click', () => go(-1));
+    next.addEventListener('click', () => go(1));
+    track.addEventListener('scroll', queue, { passive: true });
+    addEventListener('resize', queue);
+    update();
+  });
+</script>
+
+<style>
+  .slider__head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: end;
+    justify-content: space-between;
+    gap: 1.5rem 3rem;
+    margin-bottom: clamp(2rem, 1rem + 3vw, 3.5rem);
+  }
+
+  .slider__head > .stack {
+    max-width: 44rem;
+  }
+
+  .slider__controls {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .slider__all {
+    margin-right: 1.25rem;
+  }
+
+  .slider__btn {
+    display: grid;
+    place-items: center;
+    width: 48px;
+    height: 48px;
+    padding: 0;
+    border: 1px solid var(--ink);
+    background: transparent;
+    color: var(--ink);
+    cursor: pointer;
+    transition:
+      background 0.25s var(--ease),
+      color 0.25s var(--ease),
+      border-color 0.25s var(--ease),
+      opacity 0.25s var(--ease);
+  }
+
+  .slider__btn svg {
+    width: 20px;
+    height: 20px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.5;
+  }
+
+  .slider__btn--prev svg {
+    transform: scaleX(-1);
+  }
+
+  .slider__btn:hover:not(:disabled) {
+    background: var(--ink);
+    color: #fff;
+  }
+
+  .slider__btn:disabled {
+    opacity: 0.3;
+    cursor: default;
+  }
+
+  /* The row starts in line with the page and runs off the right edge,
+     so the next card always peeks in. */
+  .slider__track {
+    --inset: max(var(--gutter), calc((100% - var(--max)) / 2 + var(--gutter)));
+    display: flex;
+    gap: clamp(1rem, 0.5rem + 1vw, 1.75rem);
+    margin: 0;
+    padding: 0 var(--inset) 0.25rem;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scroll-snap-type: x mandatory;
+    scroll-padding-inline: var(--inset);
+    scrollbar-width: none;
+  }
+
+  .slider__track::-webkit-scrollbar {
+    display: none;
+  }
+
+  .card {
+    flex: 0 0 clamp(260px, 22vw + 40px, 340px);
+    display: flex;
+    flex-direction: column;
+    scroll-snap-align: start;
+  }
+
+  .card__media {
+    position: relative;
+    display: block;
+    aspect-ratio: 4 / 5;
+    overflow: hidden;
+    background: var(--sand);
+  }
+
+  .card__media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 1.2s var(--ease);
+  }
+
+  .card:hover .card__media img {
+    transform: scale(1.04);
+  }
+
+  /* Placeholder until a photo arrives: fine slats for blinds, folds for curtains. */
+  .card__ph {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: flex-end;
+    padding: 1.5rem;
+    background:
+      repeating-linear-gradient(180deg, transparent 0 21px, rgb(35 38 45 / 0.07) 21px 22px) top / 100% 62% no-repeat,
+      linear-gradient(180deg, #eef1f4, var(--sand));
+    transition: background-color 0.4s var(--ease);
+  }
+
+  .card__ph--folds {
+    background:
+      repeating-linear-gradient(90deg, transparent 0 26px, rgb(35 38 45 / 0.05) 26px 34px, transparent 34px 44px) top / 100% 70% no-repeat,
+      linear-gradient(180deg, #f3f1ec, #eeeae2);
+  }
+
+  .card__ph-name {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: clamp(1.75rem, 1.2rem + 1.4vw, 2.5rem);
+    line-height: 1.05;
+    color: var(--slate);
+    transition: transform 0.6s var(--ease);
+  }
+
+  .card:hover .card__ph-name {
+    transform: translateY(-4px);
+  }
+
+  .card__body {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+    padding-top: 1.25rem;
+  }
+
+  .card__name {
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: var(--step-2);
+    line-height: 1.1;
+    letter-spacing: -0.01em;
+  }
+
+  .card__summary {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    overflow: hidden;
+    min-height: calc(2 * 1.5em);
+    margin-bottom: 0.75rem;
+    font-size: 0.9375rem;
+    line-height: 1.5;
+  }
+
+  .card__more {
+    margin-top: auto;
+    min-height: 40px;
+    padding: 0.55rem 1.4rem;
+    font-size: 0.875rem;
+  }
+
+  /* Progress */
+  .slider__bar {
+    position: relative;
+    height: 2px;
+    margin-top: clamp(2rem, 1.5rem + 1.5vw, 3rem);
+    background: var(--line);
+    overflow: hidden;
+  }
+
+  .slider__bar span {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: var(--w, 30%);
+    left: calc((100% - var(--w, 30%)) * var(--p, 0));
+    background: var(--ink);
+    transition: width 0.3s var(--ease);
+  }
+
+  @media (max-width: 639px) {
+    .slider__all {
+      display: none;
+    }
+  }
+</style>

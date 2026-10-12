@@ -29,15 +29,21 @@ so frame each one the way it should display.
 | 10 | Venetian blinds | ✗ | Kitchen or bathroom, slats tilted, portrait 4:5 |
 | 11 | Outdoor PVC blinds | ✗ | Balcony from inside, blind down, rain or evening light |
 | 12 | Industrial strip curtains | ✗ | Factory doorway, strips hanging, landscape |
+| 13 | Smart curtains | ✗ | Living room or bedroom, curtains half drawn on a ceiling track |
+| 14 | Curtains | ✗ | Sheer and blackout layered, full height, soft daylight |
+| 15 | Shades | ✗ | Single window, shade two thirds down, light filtering through |
+
+Product photos also appear on the home page slider as uniform portrait cards (4:5), so a
+portrait shot with the blind or curtain centred works best there.
 
 ## Pages
 
 | Page | Slot | Shot wanted |
 |---|---|---|
-| Home hero | full width, ~2:1 | The best room you have ever fitted, wide, ≥2400 px. Currently the café photo. |
-| Home featured | 3 landscape or square photos | Bamboo, zebra, roller (have). Swap in better ones when available. |
+| Home hero | full width band, ~3:1 | The best room you have ever fitted, very wide, ≥2400 px. Currently the café photo. |
 | About | landscape | The studio, the samples wall, or the team on a fitting |
 | Motorisation | landscape + one close up | Wide window with blinds mid travel; a hand on a remote or wall switch |
+| Projects | any | Finished jobs with a one line caption: homes, cafés, offices |
 | Commercial | landscape | An office floor or hotel façade with blinds across every window |
 | Contact | landscape | Studio exterior on Hennur Bagalur Road |
 | Reviews | any | More customer photos from Google reviews (download the originals from Business Profile) |

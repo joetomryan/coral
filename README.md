@@ -38,7 +38,17 @@ photo's real width and height. To add one:
 3. Point a product at it (`image: photos.<name>` in `src/data/products.ts`) or pass
    `photo={photos.<name>}` to the `<Photo>` component on a page.
 
-Products without a photo show a typographic entry instead of a fake image.
+Products without a photo show a typographic entry instead of a fake image. The one
+exception to "never cropped" is the home page: the hero is a wide band (about 3:1) and the
+product slider uses uniform 4:5 cards, so photos there are framed to fit. Product pages
+always show the full photo.
+
+## Pages
+
+Products, Collections, Projects, Inspiration and About us are the main menu (`nav` in
+`src/data/site.ts`). Motorisation and Commercial are linked from the footer and from the
+pages that mention them. Projects shows the photos in `src/data/photos.ts`; add new
+installations there and to the `work` list in `src/pages/projects.astro`.
 What's still needed is in [`docs/02-photo-shotlist.md`](docs/02-photo-shotlist.md).
 
 ## Brands strip

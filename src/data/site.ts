@@ -5,7 +5,7 @@ export const site = {
   legalName: 'Coral Interiors',
   url: 'https://www.coralblinds.in',
   since: 2002,
-  tagline: 'Made to measure blinds for homes and workplaces in Bengaluru.',
+  tagline: 'Made to measure blinds and curtains for homes and workplaces in Bengaluru.',
   phones: {
     office: { display: '+91 63629 04441', tel: '+916362904441' },
     mobile: { display: '+91 98866 72792', tel: '+919886672792' },
@@ -47,7 +47,8 @@ export const whatsappLink = (text = 'Hi Coral Interiors, I would like to book a 
 
 export const nav = [
   { href: '/products', label: 'Products' },
-  { href: '/motorisation', label: 'Motorisation' },
-  { href: '/commercial', label: 'Commercial' },
-  { href: '/about', label: 'About' },
+  { href: '/collections', label: 'Collections' },
+  { href: '/projects', label: 'Projects' },
+  { href: '/inspiration', label: 'Inspiration' },
+  { href: '/about', label: 'About us' },
 ] as const;

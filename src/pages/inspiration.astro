@@ -1,0 +1,133 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHero from '../components/PageHero.astro';
+import CtaBand from '../components/CtaBand.astro';
+import { getProduct } from '../data/products';
+
+// Ideas by what a room needs, each pointing at the systems that do it best.
+const ideas = [
+  {
+    title: 'Sleep in real darkness',
+    text: 'Blackout fabric stops the early sun and the street lights. Layer a sheer curtain in front for a softer look by day.',
+    picks: ['roller-blinds', 'curtains', 'roman-blinds'],
+  },
+  {
+    title: 'Screens without glare',
+    text: 'Sunscreen fabrics and turning louvres cut glare on monitors and televisions while keeping the view and the daylight.',
+    picks: ['vertical-blinds', 'zebra-blinds', 'roller-blinds'],
+  },
+  {
+    title: 'Soft light, warm rooms',
+    text: 'Woven wood, bamboo and soft fabric shades turn harsh sun into a warm, textured glow across the room.',
+    picks: ['wooden-blinds', 'bamboo-blinds', 'shades'],
+  },
+  {
+    title: 'A balcony for every season',
+    text: 'Clear PVC keeps the monsoon rain and dust out, so the balcony stays a room you use all year.',
+    picks: ['outdoor-pvc-blinds', 'bamboo-blinds'],
+  },
+  {
+    title: 'Windows that move on their own',
+    text: 'Motorised curtains and blinds open with the sunrise, close at dusk and reach the windows you can’t.',
+    picks: ['smart-curtains', 'skylight-blinds', 'roller-blinds'],
+    more: { href: '/motorisation', label: 'About motorisation' },
+  },
+  {
+    title: 'Make it personal',
+    text: 'Print a family photograph, a pattern for a child’s room or your brand for a shopfront onto a roller blind.',
+    picks: ['printed-blinds'],
+  },
+].map((idea) => ({ ...idea, products: idea.picks.map((s) => getProduct(s)!).filter(Boolean) }));
+---
+
+<Base
+  title="Inspiration"
+  description="Ideas for blinds and curtains in every room: darkness for sleep, glare free screens, warm natural light, monsoon proof balconies and smart homes."
+>
+  <PageHero
+    eyebrow="Inspiration"
+    title="Start with how the room should <em>feel</em>."
+    lead="Six ideas we come back to again and again on home visits, and the systems that make each one work."
+  />
+
+  <section class="section section--tight ideas-wrap">
+    <div class="container">
+      <ol role="list" class="ideas">
+        {
+          ideas.map((idea, i) => (
+            <li class="idea reveal">
+              <span class="idea__num">{String(i + 1).padStart(2, '0')}</span>
+              <div class="stack idea__main">
+                <h2 class="h2">{idea.title}</h2>
+                <p class="lead">{idea.text}</p>
+              </div>
+              <div class="idea__picks">
+                <p class="eyebrow">Try</p>
+                <ul role="list">
+                  {idea.products.map((p) => (
+                    <li>
+                      <a class="link-arrow" href={`/products/${p.slug}`}>
+                        {p.name} <span aria-hidden="true">→</span>
+                      </a>
+                    </li>
+                  ))}
+                  {idea.more && (
+                    <li>
+                      <a class="link-arrow" href={idea.more.href}>
+                        {idea.more.label} <span aria-hidden="true">→</span>
+                      </a>
+                    </li>
+                  )}
+                </ul>
+              </div>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </section>
+
+  <CtaBand title="Bring the idea home." text="We visit, measure and bring the samples, so you can see each idea in your own light." />
+</Base>
+
+<style>
+  .ideas-wrap {
+    padding-top: 0;
+  }
+
+  .ideas {
+    border-top: 1px solid var(--line);
+  }
+
+  .idea {
+    display: grid;
+    gap: 1.25rem 3rem;
+    padding-block: clamp(2.5rem, 2rem + 2vw, 4rem);
+    border-bottom: 1px solid var(--line);
+  }
+
+  .idea__num {
+    font-size: var(--step--1);
+    letter-spacing: 0.1em;
+    font-weight: 500;
+    color: var(--green);
+  }
+
+  .idea__picks ul {
+    display: grid;
+    justify-items: start;
+    gap: 0.75rem;
+    margin-top: 1rem;
+  }
+
+  @media (min-width: 960px) {
+    .idea {
+      grid-template-columns: 4rem 1.6fr 1fr;
+      align-items: start;
+    }
+
+    .idea__num {
+      padding-top: 0.9rem;
+    }
+  }
+</style>

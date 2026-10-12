@@ -16,10 +16,11 @@ export const rooms: { id: Room; label: string }[] = [
   { id: 'balcony', label: 'Balcony' },
 ];
 
-export type Category = 'fabric' | 'natural' | 'slatted' | 'outdoor';
+export type Category = 'fabric' | 'curtains' | 'natural' | 'slatted' | 'outdoor';
 
 export const categories: { id: Category; label: string; blurb: string }[] = [
   { id: 'fabric', label: 'Fabric blinds', blurb: 'Soft, tailored control over light and privacy.' },
+  { id: 'curtains', label: 'Curtains & shades', blurb: 'Soft fabric, made to measure, manual or motorised.' },
   { id: 'natural', label: 'Natural textures', blurb: 'Woven wood and bamboo for warmth and grain.' },
   { id: 'slatted', label: 'Slatted blinds', blurb: 'Precise, tilting control for busy rooms.' },
   { id: 'outdoor', label: 'Outdoor & industrial', blurb: 'Built for balconies, weather and doorways.' },
@@ -119,6 +120,54 @@ export const products: Product[] = [
     motorised: true,
     legacy: ['/Vertical.html'],
     featured: true,
+  },
+  {
+    slug: 'smart-curtains',
+    name: 'Smart Curtains',
+    category: 'curtains',
+    summary: 'Curtains that open and close at a touch, or on their own.',
+    intro:
+      'Made to measure curtains on a quiet motorised track. Open them from a remote, a wall switch, your phone or your voice, or set them to move with the sunrise.',
+    rooms: ['living', 'bedroom', 'office'],
+    features: [
+      'Quiet motorised tracks with Somfy motors',
+      'Remote, wall switch, app and voice control',
+      'Schedules and scenes for morning and night',
+      'Works with any of our curtain fabrics',
+    ],
+    motorised: true,
+  },
+  {
+    slug: 'curtains',
+    name: 'Curtains',
+    category: 'curtains',
+    summary: 'Tailored curtains in sheer, dim out and blackout fabrics.',
+    intro:
+      'Curtains stitched to the exact height and width of your window, so they fall cleanly and stack neatly. Layer a sheer behind a blackout for soft light by day and real darkness at night.',
+    rooms: ['living', 'bedroom', 'kids'],
+    features: [
+      'Sheer, dim out and blackout fabrics',
+      'Pinch pleat, ripple fold and eyelet styles',
+      'Lined or unlined, with blackout lining available',
+      'Ceiling tracks, wall tracks and decorative rods',
+    ],
+    motorised: true,
+  },
+  {
+    slug: 'shades',
+    name: 'Shades',
+    category: 'curtains',
+    summary: 'Soft fabric shades that filter light and keep privacy.',
+    intro:
+      'Soft fabric shades that lift neatly out of the way and drop to a calm, even surface. A gentle middle ground between a blind and a curtain, made to measure for each window.',
+    rooms: ['living', 'bedroom', 'office'],
+    features: [
+      'Light filtering and blackout fabrics',
+      'Soft, even finish when lowered',
+      'Compact headrail that sits inside the recess',
+      'Chain operated or motorised',
+    ],
+    motorised: true,
   },
   {
     slug: 'wooden-blinds',

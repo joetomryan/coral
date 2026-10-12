@@ -1,0 +1,176 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHero from '../components/PageHero.astro';
+import Photo from '../components/Photo.astro';
+import CtaBand from '../components/CtaBand.astro';
+import { categories, products, type Product } from '../data/products';
+import { photos, type Photo as PhotoData } from '../data/photos';
+
+interface Collection {
+  id: string;
+  label: string;
+  blurb: string;
+  href: string;
+  items: Product[];
+  photo?: PhotoData;
+  folds?: boolean;
+}
+
+// A photo for a collection where we have a real one; the rest show a quiet panel.
+const covers: Record<string, PhotoData> = {
+  fabric: photos.rollerLiving,
+  natural: photos.bambooCafe,
+};
+
+const collections: Collection[] = [
+  ...categories.map((c) => ({
+    id: c.id,
+    label: c.label,
+    blurb: c.blurb,
+    href: `/products#${c.id}`,
+    items: products.filter((p) => p.category === c.id),
+    photo: covers[c.id],
+    folds: c.id === 'curtains',
+  })),
+  {
+    id: 'smart',
+    label: 'Motorised & smart',
+    blurb: 'Blinds and curtains that move from a remote, a switch, your phone or your voice.',
+    href: '/motorisation',
+    items: products.filter((p) => p.motorised),
+  },
+];
+const pad = (n: number) => String(n).padStart(2, '0');
+---
+
+<Base
+  title="Collections"
+  description="Browse Coral Interiors by collection: fabric blinds, curtains and shades, natural wood and bamboo, slatted, outdoor and industrial, and motorised systems."
+>
+  <PageHero
+    eyebrow="Collections"
+    title="Six collections, one <em>standard</em>."
+    lead="Every collection is made to measure and fitted by our own team. Start with the feel you want, then choose the system."
+  />
+
+  <section class="section section--tight colls-wrap">
+    <div class="container colls">
+      {
+        collections.map((c, i) => (
+          <article class="coll reveal" id={c.id}>
+            <a class="coll__media" href={c.href} tabindex="-1" aria-hidden="true">
+              {c.photo ? (
+                <Photo photo={c.photo} />
+              ) : (
+                <span class:list={['coll__ph', { 'coll__ph--folds': c.folds }]}>
+                  <span>{c.label}</span>
+                </span>
+              )}
+            </a>
+            <div class="coll__body stack">
+              <p class="eyebrow">
+                {pad(i + 1)} · {c.items.length} {c.items.length === 1 ? 'system' : 'systems'}
+              </p>
+              <h2 class="h2">
+                <a href={c.href}>{c.label}</a>
+              </h2>
+              <p class="lead">{c.blurb}</p>
+              <ul role="list" class="coll__items">
+                {c.items.map((p) => (
+                  <li>
+                    <a href={`/products/${p.slug}`}>{p.name}</a>
+                  </li>
+                ))}
+              </ul>
+              <a class="link-arrow" href={c.href}>
+                See the collection <span aria-hidden="true">→</span>
+              </a>
+            </div>
+          </article>
+        ))
+      }
+    </div>
+  </section>
+
+  <CtaBand title="Not sure where to start?" text="Tell us about the room. We’ll bring samples from every collection that suits it." />
+</Base>
+
+<style>
+  .colls-wrap {
+    padding-top: 0;
+  }
+
+  .colls {
+    display: grid;
+    gap: clamp(4rem, 3rem + 4vw, 8rem);
+  }
+
+  .coll {
+    display: grid;
+    gap: clamp(1.75rem, 1rem + 2vw, 3rem);
+    align-items: center;
+    scroll-margin-top: calc(var(--header-h) + 2rem);
+  }
+
+  .coll__media {
+    display: block;
+  }
+
+  .coll__ph {
+    display: flex;
+    align-items: flex-end;
+    aspect-ratio: 4 / 3;
+    padding: clamp(1.25rem, 1rem + 1vw, 2rem);
+    background:
+      repeating-linear-gradient(180deg, transparent 0 25px, rgb(35 38 45 / 0.07) 25px 26px) top / 100% 60% no-repeat,
+      linear-gradient(180deg, #eef1f4, var(--sand));
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: var(--step-3);
+    line-height: 1.05;
+    color: var(--slate);
+  }
+
+  .coll__ph--folds {
+    background:
+      repeating-linear-gradient(90deg, transparent 0 30px, rgb(35 38 45 / 0.05) 30px 40px, transparent 40px 52px) top / 100% 70% no-repeat,
+      linear-gradient(180deg, #f3f1ec, #eeeae2);
+  }
+
+  .coll__body .h2 a {
+    transition: color 0.2s var(--ease);
+  }
+
+  .coll__body .h2 a:hover {
+    color: var(--green-ink);
+  }
+
+  .coll__items {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .coll__items a {
+    display: inline-block;
+    padding: 0.4rem 0.9rem;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    font-size: 0.875rem;
+    transition: border-color 0.2s var(--ease);
+  }
+
+  .coll__items a:hover {
+    border-color: var(--ink);
+  }
+
+  @media (min-width: 900px) {
+    .coll {
+      grid-template-columns: 1.1fr 1fr;
+    }
+
+    .coll:nth-child(even) .coll__media {
+      order: 2;
+    }
+  }
+</style>

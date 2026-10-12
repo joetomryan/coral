@@ -31,6 +31,7 @@
   --step-4: clamp(3rem, 1.6rem + 5.6vw, 6.5rem);
 
   --gutter: clamp(1rem, 0.5rem + 2.5vw, 2.5rem);
+  --gutter-wide: clamp(1rem, 0.4rem + 2.6vw, 3rem); /* header and hero run edge to edge */
   --section: clamp(5.5rem, 3.5rem + 7vw, 11rem);
   --max: 1360px;
   --header-h: 72px;
@@ -108,6 +109,11 @@ ul[role='list'] {
   max-width: var(--max);
   margin-inline: auto;
   padding-inline: var(--gutter);
+}
+
+.container--wide {
+  max-width: none;
+  padding-inline: var(--gutter-wide);
 }
 
 .section {

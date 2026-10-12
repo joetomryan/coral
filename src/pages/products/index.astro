@@ -5,7 +5,7 @@ import ProductRows from '../../components/ProductRows.astro';
 import CtaBand from '../../components/CtaBand.astro';
 import { products, categories, rooms } from '../../data/products';
 
-// Row numbers run 01–12 across the categories.
+// Row numbers run on across the categories.
 let running = 1;
 const groups = categories.map((c) => {
   const items = products.filter((p) => p.category === c.id);
@@ -16,13 +16,13 @@ const groups = categories.map((c) => {
 ---
 
 <Base
-  title="Blinds for every window"
-  description="Roller, zebra, Roman, vertical, wooden, bamboo, Venetian, skylight, panel, printed and outdoor blinds, made to measure in Bengaluru."
+  title="Blinds and curtains for every window"
+  description="Roller, zebra, Roman, vertical, wooden, bamboo, Venetian, skylight, panel, printed and outdoor blinds, plus curtains, smart curtains and shades, made to measure in Bengaluru."
 >
   <PageHero
     eyebrow="Products"
-    title="Blinds for every <em>window</em>."
-    lead="Twelve systems, hundreds of fabrics, all made to measure. Filter by room, or browse by type."
+    title="Blinds and curtains for every <em>window</em>."
+    lead={`${products.length} systems, hundreds of fabrics, all made to measure. Filter by room, or browse by type.`}
   />
 
   <section class="section section--tight filter-wrap">
@@ -34,7 +34,7 @@ const groups = categories.map((c) => {
 
       {
         groups.map((c) => (
-          <section class="cat" data-cat>
+          <section class="cat" id={c.id} data-cat>
             <div class="cat__head">
               <h2 class="h3">{c.label}</h2>
               <p class="muted">{c.blurb}</p>
@@ -122,6 +122,7 @@ const groups = categories.map((c) => {
   }
 
   .cat {
+    scroll-margin-top: calc(var(--header-h) + 4.5rem);
     padding-top: clamp(3rem, 2rem + 3vw, 5rem);
   }
 

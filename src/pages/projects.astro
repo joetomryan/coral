@@ -1,0 +1,122 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHero from '../components/PageHero.astro';
+import Photo from '../components/Photo.astro';
+import CtaBand from '../components/CtaBand.astro';
+import { photos } from '../data/photos';
+
+// Real installations, shown at their own shapes. Add new ones to src/data/photos.ts.
+const work = [
+  { photo: photos.bambooCafe, title: 'Café', text: 'Bamboo blinds that soften the afternoon sun along the street windows.' },
+  { photo: photos.rollerCourtyard, title: 'Courtyard home', text: 'Roller blinds on a double height window, light filtering by day.' },
+  { photo: photos.zebraOffice, title: 'Meeting room', text: 'Zebra blinds for screens and privacy without losing daylight.' },
+  { photo: photos.rollerLiving, title: 'Living room', text: 'Roller blinds in a warm orange that sets the tone of the room.' },
+  { photo: photos.rollerOffice, title: 'Conference room', text: 'Grey roller blinds, measured and fitted across a full glass wall.' },
+];
+
+const sectors = [
+  { title: 'Homes', text: 'Apartments, villas and independent houses, from a single bedroom to every window in the house.' },
+  { title: 'Offices', text: 'Glare control for screens, consistent façades across floors, and fabrics that meet fire safety needs.' },
+  { title: 'Hospitality', text: 'Blackout for guest rooms and soft, tailored fabrics for lobbies and restaurants.' },
+  { title: 'Healthcare & education', text: 'Easy to clean, durable systems for wards, clinics and classrooms.' },
+  { title: 'Factories & warehouses', text: 'PVC strip curtains for doorways that hold back heat, dust and insects.' },
+];
+---
+
+<Base
+  title="Projects"
+  description="Blinds and curtains fitted by Coral Interiors in Bengaluru homes, cafés, offices and factories."
+>
+  <PageHero
+    eyebrow="Projects"
+    title="Fitted across <em>Bengaluru</em>."
+    lead="A few of the homes and workplaces we have measured, made and fitted. More photographs are on their way."
+  />
+
+  <section class="section section--tight work-wrap">
+    <div class="container">
+      <ul role="list" class="work">
+        {
+          work.map((w) => (
+            <li class="work__item reveal">
+              <Photo photo={w.photo} />
+              <div class="work__cap">
+                <h2 class="h3">{w.title}</h2>
+                <p class="muted">{w.text}</p>
+              </div>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <section class="section section--sand">
+    <div class="container">
+      <div class="section-head reveal">
+        <div class="stack">
+          <p class="eyebrow">Where we work</p>
+          <h2 class="h2">Homes and workplaces.</h2>
+        </div>
+        <a class="link-arrow" href="/commercial">Commercial projects <span aria-hidden="true">→</span></a>
+      </div>
+      <dl class="sectors reveal">
+        {
+          sectors.map((s) => (
+            <div class="sector">
+              <dt class="h3">{s.title}</dt>
+              <dd class="muted">{s.text}</dd>
+            </div>
+          ))
+        }
+      </dl>
+    </div>
+  </section>
+
+  <CtaBand title="Planning a project?" text="Share a window count or drawings and we’ll arrange a visit and an itemised quote." />
+</Base>
+
+<style>
+  .work-wrap {
+    padding-top: 0;
+  }
+
+  /* Two columns that keep every photo at its own shape. */
+  .work {
+    columns: 1;
+    column-gap: clamp(1.25rem, 0.5rem + 2vw, 2.5rem);
+  }
+
+  .work__item {
+    break-inside: avoid;
+    margin-bottom: clamp(2rem, 1.5rem + 2vw, 3.5rem);
+  }
+
+  .work__cap {
+    display: grid;
+    gap: 0.35rem;
+    padding-top: 1rem;
+  }
+
+  .sectors {
+    border-top: 1px solid rgb(35 38 45 / 0.15);
+  }
+
+  .sector {
+    display: grid;
+    gap: 0.5rem 3rem;
+    padding-block: 1.75rem;
+    border-bottom: 1px solid rgb(35 38 45 / 0.15);
+  }
+
+  @media (min-width: 800px) {
+    .work {
+      columns: 2;
+    }
+
+    .sector {
+      grid-template-columns: 1fr 1.6fr;
+      align-items: baseline;
+    }
+  }
+</style>
