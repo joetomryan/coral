@@ -108,8 +108,7 @@ const isActive = (href: string) => path === href || path.startsWith(`${href}/`);
     inset: 0 0 auto;
     z-index: 50;
     color: var(--ink);
-    background: rgb(255 255 255 / 0.94);
-    backdrop-filter: blur(12px);
+    background: var(--bg);
     border-bottom: 1px solid transparent;
     transition:
       background 0.35s var(--ease),
@@ -241,7 +240,7 @@ const isActive = (href: string) => path === href || path.startsWith(`${href}/`);
   }
 
   .mega a:hover {
-    color: var(--blue);
+    color: var(--blue-ink);
   }
 
   /* Burger */

@@ -12,10 +12,11 @@
   --muted: #6b7180;
   --line: #e3e6eb;
   --slate: #4c515c;
-  --green: #377e73;
-  --green-ink: #2b6359;
-  --blue: #4396d4;
-  --yellow: #f5c344;
+  --green: #02807a;
+  --green-ink: #016660;
+  --blue: #0090fa;
+  --blue-ink: #0072c6;
+  --yellow: #fdbe02;
   --accent: var(--green);
 
   --font-display: 'Instrument Serif', 'Times New Roman', serif;
@@ -251,9 +252,10 @@ ul[role='list'] {
   transition: gap 0.25s var(--ease), color 0.25s var(--ease);
 }
 
+/* Brand blue is light on white, so links use its deeper shade. */
 .link-arrow:hover {
   gap: 0.8rem;
-  color: var(--blue);
+  color: var(--blue-ink);
 }
 
 .btn-row {
