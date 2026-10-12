@@ -36,6 +36,35 @@ To use a real photo:
    about 1600px elsewhere).
 2. Pass `src="/images/…"` to that `<Photo>` component. The placeholder disappears.
 
+## Brands strip
+
+Edit `src/data/brands.ts`. Put logo files in `public/images/brands/` (SVG or transparent PNG)
+and set `logo` on each entry. Brands without a logo show as text.
+
+## Google reviews (live)
+
+The home page shows your Google rating, top reviews and customer photos, loaded live from
+Google every time someone views the page (nothing is copied or stored, as Google's terms require).
+Until it's connected, the section shows labelled placeholders.
+
+1. In [Google Cloud Console](https://console.cloud.google.com), create a project, turn on
+   billing, and enable **Maps JavaScript API** and **Places API (New)**.
+2. Create an API key. Restrict it to **Websites**: `https://www.coralblinds.in/*`,
+   `https://coralblinds.in/*` and your `*.vercel.app` preview URL, and to those two APIs.
+3. Find your Place ID with Google's
+   [Place ID finder](https://developers.google.com/maps/documentation/javascript/examples/places-placeid-finder).
+4. On the host, set:
+   ```
+   PUBLIC_GOOGLE_MAPS_API_KEY=<the key>
+   PUBLIC_GOOGLE_PLACE_ID=<the place id>
+   ```
+   and redeploy.
+
+Google returns up to 5 reviews (its "most relevant") plus photos from your Business Profile.
+The section only calls Google when a visitor scrolls near it, which keeps usage low. Reviews
+are a paid field once you go past Google's monthly free allowance, so check current pricing
+and set a budget alert in the Cloud Console.
+
 ## Contact form
 
 The form composes a WhatsApp message by default, so it needs no backend. To also receive

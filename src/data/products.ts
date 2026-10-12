@@ -47,11 +47,11 @@ export const products: Product[] = [
     category: 'fabric',
     summary: 'Clean, flat fabric that rolls away to nothing.',
     intro:
-      'The quietest way to dress a window. A single panel of fabric on a slim roller — blackout for bedrooms, sunscreen for living spaces where you still want the view.',
+      'The quietest way to dress a window. A single panel of fabric on a slim roller. Choose blackout for bedrooms, or sunscreen for living spaces where you still want the view.',
     rooms: ['living', 'bedroom', 'kitchen', 'office'],
     features: [
-      'Blackout, dim-out and sunscreen fabrics',
-      'Chain-operated or motorised',
+      'Blackout, dim out and sunscreen fabrics',
+      'Chain operated or motorised',
       'Optional cassette to hide the roller',
       'Fits inside or outside the window recess',
     ],
@@ -63,14 +63,14 @@ export const products: Product[] = [
     slug: 'zebra-blinds',
     name: 'Zebra Blinds',
     category: 'fabric',
-    summary: 'Two layers of alternating bands for day-and-night control.',
+    summary: 'Two layers of alternating bands for day and night control.',
     intro:
       'Alternating sheer and solid bands slide past each other, so one blind moves from soft filtered daylight to full privacy without ever lifting it.',
     rooms: ['living', 'bedroom', 'office'],
     features: [
       'Adjust light without raising the blind',
       'Sheer and opaque bands in one fabric',
-      'Chain-operated or motorised',
+      'Chain operated or motorised',
       'Compact headrail with matching cassette',
     ],
     motorised: true,
@@ -87,7 +87,7 @@ export const products: Product[] = [
     rooms: ['living', 'bedroom', 'kids'],
     features: [
       'Wide choice of decorative fabrics',
-      'Lined or unlined; blackout lining available',
+      'Lined or unlined, with blackout lining available',
       'Flat or relaxed fold styles',
       'Cord or chain operation',
     ],
@@ -102,11 +102,11 @@ export const products: Product[] = [
     category: 'fabric',
     summary: 'Tall, turning louvres for wide windows and sliding doors.',
     intro:
-      'Vertical louvres that rotate and draw to one side — the practical answer for large glazing, sliding doors and offices that need precise glare control.',
+      'Vertical louvres that rotate and draw to one side. The practical answer for large glazing, sliding doors and offices that need precise glare control.',
     rooms: ['office', 'living'],
     features: [
-      'Blackout, dim-out, translucent and solar-reflective fabrics',
-      'Fire-retardant treatment available',
+      'Blackout, dim out, translucent and solar reflective fabrics',
+      'Fire retardant treatment available',
       'Fabrics sourced from Europe and Asia',
       'Mechanism and components by Uni-Soleil, Taiwan',
     ],
@@ -126,18 +126,18 @@ export const products: Product[] = [
     category: 'natural',
     summary: 'Woven wood with real grain and warmth.',
     intro:
-      'Natural woven wood that filters light into warm, textured patterns. Treated to resist fungus and termites, so it lasts in Bengaluru’s monsoon.',
+      'Natural woven wood that filters light into warm, textured patterns. Treated to resist fungus and termites, so it lasts through Bengaluru’s monsoon.',
     rooms: ['living', 'bedroom', 'balcony'],
     features: [
       'Six weaves and 26 colours',
-      'Anti-fungal and anti-termite coating',
-      'Roll-up or Roman-style operation',
+      'Coating that resists fungus and termites',
+      'Roll up or Roman style operation',
     ],
     specs: [
       { label: 'Weaves', value: '6' },
       { label: 'Colours', value: '26' },
       { label: 'Maximum width', value: '240 cm' },
-      { label: 'Operation', value: 'Roll-up or Roman style' },
+      { label: 'Operation', value: 'Roll up or Roman style' },
     ],
     motorised: false,
     hue: 35,
@@ -148,14 +148,14 @@ export const products: Product[] = [
     slug: 'bamboo-blinds',
     name: 'Bamboo Blinds',
     category: 'natural',
-    summary: 'Light, natural and made for open-air spaces.',
+    summary: 'Light, natural and made for open air spaces.',
     intro:
-      'Fine bamboo slats that soften harsh sun while keeping air moving — at home on balconies, verandas and sit-outs as much as indoors.',
+      'Fine bamboo slats that soften harsh sun while keeping air moving. Just as good on balconies, verandas and sit outs as indoors.',
     rooms: ['balcony', 'living'],
     features: [
       'Natural and stained finishes',
-      'Light-filtering, breathable weave',
-      'Roll-up operation',
+      'Light filtering, breathable weave',
+      'Roll up operation',
       'Indoor and covered outdoor use',
     ],
     motorised: false,
@@ -173,7 +173,7 @@ export const products: Product[] = [
     rooms: ['kitchen', 'bathroom', 'office'],
     features: [
       'Tilt to angle light and privacy',
-      'Moisture-friendly slat options',
+      'Moisture resistant slat options',
       'Easy to clean',
       'Cord or wand operation',
     ],
@@ -190,8 +190,8 @@ export const products: Product[] = [
     rooms: ['living', 'office'],
     features: [
       'Made for unusual shapes and sizes',
-      'Remote, wall-switch or smartphone control',
-      'Blackout or light-filtering fabrics',
+      'Remote, wall switch or smartphone control',
+      'Blackout or light filtering fabrics',
     ],
     motorised: true,
     hue: 190,
@@ -203,10 +203,10 @@ export const products: Product[] = [
     category: 'fabric',
     summary: 'Wide sliding panels for big glass and room dividers.',
     intro:
-      'Broad fabric panels that glide on a slim track. A calm, architectural choice for floor-to-ceiling glass, sliding doors and dividing open-plan spaces.',
+      'Broad fabric panels that glide on a slim track. A calm, architectural choice for floor to ceiling glass, sliding doors and dividing open plan spaces.',
     rooms: ['living', 'office'],
     features: [
-      'Wide panels on a multi-channel track',
+      'Wide panels on a multichannel track',
       'Ideal for sliding doors and partitions',
       'Mix sheer and solid panels',
     ],
@@ -220,12 +220,12 @@ export const products: Product[] = [
     category: 'fabric',
     summary: 'Your artwork, photograph or brand on a blind.',
     intro:
-      'Fully customisable roller blinds printed with any design you choose — a family photograph, a pattern for a child’s room, or your brand for a shopfront or office.',
+      'Fully customisable roller blinds printed with any design you choose: a family photograph, a pattern for a child’s room, or your brand for a shopfront or office.',
     rooms: ['kids', 'office', 'living'],
     features: [
       'Print any image or pattern',
       'Brand graphics for shops and offices',
-      'Blackout or light-filtering base fabric',
+      'Blackout or light filtering base fabric',
     ],
     motorised: true,
     hue: 330,
@@ -237,7 +237,7 @@ export const products: Product[] = [
     category: 'outdoor',
     summary: 'Keep the rain out, keep the balcony.',
     intro:
-      'Clear or tinted PVC roller blinds that close off a balcony or sit-out against monsoon rain, wind and dust — so the space stays usable all year.',
+      'Clear or tinted PVC roller blinds that close off a balcony or sit out against monsoon rain, wind and dust, so the space stays usable all year.',
     rooms: ['balcony'],
     features: [
       'Clear and tinted PVC',

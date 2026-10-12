@@ -3,15 +3,20 @@
 @import '@fontsource/instrument-serif/400-italic.css';
 
 :root {
-  --bg: #f6f3ee;
-  --surface: #fffdfa;
-  --sand: #ece6dc;
-  --ink: #1d1c1a;
-  --ink-soft: #3b3935;
-  --muted: #736d64;
-  --line: #ded7cb;
-  --coral: #c4553f;
-  --coral-ink: #a8432f;
+  /* Mostly white; accents come from the Coral Interiors logo. */
+  --bg: #ffffff;
+  --surface: #ffffff;
+  --sand: #f4f6f8;
+  --ink: #23262d;
+  --ink-soft: #3d424c;
+  --muted: #6b7180;
+  --line: #e3e6eb;
+  --slate: #4c515c;
+  --green: #377e73;
+  --green-ink: #2b6359;
+  --blue: #4396d4;
+  --yellow: #f5c344;
+  --accent: var(--green);
 
   --font-display: 'Instrument Serif', 'Times New Roman', serif;
   --font-body: 'Inter Variable', system-ui, -apple-system, 'Segoe UI', sans-serif;
@@ -83,7 +88,7 @@ ul[role='list'] {
 }
 
 :focus-visible {
-  outline: 2px solid var(--coral);
+  outline: 2px solid var(--accent);
   outline-offset: 3px;
 }
 
@@ -109,8 +114,8 @@ ul[role='list'] {
 }
 
 .section--ink {
-  background: var(--ink);
-  color: var(--bg);
+  background: var(--slate);
+  color: #fff;
 }
 
 .stack > * + * {
@@ -152,11 +157,11 @@ ul[role='list'] {
   font-weight: 500;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: var(--muted);
+  color: var(--green);
 }
 
 .section--ink .eyebrow {
-  color: #b7afa3;
+  color: var(--yellow);
 }
 
 .lead {
@@ -167,7 +172,7 @@ ul[role='list'] {
 }
 
 .section--ink .lead {
-  color: #d9d2c7;
+  color: #dfe2e7;
 }
 
 .muted {
@@ -183,9 +188,9 @@ ul[role='list'] {
   gap: 0.6rem;
   min-height: 48px;
   padding: 0.85rem 1.6rem;
-  border: 1px solid var(--ink);
-  background: var(--ink);
-  color: var(--bg);
+  border: 1px solid var(--green);
+  background: var(--green);
+  color: #fff;
   font: 500 0.9375rem/1 var(--font-body);
   letter-spacing: 0.01em;
   cursor: pointer;
@@ -196,12 +201,13 @@ ul[role='list'] {
 }
 
 .btn:hover {
-  background: var(--coral);
-  border-color: var(--coral);
+  background: var(--green-ink);
+  border-color: var(--green-ink);
 }
 
 .btn--ghost {
   background: transparent;
+  border-color: var(--ink);
   color: var(--ink);
 }
 
@@ -218,9 +224,9 @@ ul[role='list'] {
 }
 
 .btn--light:hover {
-  background: var(--coral);
-  border-color: var(--coral);
-  color: var(--bg);
+  background: var(--yellow);
+  border-color: var(--yellow);
+  color: var(--ink);
 }
 
 .btn--outline-light {
@@ -247,7 +253,7 @@ ul[role='list'] {
 
 .link-arrow:hover {
   gap: 0.8rem;
-  color: var(--coral);
+  color: var(--blue);
 }
 
 .btn-row {

@@ -1,0 +1,334 @@
+---
+// Live Google reviews and customer photos, loaded in the browser from the
+// Google Maps JavaScript API (Places library). Nothing is stored on our side,
+// which keeps us within Google's caching rules.
+//
+// Needs two public env vars on the host:
+//   PUBLIC_GOOGLE_MAPS_API_KEY  browser key, restricted to the site's domain and the Maps JavaScript API + Places API (New)
+//   PUBLIC_GOOGLE_PLACE_ID      the business's Place ID
+// Without them, the section shows labelled placeholders.
+import { site } from '../data/site';
+
+const apiKey = import.meta.env.PUBLIC_GOOGLE_MAPS_API_KEY as string | undefined;
+const placeId = import.meta.env.PUBLIC_GOOGLE_PLACE_ID as string | undefined;
+const live = Boolean(apiKey && placeId);
+const mapsSearch = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${site.name} ${site.address.line2} ${site.address.city}`)}`;
+---
+
+<section class="section reviews" data-reviews data-key={apiKey} data-place={placeId} data-live={live ? 'true' : undefined}>
+  <div class="container">
+    <div class="section-head reveal">
+      <div class="stack">
+        <p class="eyebrow">Reviews on Google</p>
+        <h2 class="h2">What our customers say.</h2>
+      </div>
+      <div class="summary" data-summary>
+        <span class="summary__score" data-score></span>
+        <span class="summary__meta">
+          <span class="stars" data-stars style="--r: 0" aria-hidden="true">★★★★★</span>
+          <span class="muted" data-count>{live ? 'Loading reviews' : 'Your Google rating appears here'}</span>
+        </span>
+      </div>
+    </div>
+
+    <ul role="list" class="photos" data-photos>
+      {
+        Array.from({ length: 6 }, (_, i) => (
+          <li class="photo-ph" style={`--h:${[200, 30, 160, 45, 215, 15][i]}`}>
+            <span>Customer photo</span>
+          </li>
+        ))
+      }
+    </ul>
+
+    <ul role="list" class="cards" data-cards>
+      {
+        Array.from({ length: 3 }, () => (
+          <li class="card card--ph">
+            <div class="card__head">
+              <span class="avatar" />
+              <div>
+                <p class="card__name">Customer name</p>
+                <p class="muted card__when">Review date</p>
+              </div>
+            </div>
+            <p class="stars" style="--r: 0" aria-hidden="true">★★★★★</p>
+            <p class="card__text muted">
+              Your top Google reviews appear here automatically once the site is connected to your Google Business
+              Profile.
+            </p>
+          </li>
+        ))
+      }
+    </ul>
+
+    <div class="reviews__foot">
+      <a class="link-arrow" href={mapsSearch} target="_blank" rel="noopener" data-all>
+        Read all reviews on Google <span aria-hidden="true">→</span>
+      </a>
+      <p class="muted reviews__credit">Reviews and photos from Google</p>
+    </div>
+  </div>
+</section>
+
+<script>
+  type Attribution = { displayName?: string | null; uri?: string | null; photoURI?: string | null };
+  type Review = {
+    rating?: number | null;
+    text?: string | null;
+    relativePublishTimeDescription?: string | null;
+    authorAttribution?: Attribution | null;
+  };
+  type Photo = { getURI(o: { maxWidth?: number; maxHeight?: number }): string; authorAttributions: Attribution[] };
+
+  const root = document.querySelector<HTMLElement>('[data-reviews]');
+
+  const loadMaps = (key: string) =>
+    new Promise<void>((resolve, reject) => {
+      const w = window as any;
+      if (w.google?.maps?.importLibrary) return resolve();
+      w.__coralMapsReady = () => resolve();
+      const s = document.createElement('script');
+      s.src = `https://maps.googleapis.com/maps/api/js?key=${encodeURIComponent(key)}&v=weekly&loading=async&callback=__coralMapsReady`;
+      s.async = true;
+      s.onerror = () => reject(new Error('Google Maps failed to load'));
+      document.head.append(s);
+    });
+
+  const el = <K extends keyof HTMLElementTagNameMap>(tag: K, cls?: string, text?: string) => {
+    const e = document.createElement(tag);
+    if (cls) e.className = cls;
+    if (text) e.textContent = text;
+    return e;
+  };
+
+  const stars = (r: number) => {
+    const s = el('p', 'stars', '★★★★★');
+    s.style.setProperty('--r', String(r));
+    s.setAttribute('aria-label', `${r} out of 5 stars`);
+    return s;
+  };
+
+  async function render(rootEl: HTMLElement) {
+    const { key, place: placeId } = rootEl.dataset;
+    await loadMaps(key!);
+    const { Place } = await (window as any).google.maps.importLibrary('places');
+    const place = new Place({ id: placeId });
+    await place.fetchFields({ fields: ['rating', 'userRatingCount', 'reviews', 'photos', 'googleMapsURI'] });
+
+    // Summary
+    const rating: number = place.rating ?? 0;
+    rootEl.querySelector('[data-score]')!.textContent = rating.toFixed(1);
+    (rootEl.querySelector('[data-stars]') as HTMLElement).style.setProperty('--r', String(rating));
+    rootEl.querySelector('[data-count]')!.textContent = `${place.userRatingCount ?? 0} Google reviews`;
+    if (place.googleMapsURI) rootEl.querySelector<HTMLAnchorElement>('[data-all]')!.href = place.googleMapsURI;
+
+    // Top reviews: best rated first, then the more detailed ones.
+    const reviews: Review[] = [...(place.reviews ?? [])]
+      .filter((r: Review) => r.text)
+      .sort((a: Review, b: Review) => (b.rating ?? 0) - (a.rating ?? 0) || (b.text!.length - a.text!.length));
+    const cards = rootEl.querySelector('[data-cards]')!;
+    if (reviews.length) {
+      cards.replaceChildren(
+        ...reviews.slice(0, 6).map((r) => {
+          const li = el('li', 'card');
+          const head = el('div', 'card__head');
+          const author = r.authorAttribution ?? {};
+          if (author.photoURI) {
+            const img = el('img', 'avatar');
+            img.src = author.photoURI;
+            img.alt = '';
+            img.referrerPolicy = 'no-referrer';
+            head.append(img);
+          } else head.append(el('span', 'avatar'));
+          const who = el('div');
+          const name = author.uri ? el('a', 'card__name', author.displayName ?? 'Google user') : el('p', 'card__name', author.displayName ?? 'Google user');
+          if (author.uri) Object.assign(name, { href: author.uri, target: '_blank', rel: 'noopener' });
+          who.append(name, el('p', 'muted card__when', r.relativePublishTimeDescription ?? ''));
+          head.append(who);
+          li.append(head, stars(r.rating ?? 5), el('p', 'card__text', r.text!));
+          return li;
+        }),
+      );
+    }
+
+    // Customer photos (with the attribution Google requires).
+    const photos: Photo[] = place.photos ?? [];
+    const strip = rootEl.querySelector('[data-photos]')!;
+    if (photos.length) {
+      strip.replaceChildren(
+        ...photos.slice(0, 8).map((p) => {
+          const li = el('li', 'photo');
+          const img = el('img');
+          img.src = p.getURI({ maxWidth: 640 });
+          img.alt = 'Photo from Google';
+          img.loading = 'lazy';
+          li.append(img);
+          const a = p.authorAttributions?.[0];
+          if (a?.displayName) {
+            const credit = el(a.uri ? 'a' : 'span', 'photo__credit', a.displayName);
+            if (a.uri) Object.assign(credit, { href: a.uri, target: '_blank', rel: 'noopener' });
+            li.append(credit);
+          }
+          return li;
+        }),
+      );
+    } else strip.remove();
+  }
+
+  if (root?.dataset.live) {
+    // Only call Google when the section is about to scroll into view (saves API usage).
+    const io = new IntersectionObserver(
+      (entries) => {
+        if (!entries.some((e) => e.isIntersecting)) return;
+        io.disconnect();
+        render(root).catch(() => {
+          root.querySelector('[data-count]')!.textContent = 'See our reviews on Google';
+        });
+      },
+      { rootMargin: '400px 0px' },
+    );
+    io.observe(root);
+  }
+</script>
+
+<style>
+  .summary {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .summary__score {
+    font-family: var(--font-display);
+    font-size: var(--step-4);
+    line-height: 1;
+  }
+
+  .summary__meta {
+    display: grid;
+    gap: 0.2rem;
+    font-size: 0.875rem;
+  }
+
+  .reviews :global(.stars) {
+    --r: 5;
+    width: max-content;
+    font-size: 1rem;
+    letter-spacing: 0.12em;
+    background: linear-gradient(90deg, var(--yellow) calc(var(--r) / 5 * 100%), var(--line) 0);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .photos {
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: minmax(12rem, 1fr);
+    gap: 0.75rem;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    margin-bottom: clamp(2rem, 1.5rem + 2vw, 3rem);
+    scrollbar-width: thin;
+  }
+
+  .photos > :global(li) {
+    position: relative;
+    aspect-ratio: 1;
+    overflow: hidden;
+    scroll-snap-align: start;
+    background: var(--sand);
+  }
+
+  .photos :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .photos :global(.photo__credit) {
+    position: absolute;
+    left: 0.5rem;
+    bottom: 0.5rem;
+    padding: 0.2rem 0.45rem;
+    background: rgb(255 255 255 / 0.85);
+    font-size: 0.6875rem;
+    color: var(--ink-soft);
+  }
+
+  .photo-ph {
+    display: grid;
+    place-items: end start;
+    padding: 0.75rem;
+    background:
+      repeating-linear-gradient(180deg, hsl(var(--h) 25% 97% / 0.6) 0 2px, transparent 2px 18px),
+      linear-gradient(160deg, hsl(var(--h) 18% 86%), hsl(var(--h) 14% 74%)) !important;
+  }
+
+  .photo-ph span {
+    padding: 0.25rem 0.5rem;
+    background: rgb(255 255 255 / 0.75);
+    font-size: 0.6875rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+  }
+
+  .cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 20rem), 1fr));
+    gap: clamp(1rem, 0.5rem + 1.5vw, 2rem);
+  }
+
+  .reviews :global(.card) {
+    display: grid;
+    gap: 1rem;
+    align-content: start;
+    padding: 1.75rem;
+    border: 1px solid var(--line);
+  }
+
+  .reviews :global(.card__head) {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+  }
+
+  .reviews :global(.avatar) {
+    flex: none;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--sand);
+    object-fit: cover;
+  }
+
+  .reviews :global(.card__name) {
+    font-weight: 500;
+  }
+
+  .reviews :global(.card__when) {
+    font-size: 0.8125rem;
+  }
+
+  .reviews :global(.card__text) {
+    display: -webkit-box;
+    -webkit-line-clamp: 7;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .reviews__foot {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-top: 2.5rem;
+  }
+
+  .reviews__credit {
+    font-size: 0.8125rem;
+  }
+</style>

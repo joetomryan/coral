@@ -5,7 +5,7 @@ export const site = {
   legalName: 'Coral Interiors',
   url: 'https://www.coralblinds.in',
   since: 2002,
-  tagline: 'Made-to-measure blinds for homes and workplaces in Bengaluru.',
+  tagline: 'Made to measure blinds for homes and workplaces in Bengaluru.',
   phones: {
     office: { display: '+91 63629 04441', tel: '+916362904441' },
     mobile: { display: '+91 98866 72792', tel: '+919886672792' },
@@ -15,7 +15,7 @@ export const site = {
   // ⚠ Real address is obfuscated in search indexes — fill in from the owner.
   email: '',
   address: {
-    line1: '12/2, 2nd Floor, Hennur–Bagalur Main Road',
+    line1: '12/2, 2nd Floor, Hennur Bagalur Main Road',
     line2: 'Opp. Uttam Sagar Gardenia, Kothanur',
     city: 'Bengaluru',
     region: 'Karnataka',
@@ -23,7 +23,7 @@ export const site = {
     country: 'IN',
   },
   // ⚠ Confirm Saturday hours.
-  hours: [{ days: 'Monday – Friday', time: '9:30 am – 6:30 pm' }],
+  hours: [{ days: 'Monday to Friday', time: '9:30 am to 6:30 pm' }],
   mapsUrl:
     'https://www.google.com/maps/search/?api=1&query=Coral+Blinds+Hennur+Bagalur+Road+Kothanur+Bengaluru',
   social: {
@@ -36,7 +36,7 @@ export const site = {
   ],
 } as const;
 
-export const whatsappLink = (text = 'Hi Coral Blinds, I would like a free measurement.') =>
+export const whatsappLink = (text = 'Hi Coral Blinds, I would like to book a free visit.') =>
   `https://wa.me/${site.whatsapp}?text=${encodeURIComponent(text)}`;
 
 export const nav = [

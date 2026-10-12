@@ -14,7 +14,7 @@ const isActive = (href: string) => path === href || path.startsWith(`${href}/`);
 
 <header class:list={['header', { 'header--overlay': overlay }]} data-header>
   <div class="container header__bar">
-    <a href="/" class="header__logo" aria-label="Coral Blinds — home"><Logo /></a>
+    <a href="/" class="header__logo" aria-label="Coral Blinds home"><Logo /></a>
 
     <nav class="header__nav" aria-label="Main">
       <ul role="list">
@@ -58,7 +58,7 @@ const isActive = (href: string) => path === href || path.startsWith(`${href}/`);
 
     <div class="header__actions">
       <a class="header__contact" href="/contact">Contact</a>
-      <a class="btn header__cta" href="/contact#book">Free measurement</a>
+      <a class="btn header__cta" href="/contact#book">Book a free visit</a>
       <button class="header__toggle" type="button" aria-expanded="false" aria-controls="mobile-menu" data-menu-toggle>
         <span class="visually-hidden">Menu</span>
         <span class="header__burger" aria-hidden="true"></span>
@@ -78,7 +78,7 @@ const isActive = (href: string) => path === href || path.startsWith(`${href}/`);
         }
         <li><a href="/contact">Contact</a></li>
       </ul>
-      <a class="btn" href="/contact#book">Book a free measurement</a>
+      <a class="btn" href="/contact#book">Book a free visit</a>
     </nav>
   </div>
 </header>
@@ -108,7 +108,7 @@ const isActive = (href: string) => path === href || path.startsWith(`${href}/`);
     inset: 0 0 auto;
     z-index: 50;
     color: var(--ink);
-    background: rgb(246 243 238 / 0.92);
+    background: rgb(255 255 255 / 0.94);
     backdrop-filter: blur(12px);
     border-bottom: 1px solid transparent;
     transition:
@@ -241,7 +241,7 @@ const isActive = (href: string) => path === href || path.startsWith(`${href}/`);
   }
 
   .mega a:hover {
-    color: var(--coral);
+    color: var(--blue);
   }
 
   /* Burger */

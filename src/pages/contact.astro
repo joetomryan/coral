@@ -11,19 +11,19 @@ const formKey = import.meta.env.PUBLIC_FORM_KEY as string | undefined;
 ---
 
 <Base
-  title="Contact & free measurement"
-  description="Book a free home measurement with Coral Blinds, Kothanur, Bengaluru. Call +91 63629 04441, WhatsApp, or visit our studio on Hennur–Bagalur Road."
+  title="Contact and free home visit"
+  description="Book a free home visit with Coral Blinds, Kothanur, Bengaluru. Call +91 63629 04441, WhatsApp us, or visit our studio on Hennur Bagalur Road."
 >
   <PageHero
     eyebrow="Contact"
     title="Let’s look at your <em>windows</em>."
-    lead="Book a free measurement and we’ll bring samples to your home — or visit our studio in Kothanur."
+    lead="Book a free visit and we’ll measure your windows and bring samples to your home. You can also visit our studio in Kothanur."
   />
 
   <section class="section section--tight">
     <div class="container contact">
       <div class="contact__form" id="book">
-        <h2 class="h3">Book a free measurement</h2>
+        <h2 class="h3">Book a free visit</h2>
         <form
           class="form"
           method="post"
@@ -32,7 +32,7 @@ const formKey = import.meta.env.PUBLIC_FORM_KEY as string | undefined;
           data-endpoint={endpoint ? 'true' : undefined}
         >
           {formKey && <input type="hidden" name="access_key" value={formKey} />}
-          <input type="hidden" name="subject" value="New measurement request — coralblinds.in" />
+          <input type="hidden" name="subject" value="New home visit request from coralblinds.in" />
           <div class="field">
             <label for="name">Name</label>
             <input id="name" name="name" autocomplete="name" required />
@@ -55,7 +55,7 @@ const formKey = import.meta.env.PUBLIC_FORM_KEY as string | undefined;
             </select>
           </div>
           <div class="field field--full">
-            <label for="message">Anything else? (number of windows, timing…)</label>
+            <label for="message">Anything else? (number of windows, timing)</label>
             <textarea id="message" name="message" rows="4"></textarea>
           </div>
           <div class="field--full form__foot">
@@ -118,7 +118,7 @@ const formKey = import.meta.env.PUBLIC_FORM_KEY as string | undefined;
       const data = new FormData(form);
       const productLabel = select.selectedOptions[0]?.text ?? '';
       const lines = [
-        'Hi Coral Blinds, I’d like a free measurement.',
+        'Hi Coral Blinds, I’d like to book a free visit.',
         `Name: ${data.get('name')}`,
         `Phone: ${data.get('phone')}`,
         data.get('area') && `Area: ${data.get('area')}`,
@@ -186,7 +186,7 @@ const formKey = import.meta.env.PUBLIC_FORM_KEY as string | undefined;
   }
 
   .info-block > a:not(.link-arrow):hover {
-    color: var(--coral);
+    color: var(--blue);
   }
 
   address {

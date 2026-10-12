@@ -1,5 +1,5 @@
 ---
-// Placeholder wordmark until the owner supplies the logo.
+// Placeholder wordmark in the logo colours until we have the logo as SVG / transparent PNG.
 interface Props {
   class?: string;
 }
@@ -7,7 +7,7 @@ const { class: cls } = Astro.props;
 ---
 
 <span class:list={['logo', cls]}>
-  <span class="logo__mark" aria-hidden="true"></span>
+  <span class="logo__mark" aria-hidden="true"><i></i><i></i><i></i></span>
   <span class="logo__word">Coral</span>
   <span class="logo__sub">Blinds</span>
 </span>
@@ -22,9 +22,26 @@ const { class: cls } = Astro.props;
 
   .logo__mark {
     align-self: center;
+    display: grid;
+    gap: 2px;
     width: 14px;
-    height: 14px;
-    background: repeating-linear-gradient(180deg, var(--coral) 0 2px, transparent 2px 4px);
+  }
+
+  .logo__mark i {
+    display: block;
+    height: 3px;
+  }
+
+  .logo__mark i:nth-child(1) {
+    background: var(--green);
+  }
+
+  .logo__mark i:nth-child(2) {
+    background: var(--yellow);
+  }
+
+  .logo__mark i:nth-child(3) {
+    background: var(--blue);
   }
 
   .logo__word {

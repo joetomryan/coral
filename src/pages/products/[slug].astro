@@ -32,13 +32,13 @@ const schema = [
 
 <Base
   title={`${product.name} in Bengaluru`}
-  description={`${product.summary} Made-to-measure ${product.name.toLowerCase()} by ${site.name}, Bengaluru — free home measurement.`}
+  description={`${product.summary} Made to measure ${product.name.toLowerCase()} by ${site.name}, Bengaluru. Book a free home visit.`}
   schema={schema}
 >
   <section class="pd">
     <div class="container pd__grid">
       <div class="pd__media">
-        <Photo alt={product.name} hue={product.hue} ratio="4 / 5" label={`${product.name} — in a room`} eager />
+        <Photo alt={product.name} hue={product.hue} ratio="4 / 5" label={`${product.name} in a room`} eager />
       </div>
 
       <div class="pd__info">
@@ -49,7 +49,7 @@ const schema = [
         <p class="lead">{product.intro}</p>
 
         <div class="btn-row">
-          <a class="btn" href={`/contact?product=${product.slug}#book`}>Book a free measurement</a>
+          <a class="btn" href={`/contact?product=${product.slug}#book`}>Book a free visit</a>
           <a
             class="btn btn--ghost"
             href={whatsappLink(`Hi Coral Blinds, I’m interested in ${product.name}.`)}
@@ -94,9 +94,9 @@ const schema = [
 
   <section class="section section--tight">
     <div class="container grid grid--3 gallery">
-      <Photo alt={`${product.name} detail`} hue={product.hue} ratio="1 / 1" label="Fabric close-up" />
-      <Photo alt={`${product.name} installed`} hue={product.hue + 10} ratio="1 / 1" label="Installed — wide shot" />
-      <Photo alt={`${product.name} mechanism`} hue={product.hue - 10} ratio="1 / 1" label="Headrail / control detail" />
+      <Photo alt={`${product.name} detail`} hue={product.hue} ratio="1 / 1" label="Fabric close up" />
+      <Photo alt={`${product.name} installed`} hue={product.hue + 10} ratio="1 / 1" label="Installed, wide shot" />
+      <Photo alt={`${product.name} mechanism`} hue={product.hue - 10} ratio="1 / 1" label="Headrail and control detail" />
     </div>
   </section>
 
@@ -144,7 +144,7 @@ const schema = [
   }
 
   .crumbs a:hover {
-    color: var(--coral);
+    color: var(--blue);
   }
 
   .pd__title {

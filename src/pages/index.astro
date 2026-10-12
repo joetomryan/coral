@@ -2,23 +2,16 @@
 import Base from '../layouts/Base.astro';
 import Photo from '../components/Photo.astro';
 import ProductCard from '../components/ProductCard.astro';
+import BrandMarquee from '../components/BrandMarquee.astro';
+import GoogleReviews from '../components/GoogleReviews.astro';
 import CtaBand from '../components/CtaBand.astro';
 import { site } from '../data/site';
-import { products, rooms } from '../data/products';
+import { products } from '../data/products';
 
 const featured = products.filter((p) => p.featured);
-const roomHues: Record<string, number> = {
-  living: 32,
-  bedroom: 220,
-  kids: 350,
-  kitchen: 90,
-  bathroom: 190,
-  office: 210,
-  balcony: 45,
-};
 const steps = [
   { title: 'Visit', text: 'We come to you, measure every window and bring fabric samples to see in your own light.' },
-  { title: 'Choose', text: 'Pick fabrics, colours and operation — manual or motorised — with honest advice and a clear quote.' },
+  { title: 'Choose', text: 'Pick fabrics, colours and manual or motorised operation, with honest advice and a clear quote.' },
   { title: 'Make', text: 'Each blind is made to measure for your window, typically ready in about five days.' },
   { title: 'Fit', text: 'Our own team installs, tests and tidies up. We stay on call if anything needs adjusting.' },
 ];
@@ -26,7 +19,7 @@ const steps = [
 
 <Base
   title={site.name}
-  description="Made-to-measure roller, zebra, Roman, vertical, wooden and motorised blinds for homes and offices in Bengaluru. Free home measurement. Since 2002."
+  description="Made to measure roller, zebra, Roman, vertical, wooden and motorised blinds for homes and offices in Bengaluru. Free home visit. Since 2002."
   overlayHeader
 >
   <!-- Hero -->
@@ -34,17 +27,17 @@ const steps = [
     <Photo
       class="hero__bg"
       alt="Living room with soft light through roller blinds"
-      hue={28}
+      hue={210}
       ratio="auto"
-      label="Hero — living room, afternoon light"
+      label="Hero: living room, afternoon light"
       eager
       dark
     />
     <div class="container hero__content">
-      <p class="eyebrow hero__eyebrow">Made-to-measure blinds · Bengaluru · Since {site.since}</p>
+      <p class="eyebrow hero__eyebrow">Made to measure blinds · Bengaluru · Since {site.since}</p>
       <h1 class="display hero__title">Light, shaped for the way you&nbsp;<em>live</em>.</h1>
       <div class="btn-row">
-        <a class="btn btn--light" href="/contact#book">Book a free measurement</a>
+        <a class="btn" href="/contact#book">Book a free visit</a>
         <a class="btn btn--outline-light" href="/products">Explore products</a>
       </div>
     </div>
@@ -54,8 +47,8 @@ const steps = [
   <section class="section">
     <div class="container intro reveal">
       <p class="h2 intro__statement">
-        For over two decades we’ve made blinds for Bengaluru homes and workplaces — measured, made and fitted by
-        <em>one team</em>.
+        For over two decades we’ve made blinds for Bengaluru homes and workplaces. Every one is measured, made and
+        fitted by <em>one&nbsp;team</em>.
       </p>
       <dl class="proof">
         {
@@ -86,73 +79,12 @@ const steps = [
     </div>
   </section>
 
-  <!-- Rooms -->
-  <section class="section">
-    <div class="container">
-      <div class="section-head reveal">
-        <div class="stack">
-          <p class="eyebrow">Shop by room</p>
-          <h2 class="h2">Start with the room.</h2>
-        </div>
-        <p class="lead">Every room asks for something different — darkness to sleep, glare-free screens, fabric that copes with steam.</p>
-      </div>
-      <ul role="list" class="rooms">
-        {
-          rooms.map((r) => (
-            <li class="reveal">
-              <a href={`/products?room=${r.id}`} class="room">
-                <Photo alt={r.label} hue={roomHues[r.id]} ratio="3 / 4" />
-                <span class="room__label">{r.label}</span>
-              </a>
-            </li>
-          ))
-        }
-      </ul>
-    </div>
-  </section>
+  <BrandMarquee />
 
-  <!-- Motorisation -->
-  <section class="section section--sand">
-    <div class="container split">
-      <div class="reveal">
-        <Photo alt="Motorised blinds controlled from a phone" hue={24} ratio="4 / 5" label="Motorised blinds — phone / remote in hand" />
-      </div>
-      <div class="stack reveal">
-        <p class="eyebrow">Motorisation</p>
-        <h2 class="h2">Touch a button. <em>Or don’t</em> — set a schedule.</h2>
-        <p class="lead">
-          Motors from Somfy and Lutron, controlled by remote, wall switch, phone or voice. Schedule blinds to close
-          before the afternoon sun hits, or reach skylights you’d never get to by hand.
-        </p>
-        <a class="link-arrow" href="/motorisation">Explore motorisation <span aria-hidden="true">→</span></a>
-      </div>
-    </div>
-  </section>
-
-  <!-- Homes / Commercial -->
-  <section class="section">
-    <div class="container grid grid--2">
-      <a class="audience reveal" href="/products">
-        <Photo alt="Bedroom with blackout Roman blinds" hue={15} ratio="5 / 4" label="Homes — bedroom" />
-        <div class="audience__body">
-          <p class="eyebrow">For homes</p>
-          <h3 class="h3">Calm, private, made for how you live.</h3>
-          <span class="link-arrow">Browse products <span aria-hidden="true">→</span></span>
-        </div>
-      </a>
-      <a class="audience reveal" href="/commercial">
-        <Photo alt="Office with vertical blinds" hue={210} ratio="5 / 4" label="Commercial — office floor" />
-        <div class="audience__body">
-          <p class="eyebrow">For workplaces</p>
-          <h3 class="h3">Offices, hotels, hospitals and factories.</h3>
-          <span class="link-arrow">Commercial projects <span aria-hidden="true">→</span></span>
-        </div>
-      </a>
-    </div>
-  </section>
+  <GoogleReviews />
 
   <!-- Process -->
-  <section class="section section--tight">
+  <section class="section section--sand">
     <div class="container">
       <div class="section-head reveal">
         <div class="stack">
@@ -214,7 +146,7 @@ const steps = [
   }
 
   .hero__eyebrow {
-    color: rgb(255 255 255 / 0.8);
+    color: var(--yellow);
     margin-bottom: 1.25rem;
   }
 
@@ -250,52 +182,7 @@ const steps = [
     font-size: var(--step-3);
     line-height: 1.1;
     margin-top: 0.25rem;
-  }
-
-  .rooms {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(min(100%, 9.5rem), 1fr));
-    gap: 1rem;
-  }
-
-  .room {
-    position: relative;
-    display: block;
-    overflow: hidden;
-  }
-
-  .room :global(.photo__ph) {
-    transition: transform 1s var(--ease);
-  }
-
-  .room:hover :global(.photo__ph) {
-    transform: scale(1.05);
-  }
-
-  .room__label {
-    position: absolute;
-    left: 1rem;
-    bottom: 0.9rem;
-    font-family: var(--font-display);
-    font-size: 1.375rem;
-    color: #fff;
-    text-shadow: 0 1px 12px rgb(0 0 0 / 0.25);
-  }
-
-  .audience {
-    display: block;
-  }
-
-  .audience__body {
-    display: grid;
-    gap: 0.75rem;
-    justify-items: start;
-    padding-top: 1.5rem;
-  }
-
-  .audience:hover .link-arrow {
-    gap: 0.8rem;
-    color: var(--coral);
+    color: var(--green);
   }
 
   .steps {
@@ -308,13 +195,14 @@ const steps = [
     gap: 0.75rem;
     align-content: start;
     padding-top: 1.5rem;
-    border-top: 1px solid var(--ink);
+    border-top: 2px solid var(--green);
   }
 
   .step__num {
     font-size: var(--step--1);
     letter-spacing: 0.1em;
-    color: var(--coral);
+    color: var(--blue);
+    font-weight: 500;
   }
 
   @media (min-width: 900px) {
