@@ -6,16 +6,17 @@ import BrandMarquee from '../components/BrandMarquee.astro';
 import GoogleReviews from '../components/GoogleReviews.astro';
 import CtaBand from '../components/CtaBand.astro';
 import { site } from '../data/site';
-import { products, categories, getProduct, bestFor } from '../data/products';
+import { products, getProduct } from '../data/products';
 import { photos } from '../data/photos';
 
 const hero = photos.bambooCafe;
-const featured = [
-  { product: getProduct('bamboo-blinds')!, photo: photos.bambooCafe },
-  { product: getProduct('zebra-blinds')!, photo: photos.zebraOffice },
-  { product: getProduct('roller-blinds')!, photo: photos.rollerLiving },
-];
-const categoryLabel = (id: string) => categories.find((c) => c.id === id)?.label ?? '';
+// The three products with photos lead the collection; the other nine follow as a list.
+const featuredSlugs = ['bamboo-blinds', 'zebra-blinds', 'roller-blinds'];
+const featured = featuredSlugs.map((slug, i) => {
+  const product = getProduct(slug)!;
+  return { product: { ...product, index: i + 1 }, photo: product.image ?? photos.bambooCafe };
+});
+const rest = products.filter((p) => !featuredSlugs.includes(p.slug));
 const steps = [
   { title: 'Visit', text: 'We come to you, measure every window and bring fabric samples to see in your own light.' },
   { title: 'Choose', text: 'Pick fabrics, colours and manual or motorised operation, with honest advice and a clear quote.' },
@@ -27,7 +28,7 @@ const steps = [
 <Base
   title={site.name}
   description="Made to measure roller, zebra, Roman, vertical, wooden and motorised blinds for homes and offices in Bengaluru. Free home visit. Since 2002."
-  overlayHeader
+  darkHeader
 >
   <!-- Hero -->
   <section class="hero">
@@ -51,70 +52,8 @@ const steps = [
     </div>
   </section>
 
-  <!-- Statement + proof -->
-  <section class="section">
-    <div class="container intro reveal">
-      <p class="h2 intro__statement">
-        For over two decades we’ve made blinds for Bengaluru homes and workplaces. Every one is measured, made and
-        fitted by <em>one&nbsp;team</em>.
-      </p>
-      <dl class="proof">
-        {
-          site.proof.map((p) => (
-            <div>
-              <dt class="muted">{p.label}</dt>
-              <dd>{p.value}</dd>
-            </div>
-          ))
-        }
-      </dl>
-    </div>
-  </section>
-
-  <!-- Featured, editorial -->
-  <section class="section section--tight featured">
-    {
-      featured.map(({ product, photo }, i) => (
-        <div class:list={['container', 'split', 'featured__row', { 'split--reverse': i % 2 === 1 }]}>
-          <div class="reveal">
-            <Photo photo={photo} />
-          </div>
-          <div class="stack reveal featured__copy">
-            <p class="eyebrow">{categoryLabel(product.category)}</p>
-            <h2 class="h2">{product.name}</h2>
-            <p class="lead">{product.intro}</p>
-            <p class="muted featured__for">Best for {bestFor(product).toLowerCase()}</p>
-            <a class="link-arrow" href={`/products/${product.slug}`}>
-              Explore {product.name.toLowerCase()} <span aria-hidden="true">→</span>
-            </a>
-          </div>
-        </div>
-      ))
-    }
-  </section>
-
-  <!-- Collection index -->
-  <section class="section">
-    <div class="container">
-      <div class="section-head reveal">
-        <div class="stack">
-          <p class="eyebrow">The collection</p>
-          <h2 class="h2">Twelve systems. Every window, considered.</h2>
-        </div>
-        <a class="link-arrow" href="/products">Browse by room <span aria-hidden="true">→</span></a>
-      </div>
-      <div class="reveal">
-        <ProductRows items={products} />
-      </div>
-    </div>
-  </section>
-
-  <BrandMarquee />
-
-  <GoogleReviews />
-
   <!-- Process -->
-  <section class="section section--sand">
+  <section class="section section--tight">
     <div class="container">
       <div class="section-head reveal">
         <div class="stack">
@@ -136,6 +75,62 @@ const steps = [
     </div>
   </section>
 
+  <!-- Statement + proof -->
+  <section class="section section--sand">
+    <div class="container intro reveal">
+      <p class="h2 intro__statement">
+        For over two decades we’ve made blinds for Bengaluru homes and workplaces. Every one is measured, made and
+        fitted by <em>one&nbsp;team</em>.
+      </p>
+      <dl class="proof">
+        {
+          site.proof.map((p) => (
+            <div>
+              <dt class="muted">{p.label}</dt>
+              <dd>{p.value}</dd>
+            </div>
+          ))
+        }
+      </dl>
+    </div>
+  </section>
+
+  <BrandMarquee />
+
+  <!-- Collection: three with photos, the rest as a list -->
+  <section class="section">
+    <div class="container">
+      <div class="section-head reveal">
+        <div class="stack">
+          <p class="eyebrow">The collection</p>
+          <h2 class="h2">Twelve systems. Every window, considered.</h2>
+        </div>
+        <a class="link-arrow" href="/products">Browse by room <span aria-hidden="true">→</span></a>
+      </div>
+
+      <div class="featured grid grid--3">
+        {
+          featured.map(({ product, photo }) => (
+            <a class="feat reveal" href={`/products/${product.slug}`}>
+              <Photo photo={photo} />
+              <span class="feat__body">
+                <span class="row__num">{String(product.index).padStart(2, '0')}</span>
+                <span class="feat__name">{product.name}</span>
+                <span class="muted feat__summary">{product.summary}</span>
+              </span>
+            </a>
+          ))
+        }
+      </div>
+
+      <div class="reveal">
+        <ProductRows items={rest} start={4} />
+      </div>
+    </div>
+  </section>
+
+  <GoogleReviews />
+
   <CtaBand />
 </Base>
 
@@ -146,8 +141,9 @@ const steps = [
     display: flex;
     align-items: flex-end;
     width: 100%;
-    min-height: 640px;
-    min-height: max(640px, 88svh);
+    margin-top: var(--header-h);
+    min-height: 560px;
+    min-height: max(560px, calc(100svh - var(--header-h)));
     overflow: hidden;
     background: var(--slate);
     color: #fff;
@@ -172,11 +168,11 @@ const steps = [
   }
 
   .hero::before {
-    background: linear-gradient(180deg, rgb(0 0 0 / 0.45) 0%, rgb(0 0 0 / 0) 28%);
+    background: linear-gradient(180deg, rgb(0 0 0 / 0.12) 0%, rgb(0 0 0 / 0) 25%);
   }
 
   .hero::after {
-    background: linear-gradient(180deg, rgb(0 0 0 / 0) 40%, rgb(0 0 0 / 0.6) 100%);
+    background: linear-gradient(180deg, rgb(0 0 0 / 0) 30%, rgb(0 0 0 / 0.3) 55%, rgb(0 0 0 / 0.65) 100%);
   }
 
   .hero__content {
@@ -232,17 +228,57 @@ const steps = [
     color: var(--ink);
   }
 
-  /* ----- Featured ----- */
+  /* ----- Featured tiles ----- */
   .featured {
+    margin-bottom: clamp(2rem, 1rem + 2vw, 3rem);
+  }
+
+  /* Photos keep their own shapes; captions line up along the bottom. */
+  .feat {
     display: grid;
-    gap: clamp(4rem, 3rem + 5vw, 8rem);
+    grid-template-rows: 1fr auto;
+    gap: 1rem;
   }
 
-  .featured__copy {
-    max-width: 30rem;
+  .feat :global(.photo) {
+    align-self: end;
   }
 
-  .featured__for {
+  .feat :global(.photo) {
+    overflow: hidden;
+  }
+
+  .feat :global(img) {
+    transition: transform 1.2s var(--ease);
+  }
+
+  .feat:hover :global(img) {
+    transform: scale(1.03);
+  }
+
+  .feat__body {
+    display: grid;
+    grid-template-columns: 2.5rem 1fr;
+    gap: 0.25rem 1rem;
+    align-items: baseline;
+  }
+
+  .feat__body .row__num {
+    font-size: var(--step--1);
+    letter-spacing: 0.08em;
+    color: var(--green);
+  }
+
+  .feat__name {
+    font-family: var(--font-display);
+    font-size: var(--step-2);
+    line-height: 1.1;
+    color: var(--ink);
+    letter-spacing: -0.01em;
+  }
+
+  .feat__summary {
+    grid-column: 2;
     font-size: 0.9375rem;
   }
 
@@ -278,10 +314,6 @@ const steps = [
       border-top: 0;
       border-left: 1px solid var(--line);
       padding: 0 0 0 2.5rem;
-    }
-
-    .featured__copy {
-      padding-inline: clamp(0rem, -2rem + 4vw, 3rem);
     }
   }
 </style>

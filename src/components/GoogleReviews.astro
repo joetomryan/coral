@@ -17,7 +17,7 @@ const placeId = (import.meta.env.PUBLIC_GOOGLE_PLACE_ID as string | undefined) |
 const live = Boolean(apiKey && placeId);
 ---
 
-<section class="section reviews" data-reviews data-key={apiKey} data-place={placeId} data-live={live ? 'true' : undefined}>
+<section class:list={["section", "reviews", { "section--tight": !live }]} data-reviews data-key={apiKey} data-place={placeId} data-live={live ? 'true' : undefined}>
   <div class="container">
     <div class="section-head reveal">
       <div class="stack">
@@ -423,7 +423,7 @@ const live = Boolean(apiKey && placeId);
     align-items: center;
     justify-content: space-between;
     gap: 1rem;
-    margin-top: 2.5rem;
+    margin-top: 2rem;
   }
 
   .reviews__credit {

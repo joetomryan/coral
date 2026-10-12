@@ -1,8 +1,10 @@
 ---
-// Copied Google reviews, one at a time, crossfading on their own (left), beside the
-// customers' photos, also crossfading (right). No controls: it simply moves.
+// Copied Google reviews, one at a time, crossfading on their own (left), beside a
+// fixed collage of the customers' photos (right). No controls: it simply moves.
 import { site } from '../data/site';
 import { reviews, reviewPhotos } from '../data/reviews';
+
+const [main, ...small] = reviewPhotos;
 ---
 
 <div class="showcase" data-showcase>
@@ -29,17 +31,15 @@ import { reviews, reviewPhotos } from '../data/reviews';
   </div>
 
   {
-    reviewPhotos.length > 0 && (
-      <div class="gal" data-gal>
-        <div class="gal__frame" style={`--frame-ratio: ${reviewPhotos[0].width / reviewPhotos[0].height}`}>
-          {reviewPhotos.map((p, i) => (
-            <figure
-              class:list={['gal__slide', { 'is-active': i === 0 }]}
-              data-ratio={p.width / p.height}
-              aria-hidden={i === 0 ? 'false' : 'true'}
-            >
-              <img src={p.src} alt={p.alt} width={p.width} height={p.height} loading={i === 0 ? 'eager' : 'lazy'} decoding="async" />
-              {p.caption && <figcaption>{p.caption}</figcaption>}
+    main && (
+      <div class="gal">
+        <div class="collage">
+          <figure class="collage__main">
+            <img src={main.src} alt={main.alt} width={main.width} height={main.height} loading="lazy" decoding="async" />
+          </figure>
+          {small.map((p) => (
+            <figure class="collage__cell">
+              <img src={p.src} alt={p.alt} width={p.width} height={p.height} loading="lazy" decoding="async" />
             </figure>
           ))}
         </div>
@@ -53,73 +53,40 @@ import { reviews, reviewPhotos } from '../data/reviews';
 
 <script>
   const REVIEW_MS = 7000;
-  const PHOTO_MS = 5000;
   const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   document.querySelectorAll<HTMLElement>('[data-showcase]').forEach((root) => {
-    // Rotate only while on screen.
     let visible = false;
     new IntersectionObserver(([e]) => (visible = e.isIntersecting)).observe(root);
 
-    // ----- Reviews -----
     const stage = root.querySelector<HTMLElement>('.rv__stage')!;
     const quotes = [...stage.querySelectorAll<HTMLElement>('.rv__quote')];
     let active = 0;
-    const fit = () => stage.style.setProperty('--h', `${quotes[active].offsetHeight}px`);
-    const showQuote = (i: number) => {
+    // The stage is as tall as the longest review, so the section never jumps.
+    const fit = () => stage.style.setProperty('--h', `${Math.max(...quotes.map((q) => q.offsetHeight))}px`);
+    const show = (i: number) => {
       active = (i + quotes.length) % quotes.length;
       quotes.forEach((q, j) => {
         q.classList.toggle('is-active', j === active);
         q.setAttribute('aria-hidden', String(j !== active));
       });
-      fit();
     };
     fit();
     document.fonts?.ready.then(fit);
-
-    // ----- Photos -----
-    const frame = root.querySelector<HTMLElement>('.gal__frame');
-    const slides = frame ? [...frame.querySelectorAll<HTMLElement>('.gal__slide')] : [];
-    let photo = 0;
-    const fitFrame = () => {
-      if (!frame || !slides.length) return;
-      const ratio = Number(slides[photo].dataset.ratio);
-      const cap = Math.min(window.innerHeight * 0.78, 760);
-      frame.style.setProperty('--frame-h', `${Math.min(frame.clientWidth / ratio, cap)}px`);
-    };
-    const showPhoto = (i: number) => {
-      photo = (i + slides.length) % slides.length;
-      slides.forEach((s, j) => {
-        s.classList.toggle('is-active', j === photo);
-        s.setAttribute('aria-hidden', String(j !== photo));
-      });
-      fitFrame();
-    };
-    fitFrame();
-    addEventListener('resize', () => {
-      fit();
-      fitFrame();
-    });
+    addEventListener('resize', fit);
 
     if (reduced) return;
 
-    // One clock drives both.
     let last = performance.now();
-    let q = 0;
-    let ph = 0;
+    let elapsed = 0;
     const tick = (now: number) => {
       const dt = now - last;
       last = now;
       if (visible && !document.hidden) {
-        q += dt;
-        ph += dt;
-        if (q >= REVIEW_MS) {
-          q = 0;
-          showQuote(active + 1);
-        }
-        if (slides.length > 1 && ph >= PHOTO_MS) {
-          ph = 0;
-          showPhoto(photo + 1);
+        elapsed += dt;
+        if (elapsed >= REVIEW_MS) {
+          elapsed = 0;
+          show(active + 1);
         }
       }
       requestAnimationFrame(tick);
@@ -131,13 +98,13 @@ import { reviews, reviewPhotos } from '../data/reviews';
 <style>
   .showcase {
     display: grid;
-    gap: clamp(2.5rem, 1.5rem + 3vw, 4.5rem);
+    gap: clamp(2rem, 1.5rem + 2vw, 3.5rem);
     align-items: center;
   }
 
   @media (min-width: 960px) {
     .showcase {
-      grid-template-columns: 1fr 1.1fr;
+      grid-template-columns: 1fr 1.15fr;
     }
   }
 
@@ -149,13 +116,12 @@ import { reviews, reviewPhotos } from '../data/reviews';
   :global(.js) .rv__stage {
     position: relative;
     height: var(--h, auto);
-    transition: height 0.6s var(--ease);
   }
 
   .rv__quote {
     grid-area: 1 / 1;
     display: grid;
-    gap: 1.5rem;
+    gap: 1.1rem;
     align-content: start;
     opacity: 0;
     transition: opacity 0.9s var(--ease);
@@ -177,9 +143,9 @@ import { reviews, reviewPhotos } from '../data/reviews';
   .rv__text {
     margin: 0;
     font-family: var(--font-display);
-    font-size: clamp(1.375rem, 1.1rem + 1vw, 1.875rem);
-    line-height: 1.35;
-    letter-spacing: -0.01em;
+    font-size: clamp(1.125rem, 1rem + 0.5vw, 1.375rem);
+    line-height: 1.4;
+    letter-spacing: -0.005em;
     color: var(--ink);
     white-space: pre-line;
   }
@@ -187,7 +153,7 @@ import { reviews, reviewPhotos } from '../data/reviews';
   .rv__who {
     display: flex;
     align-items: center;
-    gap: 0.85rem;
+    gap: 0.75rem;
     font-size: 0.9375rem;
   }
 
@@ -208,61 +174,67 @@ import { reviews, reviewPhotos } from '../data/reviews';
     display: grid;
     place-items: center;
     flex: none;
-    width: 42px;
-    height: 42px;
+    width: 38px;
+    height: 38px;
     border-radius: 50%;
     background: var(--green);
     color: #fff;
     font-weight: 600;
+    font-size: 0.9375rem;
   }
 
-  /* ----- Photos ----- */
+  /* ----- Collage: one large photo, three smaller, fixed shapes ----- */
   .gal {
     display: grid;
-    gap: 0.75rem;
+    gap: 0.6rem;
   }
 
-  .gal__frame {
+  .collage {
     display: grid;
-    width: 100%;
+    grid-template-columns: 1.6fr 1fr;
+    grid-template-rows: auto auto;
+    gap: 0.5rem;
     max-width: 100%;
-    aspect-ratio: var(--frame-ratio, 4 / 3);
+  }
+
+  .collage figure {
+    margin: 0;
+    overflow: hidden;
     background: var(--sand);
   }
 
-  :global(.js) .gal__frame {
-    aspect-ratio: auto;
-    height: var(--frame-h, 24rem);
-    transition: height 0.6s var(--ease);
-  }
-
-  .gal__slide {
-    grid-area: 1 / 1;
-    position: relative;
-    margin: 0;
-    min-width: 0;
-    opacity: 0;
-    transition: opacity 1s var(--ease);
-  }
-
-  .gal__slide.is-active {
-    opacity: 1;
-  }
-
-  .gal__slide img {
+  .collage img {
     width: 100%;
     height: 100%;
-    object-fit: contain;
+    object-fit: cover;
   }
 
-  .gal__slide figcaption {
-    position: absolute;
-    left: 1rem;
-    bottom: 1rem;
-    padding: 0.4rem 0.75rem;
-    background: rgb(255 255 255 / 0.9);
-    font-size: 0.8125rem;
-    color: var(--ink);
+  .collage__main {
+    grid-row: 1 / 3;
+    aspect-ratio: 4 / 3;
+  }
+
+  /* Wide photo on top, two upright ones below. */
+  .collage__cell:nth-of-type(2) {
+    grid-column: 2;
+    aspect-ratio: 16 / 9;
+  }
+
+  .collage__cell:nth-of-type(3),
+  .collage__cell:nth-of-type(4) {
+    grid-row: 2;
+    aspect-ratio: 3 / 4;
+  }
+
+  .collage__cell:nth-of-type(3) {
+    grid-column: 2;
+    width: calc(50% - 0.25rem);
+  }
+
+  .collage__cell:nth-of-type(4) {
+    grid-column: 2;
+    width: calc(50% - 0.25rem);
+    justify-self: end;
   }
 
   .gal__credit {
@@ -275,10 +247,7 @@ import { reviews, reviewPhotos } from '../data/reviews';
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .rv__quote,
-    .rv__stage,
-    .gal__slide,
-    .gal__frame {
+    .rv__quote {
       transition: none;
     }
   }

@@ -59,11 +59,10 @@ A big appreciation to the installation team as well, the entire process was hand
   },
 ];
 
-/** Photos from the listing, shown beside the reviews, in rotation order. */
+/** Photos from the listing, shown as a collage beside the reviews. The first is the large one. */
 export const reviewPhotos: Photo[] = [
-  photos.rollerCourtyard,
   photos.bambooCafe,
   photos.zebraOffice,
-  photos.rollerOffice,
+  photos.rollerCourtyard,
   photos.rollerLiving,
 ];
