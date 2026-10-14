@@ -1,12 +1,11 @@
-@import '@fontsource-variable/plus-jakarta-sans';
-@import '@fontsource-variable/plus-jakarta-sans/wght-italic.css';
+@import '@fontsource-variable/inter-tight';
+@import '@fontsource-variable/inter-tight/wght-italic.css';
 
 :root {
   /* Mostly white; accents come from the Coral Interiors logo. */
   --bg: #ffffff;
   --surface: #ffffff;
   --sand: #f4f6f8;
-  --band: #f3f1ec; /* warm off-white, for the home page header band */
   --ink: #23262d;
   --ink-soft: #3d424c;
   --muted: #6b7180;
@@ -19,16 +18,16 @@
   --yellow: #fdbe02;
   --accent: var(--green);
 
-  /* One open sans serif for everything; headlines use its light weight. */
-  --font-display: 'Plus Jakarta Sans Variable', system-ui, -apple-system, 'Segoe UI', sans-serif;
-  --font-body: 'Plus Jakarta Sans Variable', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  /* One tight grotesque for everything, in the Helvetica family like Bandalux. */
+  --font-display: 'Inter Tight Variable', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  --font-body: 'Inter Tight Variable', 'Helvetica Neue', Helvetica, Arial, sans-serif;
 
   --step--1: 0.8125rem;
   --step-0: 1rem;
   --step-1: 1.125rem;
   --step-2: clamp(1.25rem, 1.05rem + 0.8vw, 1.625rem);
-  --step-3: clamp(1.875rem, 1.3rem + 2.2vw, 3.25rem);
-  --step-4: clamp(2.5rem, 1.5rem + 4vw, 4.75rem);
+  --step-3: clamp(2rem, 1.3rem + 2.6vw, 3.75rem);
+  --step-4: clamp(2.75rem, 1.5rem + 4.6vw, 5.5rem);
 
   --gutter: clamp(1rem, 0.5rem + 2.5vw, 2.5rem);
   --gutter-wide: clamp(1rem, 0.4rem + 2.6vw, 3rem); /* header and hero run edge to edge */
@@ -56,7 +55,8 @@ body {
   color: var(--ink-soft);
   font-family: var(--font-body);
   font-size: var(--step-0);
-  line-height: 1.65;
+  line-height: 1.55;
+  letter-spacing: -0.005em;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
 }
@@ -141,19 +141,19 @@ ul[role='list'] {
 
 .display {
   font-family: var(--font-display);
-  font-weight: 300;
+  font-weight: 400;
   font-size: var(--step-4);
-  line-height: 1.08;
-  letter-spacing: -0.01em;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
   text-wrap: balance;
 }
 
 .h2 {
   font-family: var(--font-display);
-  font-weight: 300;
+  font-weight: 400;
   font-size: var(--step-3);
-  line-height: 1.12;
-  letter-spacing: -0.01em;
+  line-height: 1.1;
+  letter-spacing: -0.015em;
   text-wrap: balance;
 }
 
@@ -161,7 +161,8 @@ ul[role='list'] {
   font-family: var(--font-display);
   font-weight: 400;
   font-size: var(--step-2);
-  line-height: 1.25;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
   text-wrap: balance;
 }
 
@@ -374,6 +375,40 @@ ul[role='list'] {
 
 /* ---------- Reveal on scroll (only when JS is running) ---------- */
 
+/* Children of a stagger group arrive one after another (--i is set by the observer). */
+.js .reveal-stagger > * {
+  opacity: 0;
+  transform: translateY(18px);
+  transition:
+    opacity 0.9s var(--ease),
+    transform 0.9s var(--ease);
+  transition-delay: calc(var(--i, 0) * 80ms);
+}
+
+.js .reveal-stagger.is-visible > * {
+  opacity: 1;
+  transform: none;
+}
+
+/* Photos wipe up from the bottom and settle, instead of a plain fade. */
+.js .reveal--wipe {
+  clip-path: inset(100% 0 0 0);
+  transition: clip-path 1.1s var(--ease);
+}
+
+.js .reveal--wipe img {
+  transform: scale(1.06);
+  transition: transform 1.4s var(--ease);
+}
+
+.js .reveal--wipe.is-visible {
+  clip-path: inset(0);
+}
+
+.js .reveal--wipe.is-visible img {
+  transform: none;
+}
+
 .js .reveal {
   opacity: 0;
   transform: translateY(18px);
@@ -392,8 +427,16 @@ ul[role='list'] {
     scroll-behavior: auto;
   }
 
-  .js .reveal {
+  .js .reveal,
+  .js .reveal-stagger > * {
     opacity: 1;
+    transform: none;
+    transition: none;
+  }
+
+  .js .reveal--wipe,
+  .js .reveal--wipe img {
+    clip-path: none;
     transform: none;
     transition: none;
   }

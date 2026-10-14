@@ -11,8 +11,9 @@ const { photo, eager = false, class: cls } = Astro.props;
 ---
 
 {
+  /* Photos wipe in on scroll (see .reveal--wipe in global.css). */
   photo ? (
-    <figure class:list={['photo', cls]} style={`aspect-ratio: ${photo.width} / ${photo.height}`}>
+    <figure class:list={['photo', 'reveal--wipe', cls]} style={`aspect-ratio: ${photo.width} / ${photo.height}`}>
       <img
         src={photo.src}
         alt={photo.alt}

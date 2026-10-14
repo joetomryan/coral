@@ -6,15 +6,13 @@ import { categories, products } from '../data/products';
 interface Props {
   /** Transparent, light-text header that sits over a full-bleed hero. */
   overlay?: boolean;
-  /** Solid off-white band that stands apart from the page (used on the home page). */
-  band?: boolean;
 }
-const { overlay = false, band = false } = Astro.props;
+const { overlay = false } = Astro.props;
 const path = Astro.url.pathname;
 const isActive = (href: string) => path === href || path.startsWith(`${href}/`);
 ---
 
-<header class:list={['header', { 'header--overlay': overlay, 'header--band': band }]} data-header>
+<header class:list={['header', { 'header--overlay': overlay }]} data-header>
   <div class="container container--wide header__bar">
     <a href="/" class="header__logo" aria-label="Coral Interiors home"><Logo /></a>
 
@@ -120,18 +118,7 @@ const isActive = (href: string) => path === href || path.startsWith(`${href}/`);
 
   .header.is-scrolled {
     border-bottom-color: var(--line);
-  }
-
-  /* Off-white band */
-  .header--band,
-  .header--band.is-scrolled {
-    background: var(--band);
-    color: var(--ink);
-    border-bottom-color: var(--line);
-  }
-
-  .header--band .mobile {
-    background: var(--band);
+    box-shadow: 0 8px 30px rgb(35 38 45 / 0.05);
   }
 
   /* Logo at the left gutter, nav straight after it, actions pushed to the right edge. */
@@ -311,7 +298,7 @@ const isActive = (href: string) => path === href || path.startsWith(`${href}/`);
     padding-block: 0.4rem;
     font-family: var(--font-display);
     font-size: 1.75rem;
-    font-weight: 300;
+    font-weight: 400;
     line-height: 1.3;
   }
 

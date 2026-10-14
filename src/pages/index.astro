@@ -2,6 +2,7 @@
 import Base from '../layouts/Base.astro';
 import BrandMarquee from '../components/BrandMarquee.astro';
 import ProductSlider from '../components/ProductSlider.astro';
+import Process from '../components/Process.astro';
 import GoogleReviews from '../components/GoogleReviews.astro';
 import CtaBand from '../components/CtaBand.astro';
 import { site } from '../data/site';
@@ -15,21 +16,19 @@ const slides = [
   ...lead.map((slug) => products.find((p) => p.slug === slug)!).filter(Boolean),
   ...products.filter((p) => !lead.includes(p.slug)),
 ];
-const steps = [
-  { title: 'Visit', text: 'We come to you, measure every window and bring fabric samples to see in your own light.' },
-  { title: 'Choose', text: 'Pick fabrics, colours and manual or motorised operation, with honest advice and a clear quote.' },
-  { title: 'Make', text: 'Each blind or curtain is made to measure for your window, typically ready in about five days.' },
-  { title: 'Fit', text: 'Our own team installs, tests and tidies up. We stay on call if anything needs adjusting.' },
-];
+// Proof numbers count up on scroll; anything that isn't a plain number stays as written.
+const proof = site.proof.map((p) => {
+  const m = p.value.match(/^([\d,]+)(\+?)$/);
+  return m ? { ...p, count: m[1].replace(/,/g, ''), suffix: m[2] } : p;
+});
 ---
 
 <Base
   title={site.name}
   description="Made to measure blinds, curtains, smart curtains and shades for homes and offices in Bengaluru. Free home visit. Since 2002."
-  headerBand
 >
   <!-- Hero -->
-  <section class="hero">
+  <section class="hero" data-hero>
     <img
       class="hero__img"
       src={hero.src}
@@ -41,7 +40,11 @@ const steps = [
       fetchpriority="high"
     />
     <div class="container container--wide hero__content">
-      <h1 class="display hero__title">Light, shaped for the way you&nbsp;<em>live</em>.</h1>
+      <h1 class="display hero__title">
+        <span class="hero__word">Light, shaped</span>
+        <span class="hero__word">for the way</span>
+        <span class="hero__word">you&nbsp;<em>live</em>.</span>
+      </h1>
       <div class="hero__foot">
         <span class="hero__line" aria-hidden="true"></span>
         <p class="hero__sub">Blinds, curtains and shades · Bengaluru · Since {site.since}</p>
@@ -49,28 +52,7 @@ const steps = [
     </div>
   </section>
 
-  <!-- Process -->
-  <section class="section section--tight">
-    <div class="container">
-      <div class="section-head reveal">
-        <div class="stack">
-          <p class="eyebrow">How it works</p>
-          <h2 class="h2">From first visit to final fit.</h2>
-        </div>
-      </div>
-      <ol class="steps grid grid--4">
-        {
-          steps.map((s, i) => (
-            <li class="step reveal">
-              <span class="step__num">0{i + 1}</span>
-              <h3 class="h3">{s.title}</h3>
-              <p class="muted">{s.text}</p>
-            </li>
-          ))
-        }
-      </ol>
-    </div>
-  </section>
+  <Process />
 
   <!-- Statement + proof -->
   <section class="section section--sand">
@@ -81,10 +63,10 @@ const steps = [
       </p>
       <dl class="proof">
         {
-          site.proof.map((p) => (
+          proof.map((p) => (
             <div>
               <dt class="muted">{p.label}</dt>
-              <dd>{p.value}</dd>
+              <dd>{'count' in p ? <span data-countup={p.count} data-suffix={p.suffix}>{p.value}</span> : p.value}</dd>
             </div>
           ))
         }
@@ -101,14 +83,30 @@ const steps = [
   <CtaBand />
 </Base>
 
+<script>
+  // The hero photo drifts up at a fraction of the scroll speed while it is in view.
+  const hero = document.querySelector<HTMLElement>('[data-hero]');
+  const img = hero?.querySelector<HTMLElement>('.hero__img');
+  if (hero && img && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    let frame = 0;
+    const update = () => {
+      frame = 0;
+      const y = Math.min(scrollY, hero.offsetHeight);
+      img.style.setProperty('--shift', `${y * 0.18}px`);
+    };
+    addEventListener('scroll', () => (frame ||= requestAnimationFrame(update)), { passive: true });
+    update();
+  }
+</script>
+
 <style>
-  /* ----- Hero: a wide band, about 3:1 like Bandalux ----- */
+  /* ----- Hero: about three quarters of the screen, like Bandalux ----- */
   .hero {
     position: relative;
     display: flex;
     width: 100%;
     margin-top: var(--header-h);
-    height: clamp(420px, 34vw, 720px);
+    height: clamp(560px, 75svh, 1000px);
     overflow: hidden;
     background: var(--slate);
     color: #fff;
@@ -116,11 +114,62 @@ const steps = [
 
   .hero__img {
     position: absolute;
-    inset: 0;
+    inset: -20% 0 0;
     width: 100%;
-    height: 100%;
+    height: 120%;
     object-fit: cover;
-    object-position: 50% 55%;
+    object-position: 50% 60%;
+    transform: translateY(var(--shift, 0)) scale(1);
+    will-change: transform;
+    animation: hero-settle 7s var(--ease) both;
+  }
+
+  /* On load the photo settles, the words rise in and the line draws down. */
+  @keyframes hero-settle {
+    from {
+      transform: translateY(var(--shift, 0)) scale(1.06);
+    }
+  }
+
+  .hero__word {
+    display: block;
+    animation: hero-rise 1s var(--ease) both;
+    animation-delay: calc(0.15s + var(--i, 0) * 0.1s);
+  }
+
+  .hero__word:nth-child(1) { --i: 0; }
+  .hero__word:nth-child(2) { --i: 1; }
+  .hero__word:nth-child(3) { --i: 2; }
+
+  @keyframes hero-rise {
+    from {
+      opacity: 0;
+      transform: translateY(0.6em);
+    }
+  }
+
+  .hero__line {
+    transform-origin: top;
+    animation: hero-draw 0.9s var(--ease) 0.7s both;
+  }
+
+  @keyframes hero-draw {
+    from {
+      transform: scaleY(0);
+    }
+  }
+
+  .hero__sub {
+    animation: hero-rise 0.9s var(--ease) 1s both;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .hero__img,
+    .hero__word,
+    .hero__line,
+    .hero__sub {
+      animation: none;
+    }
   }
 
   /* Darken the left side, where the words sit. */
@@ -144,9 +193,9 @@ const steps = [
   }
 
   .hero__title {
-    max-width: 16ch;
+    max-width: 14ch;
     color: #fff;
-    font-size: clamp(2.25rem, 1.4rem + 3.4vw, 4.75rem);
+    font-size: clamp(2.75rem, 1.6rem + 4vw, 5.75rem);
   }
 
   .hero__foot {
@@ -194,32 +243,11 @@ const steps = [
 
   .proof dd {
     font-family: var(--font-display);
-    font-weight: 300;
+    font-weight: 400;
     font-size: var(--step-3);
     line-height: 1.1;
     margin-top: 0.25rem;
     color: var(--ink);
-  }
-
-  /* ----- Process ----- */
-  .steps {
-    padding: 0;
-    list-style: none;
-  }
-
-  .step {
-    display: grid;
-    gap: 0.9rem;
-    align-content: start;
-    padding-top: 1.75rem;
-    border-top: 1px solid var(--ink);
-  }
-
-  .step__num {
-    font-size: var(--step--1);
-    letter-spacing: 0.1em;
-    color: var(--green);
-    font-weight: 500;
   }
 
   @media (min-width: 900px) {

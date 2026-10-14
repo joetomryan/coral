@@ -4,6 +4,8 @@ import PageHero from '../components/PageHero.astro';
 import Photo from '../components/Photo.astro';
 import CtaBand from '../components/CtaBand.astro';
 import { photos } from '../data/photos';
+import { site } from '../data/site';
+import { products } from '../data/products';
 
 // Real installations, shown at their own shapes. Add new ones to src/data/photos.ts.
 const work = [
@@ -12,6 +14,14 @@ const work = [
   { photo: photos.zebraOffice, title: 'Meeting room', text: 'Zebra blinds for screens and privacy without losing daylight.' },
   { photo: photos.rollerLiving, title: 'Living room', text: 'Roller blinds in a warm orange that sets the tone of the room.' },
   { photo: photos.rollerOffice, title: 'Conference room', text: 'Grey roller blinds, measured and fitted across a full glass wall.' },
+];
+
+// Like Bandalux's figures row. Plain numbers count up on scroll.
+const stats = [
+  { value: `${new Date().getFullYear() - site.since}+`, count: String(new Date().getFullYear() - site.since), suffix: '+', label: 'years making blinds' },
+  { value: '1,000+', count: '1000', suffix: '+', label: 'homes and workplaces fitted' },
+  { value: `${products.length}`, count: String(products.length), suffix: '', label: 'systems, all made to measure' },
+  { value: '1 week', label: 'from measurement to installation' },
 ];
 
 const sectors = [
@@ -33,12 +43,27 @@ const sectors = [
     lead="A few of the homes and workplaces we have measured, made and fitted. More photographs are on their way."
   />
 
+  <section class="section section--tight stats-wrap">
+    <div class="container">
+      <dl class="stats reveal-stagger">
+        {
+          stats.map((s) => (
+            <div class="stat">
+              <dd>{s.count ? <span data-countup={s.count} data-suffix={s.suffix}>{s.value}</span> : s.value}</dd>
+              <dt class="muted">{s.label}</dt>
+            </div>
+          ))
+        }
+      </dl>
+    </div>
+  </section>
+
   <section class="section section--tight work-wrap">
     <div class="container">
-      <ul role="list" class="work">
+      <ul role="list" class="work reveal-stagger">
         {
           work.map((w) => (
-            <li class="work__item reveal">
+            <li class="work__item">
               <Photo photo={w.photo} />
               <div class="work__cap">
                 <h2 class="h3">{w.title}</h2>
@@ -77,6 +102,43 @@ const sectors = [
 </Base>
 
 <style>
+  .stats-wrap {
+    padding-top: 0;
+  }
+
+  .stats {
+    display: grid;
+    gap: 2rem 2.5rem;
+  }
+
+  .stat {
+    display: grid;
+    gap: 0.75rem;
+    padding-left: 1.5rem;
+    border-left: 1px solid var(--ink);
+  }
+
+  .stat dd {
+    font-family: var(--font-display);
+    font-size: clamp(2.5rem, 1.5rem + 3.5vw, 4.5rem);
+    white-space: nowrap;
+    line-height: 1;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .stat dt {
+    font-size: 0.9375rem;
+    max-width: 14rem;
+  }
+
+  @media (min-width: 760px) {
+    .stats {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+
   .work-wrap {
     padding-top: 0;
   }

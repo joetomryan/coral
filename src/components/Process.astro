@@ -1,0 +1,296 @@
+---
+// "How it works" as a workflow that plays as you scroll: a rail fills from the first
+// visit to the final fit, each step lights up as the fill reaches it, and a counter
+// walks through the days until it lands on the whole turnaround: one week.
+const steps = [
+  { day: 'Day 1', title: 'Visit', text: 'We come to you, measure every window and bring fabric samples to see in your own light.' },
+  { day: 'Day 2', title: 'Choose', text: 'Pick fabrics, colours and manual or motorised operation, with honest advice and a clear quote.' },
+  { day: 'Days 3 to 6', title: 'Make', text: 'Each blind or curtain is made to measure for your window, usually ready within five days.' },
+  { day: 'Day 7', title: 'Fit', text: 'Our own team installs, tests and tidies up. We stay on call if anything needs adjusting.' },
+];
+const DAYS = 7;
+---
+
+<section class="section section--tight process" data-process style="--p: 0">
+  <div class="container">
+    <div class="process__head reveal">
+      <div class="stack">
+        <p class="eyebrow">How it works</p>
+        <h2 class="h2">From first visit to final fit.</h2>
+      </div>
+      <div class="turn" aria-live="off">
+        <span class="turn__value">
+          <span class="turn__day" data-day>Day 1</span>
+          <span class="turn__week" data-week>1 week</span>
+        </span>
+        <span class="turn__label muted">from measurement to installation</span>
+      </div>
+    </div>
+
+    <div class="flow">
+      <div class="rail" aria-hidden="true">
+        <span class="rail__fill"></span>
+        <span class="rail__tip"></span>
+      </div>
+
+      <ol class="steps" role="list">
+      {
+        steps.map((s, i) => (
+          <li class="step" data-step style={`--i: ${i}`}>
+            <span class="step__node" aria-hidden="true" />
+            <span class="step__day">{s.day}</span>
+            <span class="step__num">0{i + 1}</span>
+            <h3 class="h3">{s.title}</h3>
+            <p class="muted">{s.text}</p>
+          </li>
+        ))
+      }
+      </ol>
+    </div>
+  </div>
+</section>
+
+<script>
+  const DAYS = 7;
+  const root = document.querySelector<HTMLElement>('[data-process]');
+  if (root) {
+    const steps = [...root.querySelectorAll<HTMLElement>('[data-step]')];
+    const day = root.querySelector<HTMLElement>('[data-day]')!;
+    const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    const apply = (p: number) => {
+      root.style.setProperty('--p', p.toFixed(4));
+      // A step lights up once the fill has passed its node at the start of its column.
+      steps.forEach((s, i) => s.classList.toggle('is-active', p >= (i + 0.3) / steps.length));
+      day.textContent = `Day ${Math.max(1, Math.ceil(p * DAYS))}`;
+      root.classList.toggle('is-complete', p >= 0.98);
+    };
+
+    if (reduced) {
+      apply(1);
+    } else {
+      let frame = 0;
+      const update = () => {
+        frame = 0;
+        const r = root.getBoundingClientRect();
+        const vh = innerHeight;
+        // Starts as the section enters near the bottom of the screen and completes while the
+        // heading and counter are still in view, so "1 week" lands where you can see it.
+        const p = (vh * 0.8 - r.top) / (r.height * 0.65);
+        apply(Math.min(1, Math.max(0, p)));
+      };
+      const queue = () => (frame ||= requestAnimationFrame(update));
+      addEventListener('scroll', queue, { passive: true });
+      addEventListener('resize', queue);
+      update();
+    }
+  }
+</script>
+
+<style>
+  .process__head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: end;
+    justify-content: space-between;
+    gap: 2rem 3rem;
+    margin-bottom: clamp(2.5rem, 1.5rem + 3vw, 4.5rem);
+  }
+
+  .process__head > .stack {
+    max-width: 44rem;
+  }
+
+  /* Turnaround counter */
+  .turn {
+    display: grid;
+    gap: 0.35rem;
+    justify-items: start;
+  }
+
+  .turn__value {
+    position: relative;
+    display: block;
+    font-family: var(--font-display);
+    font-size: var(--step-4);
+    line-height: 1;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+
+  .turn__day,
+  .turn__week {
+    display: block;
+    transition:
+      opacity 0.4s var(--ease),
+      transform 0.5s var(--ease);
+  }
+
+  .turn__week {
+    position: absolute;
+    inset: 0;
+    color: var(--green);
+    opacity: 0;
+    transform: translateY(0.3em);
+  }
+
+  .is-complete .turn__day {
+    opacity: 0;
+    transform: translateY(-0.3em);
+  }
+
+  .is-complete .turn__week {
+    opacity: 1;
+    transform: none;
+  }
+
+  .turn__label {
+    font-size: var(--step--1);
+    letter-spacing: 0.04em;
+  }
+
+  .flow {
+    position: relative;
+  }
+
+  /* Rail: the line that fills as you scroll */
+  .rail {
+    position: relative;
+    height: 1px;
+    background: var(--line);
+    margin-bottom: 2rem;
+  }
+
+  .rail__fill {
+    position: absolute;
+    inset: 0;
+    background: var(--ink);
+    transform: scaleX(var(--p));
+    transform-origin: left;
+  }
+
+  .rail__tip {
+    position: absolute;
+    top: 50%;
+    left: calc(var(--p) * 100%);
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: var(--green);
+    transform: translate(-50%, -50%);
+    box-shadow: 0 0 0 6px rgb(2 128 122 / 0.15);
+  }
+
+  /* Steps */
+  .steps {
+    display: grid;
+    gap: 2.5rem 2rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .step {
+    position: relative;
+    display: grid;
+    gap: 0.6rem;
+    align-content: start;
+    opacity: 0.32;
+    transition: opacity 0.6s var(--ease);
+  }
+
+  /* The words rise; the node stays put on the rail. */
+  .step > :not(.step__node) {
+    transform: translateY(14px);
+    transition: transform 0.7s var(--ease);
+  }
+
+  .step.is-active {
+    opacity: 1;
+  }
+
+  .step.is-active > :not(.step__node) {
+    transform: none;
+  }
+
+  .step__node {
+    position: absolute;
+    top: calc(-2rem - 4px);
+    left: 0;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--bg);
+    border: 1px solid var(--muted);
+    transition:
+      background 0.4s var(--ease),
+      border-color 0.4s var(--ease);
+  }
+
+  .step.is-active .step__node {
+    background: var(--ink);
+    border-color: var(--ink);
+  }
+
+  .step__day {
+    font-size: var(--step--1);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--green);
+    font-weight: 500;
+  }
+
+  .step__num {
+    font-family: var(--font-display);
+    font-size: var(--step-2);
+    line-height: 1;
+    color: var(--muted);
+    letter-spacing: -0.01em;
+  }
+
+  .step .h3 {
+    margin-top: 0.1rem;
+  }
+
+  @media (min-width: 760px) {
+    .steps {
+      grid-template-columns: repeat(4, 1fr);
+    }
+
+    /* Nodes sit on the rail at the start of each column. */
+  }
+
+  @media (max-width: 759px) {
+    /* Vertical workflow on phones: the rail runs down the left of the steps. */
+    .rail {
+      position: absolute;
+      left: 3px;
+      top: 0;
+      bottom: 0;
+      width: 1px;
+      height: auto;
+      margin: 0;
+    }
+
+    .rail__fill {
+      transform: scaleY(var(--p));
+      transform-origin: top;
+    }
+
+    .rail__tip {
+      left: 50%;
+      top: calc(var(--p) * 100%);
+    }
+
+    .steps {
+      padding-left: 2rem;
+    }
+
+    .step__node {
+      top: 0.35rem;
+      left: -2rem;
+    }
+  }
+</style>

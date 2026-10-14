@@ -52,10 +52,10 @@ const ideas = [
 
   <section class="section section--tight ideas-wrap">
     <div class="container">
-      <ol role="list" class="ideas">
+      <ol role="list" class="ideas reveal-stagger">
         {
           ideas.map((idea, i) => (
-            <li class="idea reveal">
+            <li class="idea">
               <span class="idea__num">{String(i + 1).padStart(2, '0')}</span>
               <div class="stack idea__main">
                 <h2 class="h2">{idea.title}</h2>

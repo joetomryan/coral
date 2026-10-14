@@ -54,10 +54,10 @@ const pad = (n: number) => String(n).padStart(2, '0');
   />
 
   <section class="section section--tight colls-wrap">
-    <div class="container colls">
+    <div class="container colls reveal-stagger">
       {
         collections.map((c, i) => (
-          <article class="coll reveal" id={c.id}>
+          <article class="coll" id={c.id}>
             <a class="coll__media" href={c.href} tabindex="-1" aria-hidden="true">
               {c.photo ? (
                 <Photo photo={c.photo} />
@@ -126,7 +126,7 @@ const pad = (n: number) => String(n).padStart(2, '0');
       linear-gradient(180deg, #eef1f4, var(--sand));
     font-family: var(--font-display);
     font-style: italic;
-    font-weight: 300;
+    font-weight: 400;
     font-size: clamp(1.5rem, 1.1rem + 1.4vw, 2.25rem);
     line-height: 1.15;
     color: var(--slate);

@@ -10,11 +10,10 @@ interface Props {
   title: string;
   description: string;
   overlayHeader?: boolean;
-  headerBand?: boolean;
   /** Extra JSON-LD objects for this page. */
   schema?: Record<string, unknown>[];
 }
-const { title, description, overlayHeader = false, headerBand = false, schema = [] } = Astro.props;
+const { title, description, overlayHeader = false, schema = [] } = Astro.props;
 const logoUrl = new URL('/images/logo.png', site.url).href;
 const fullTitle = title === site.name ? `${site.name} | Made to measure blinds in Bengaluru` : `${title} | ${site.name}`;
 // Clean URLs: the host serves /about for about.html, so drop the extension.
@@ -86,7 +85,7 @@ const business = {
   <body>
     <PageTransition />
     <a class="visually-hidden" href="#main">Skip to content</a>
-    <Header overlay={overlayHeader} band={headerBand} />
+    <Header overlay={overlayHeader} />
     <main id="main">
       <slot />
     </main>
@@ -94,6 +93,8 @@ const business = {
     <WhatsAppButton />
 
     <script>
+      import '../scripts/countup';
+
       const io = new IntersectionObserver(
         (entries) =>
           entries.forEach((e) => {
@@ -104,7 +105,10 @@ const business = {
           }),
         { rootMargin: '0px 0px -8% 0px' },
       );
-      document.querySelectorAll('.reveal').forEach((el) => io.observe(el));
+      document.querySelectorAll('.reveal, .reveal--wipe, .reveal-stagger').forEach((el) => io.observe(el));
+      document.querySelectorAll('.reveal-stagger').forEach((group) =>
+        [...group.children].forEach((child, i) => (child as HTMLElement).style.setProperty('--i', String(i))),
+      );
     </script>
   </body>
 </html>

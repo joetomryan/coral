@@ -27,10 +27,14 @@ const live = Boolean(apiKey && placeId);
       {
         !live && googleSummary && (
           <div class="summary">
-            <span class="summary__score">{googleSummary.rating.toFixed(1)}</span>
+            <span class="summary__score" data-countup={googleSummary.rating} data-decimals="1">
+              {googleSummary.rating.toFixed(1)}
+            </span>
             <span class="summary__meta">
               <span class="stars" style={`--r: ${googleSummary.rating}`} aria-hidden="true">★★★★★</span>
-              <span class="muted">{googleSummary.count} Google reviews</span>
+              <span class="muted">
+                <span data-countup={googleSummary.count}>{googleSummary.count}</span> Google reviews
+              </span>
             </span>
           </div>
         )
@@ -211,7 +215,7 @@ const live = Boolean(apiKey && placeId);
 
   .summary__score {
     font-family: var(--font-display);
-    font-weight: 300;
+    font-weight: 400;
     font-size: var(--step-4);
     line-height: 1;
   }
@@ -385,7 +389,7 @@ const live = Boolean(apiKey && placeId);
 
   .card--all__score {
     font-family: var(--font-display);
-    font-weight: 300;
+    font-weight: 400;
     font-size: var(--step-4);
     line-height: 1;
     color: var(--green);

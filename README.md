@@ -23,7 +23,7 @@ Requires Node 22.12+.
 | Phone numbers, address, hours, WhatsApp, email | `src/data/site.ts` |
 | Photos (file, alt text, real width and height) | `src/data/photos.ts` |
 | Products (names, copy, specs, rooms, old URLs) | `src/data/products.ts` |
-| Colours, fonts, spacing | `src/styles/global.css` (`:root` tokens) |
+| Colours, font (Inter Tight), spacing | `src/styles/global.css` (`:root` tokens) |
 | Pages | `src/pages/` (one file per URL; products come from `products/[slug].astro`) |
 | Header / footer / shared blocks | `src/components/` |
 | Redirects from old site URLs | `vercel.json` **and** `public/_redirects` (keep both in sync) |
@@ -50,6 +50,16 @@ Products, Collections, Projects, Inspiration and About us are the main menu (`na
 pages that mention them. Projects shows the photos in `src/data/photos.ts`; add new
 installations there and to the `work` list in `src/pages/projects.astro`.
 What's still needed is in [`docs/02-photo-shotlist.md`](docs/02-photo-shotlist.md).
+
+## Motion helpers
+
+- `.reveal` fades a block in on scroll; `.reveal-stagger` does the same for each child in turn.
+- `<Photo>` wipes in from the bottom (`.reveal--wipe`).
+- `<span data-countup="1000" data-suffix="+">1,000+</span>` counts up when it scrolls into view
+  (`src/scripts/countup.ts`). Keep the final text inside so it reads correctly without JS.
+- The home page "How it works" (`src/components/Process.astro`) plays as a workflow while
+  scrolling and ends on the one week turnaround.
+- Everything respects the visitor's "reduce motion" setting.
 
 ## Brands strip
 

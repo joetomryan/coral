@@ -34,7 +34,7 @@ const arrow = 'M5 12h14M13 6l6 6-6 6';
     </div>
   </div>
 
-  <ul role="list" class="slider__track reveal" data-track>
+  <ul role="list" class="slider__track reveal-stagger" data-track>
     {
       items.map((p) => {
         const href = `/products/${p.slug}`;
@@ -240,7 +240,7 @@ const arrow = 'M5 12h14M13 6l6 6-6 6';
   .card__ph-name {
     font-family: var(--font-display);
     font-style: italic;
-    font-weight: 300;
+    font-weight: 400;
     font-size: clamp(1.375rem, 1.1rem + 0.9vw, 1.875rem);
     line-height: 1.15;
     color: var(--slate);

@@ -38,7 +38,7 @@ export const site = {
   proof: [
     { value: `${new Date().getFullYear() - 2002}+`, label: 'Years making blinds' },
     { value: '1,000+', label: 'Homes fitted' },
-    { value: '5 days', label: 'Typical delivery' },
+    { value: '1 week', label: 'Measure to fit' },
   ],
 } as const;
 
