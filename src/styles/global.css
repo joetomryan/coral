@@ -1,6 +1,5 @@
-@import '@fontsource-variable/instrument-sans';
-@import '@fontsource/instrument-serif/400.css';
-@import '@fontsource/instrument-serif/400-italic.css';
+@import '@fontsource-variable/plus-jakarta-sans';
+@import '@fontsource-variable/plus-jakarta-sans/wght-italic.css';
 
 :root {
   /* Mostly white; accents come from the Coral Interiors logo. */
@@ -20,15 +19,16 @@
   --yellow: #fdbe02;
   --accent: var(--green);
 
-  --font-display: 'Instrument Serif', 'Times New Roman', serif;
-  --font-body: 'Instrument Sans Variable', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  /* One open sans serif for everything; headlines use its light weight. */
+  --font-display: 'Plus Jakarta Sans Variable', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-body: 'Plus Jakarta Sans Variable', system-ui, -apple-system, 'Segoe UI', sans-serif;
 
   --step--1: 0.8125rem;
   --step-0: 1rem;
   --step-1: 1.125rem;
-  --step-2: clamp(1.5rem, 1.2rem + 1.2vw, 2rem);
-  --step-3: clamp(2.25rem, 1.4rem + 3vw, 4rem);
-  --step-4: clamp(3rem, 1.6rem + 5.6vw, 6.5rem);
+  --step-2: clamp(1.25rem, 1.05rem + 0.8vw, 1.625rem);
+  --step-3: clamp(1.875rem, 1.3rem + 2.2vw, 3.25rem);
+  --step-4: clamp(2.5rem, 1.5rem + 4vw, 4.75rem);
 
   --gutter: clamp(1rem, 0.5rem + 2.5vw, 2.5rem);
   --gutter-wide: clamp(1rem, 0.4rem + 2.6vw, 3rem); /* header and hero run edge to edge */
@@ -56,7 +56,7 @@ body {
   color: var(--ink-soft);
   font-family: var(--font-body);
   font-size: var(--step-0);
-  line-height: 1.6;
+  line-height: 1.65;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
 }
@@ -141,19 +141,19 @@ ul[role='list'] {
 
 .display {
   font-family: var(--font-display);
-  font-weight: 400;
+  font-weight: 300;
   font-size: var(--step-4);
-  line-height: 0.98;
-  letter-spacing: -0.02em;
+  line-height: 1.08;
+  letter-spacing: -0.01em;
   text-wrap: balance;
 }
 
 .h2 {
   font-family: var(--font-display);
-  font-weight: 400;
+  font-weight: 300;
   font-size: var(--step-3);
-  line-height: 1.06;
-  letter-spacing: -0.015em;
+  line-height: 1.12;
+  letter-spacing: -0.01em;
   text-wrap: balance;
 }
 
@@ -161,7 +161,7 @@ ul[role='list'] {
   font-family: var(--font-display);
   font-weight: 400;
   font-size: var(--step-2);
-  line-height: 1.15;
+  line-height: 1.25;
   text-wrap: balance;
 }
 
