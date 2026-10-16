@@ -20,9 +20,12 @@ Requires Node 22.12+.
 
 | What | File |
 |---|---|
-| Phone numbers, address, hours, WhatsApp, email | `src/data/site.ts` |
+| Phone number (one, for calls and WhatsApp), address, hours, map location | `src/data/site.ts` |
 | Photos (file, alt text, real width and height) | `src/data/photos.ts` |
 | Products (names, copy, specs, rooms, old URLs) | `src/data/products.ts` |
+| FAQ (shown on /faq and the home page, with FAQ structured data) | `src/data/faq.ts` |
+| Buying guides (/guides) | `src/data/guides.ts` |
+| Areas we serve (/areas, and the business structured data) | `src/data/areas.ts` |
 | Colours, font (Inter Tight), spacing | `src/styles/global.css` (`:root` tokens) |
 | Pages | `src/pages/` (one file per URL; products come from `products/[slug].astro`) |
 | Header / footer / shared blocks | `src/components/` |
@@ -89,6 +92,32 @@ Google returns up to 5 reviews (its "most relevant") plus photos from your Busin
 The section only calls Google when a visitor scrolls near it, which keeps usage low. Reviews
 are a paid field once you go past Google's monthly free allowance, so check current pricing
 and set a budget alert in the Cloud Console.
+
+## Search and AI visibility (SEO, AEO, GEO)
+
+- Every page carries structured data for the business (address, map location, hours, phone,
+  areas served, the list of services). Product pages add a Service, guides an Article, the
+  FAQ a FAQPage. All of it is built from the data files above, so keep those accurate.
+- `public/robots.txt` welcomes search engines and AI assistants and points to the sitemap.
+- `/llms.txt` is a plain summary of the business for AI tools, generated from the same data.
+- `public/og.jpg` is the preview image when the site is shared on WhatsApp or Facebook.
+- No prices anywhere on the site, on purpose: every quote follows a free visit.
+
+Off the site, these matter as much:
+1. Google Search Console and Bing Webmaster Tools: verify the site, submit
+   `https://www.coralblinds.in/sitemap-index.xml`.
+2. Google Business Profile: website link set, categories (window treatment store, blinds
+   shop, curtain store), weekly photos, reply to every review.
+3. Cloudflare: Security / AI Crawl Control should allow GPTBot, OAI-SearchBot,
+   ChatGPT-User, PerplexityBot, ClaudeBot and Google-Extended.
+4. The same name, address and phone (+91 63629 04441) on Justdial, Sulekha, IndiaMART,
+   Bing Places, Apple Business Connect, Facebook and Instagram.
+
+## WhatsApp enquiries
+
+Every WhatsApp button on the site opens the booking form (`/contact#book`). The form needs
+every field filled, then opens WhatsApp to +91 63629 04441 with the full request, plus a
+line saying where the visitor first found the site (Google, ChatGPT, Facebook and so on).
 
 ## Contact form
 

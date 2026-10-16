@@ -6,12 +6,11 @@ export const site = {
   url: 'https://www.coralblinds.in',
   since: 2002,
   tagline: 'Made to measure blinds and curtains for homes and workplaces in Bengaluru.',
+  // One business number for calls and WhatsApp.
   phones: {
     office: { display: '+91 63629 04441', tel: '+916362904441' },
-    mobile: { display: '+91 98866 72792', tel: '+919886672792' },
   },
-  // ⚠ Assumed to be the WhatsApp line — confirm.
-  whatsapp: '919886672792',
+  whatsapp: '916362904441',
   // ⚠ Real address is obfuscated in search indexes — fill in from the owner.
   email: '',
   address: {
@@ -27,10 +26,13 @@ export const site = {
   mapsUrl:
     'https://www.google.com/maps/search/?api=1&query=Coral+Blinds+Hennur+Bagalur+Road+Kothanur+Bengaluru',
   // Google listing "Coral Window Blinds" (from the Maps link the owner shared).
+  // Studio location (from the Google Maps listing), for maps and structured data.
+  geo: { latitude: 13.060018, longitude: 77.6463851 },
   google: {
     placeId: 'ChIJF6cg9FUXrjsRhoLrpFOav9E',
     reviewsUrl: 'https://search.google.com/local/reviews?placeid=ChIJF6cg9FUXrjsRhoLrpFOav9E',
     writeReviewUrl: 'https://search.google.com/local/writereview?placeid=ChIJF6cg9FUXrjsRhoLrpFOav9E',
+    mapsPlaceUrl: 'https://www.google.com/maps/place/?q=place_id:ChIJF6cg9FUXrjsRhoLrpFOav9E',
   },
   social: {
     facebook: 'https://www.facebook.com/Coralblinds/',
@@ -42,8 +44,8 @@ export const site = {
   ],
 } as const;
 
-export const whatsappLink = (text = 'Hi Coral Interiors, I would like to book a free visit.') =>
-  `https://wa.me/${site.whatsapp}?text=${encodeURIComponent(text)}`;
+// WhatsApp enquiries always go through the booking form, which builds the full message.
+export const enquiryLink = (product?: string) => (product ? `/contact?product=${product}#book` : '/contact#book');
 
 export const nav = [
   { href: '/products', label: 'Products' },

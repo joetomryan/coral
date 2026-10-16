@@ -1,0 +1,40 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHero from '../components/PageHero.astro';
+import FaqList from '../components/FaqList.astro';
+import CtaBand from '../components/CtaBand.astro';
+import { faqs, faqSchema } from '../data/faq';
+---
+
+<Base
+  title="Questions about blinds and curtains in Bangalore"
+  description="Answers about blinds, curtains and motorisation in Bangalore (Bengaluru): free home visits, the one week turnaround, fabrics, rooms, monsoon balconies and the areas we cover."
+  schema={[faqSchema(faqs)]}
+>
+  <PageHero
+    eyebrow="FAQ"
+    title="Questions, <em>answered</em>."
+    lead="What people ask us most on home visits. If yours isn’t here, send it with the booking form and we’ll reply."
+  />
+
+  <section class="section section--tight faq-wrap">
+    <div class="container">
+      <FaqList items={faqs} />
+      <p class="faq-more">
+        <a class="link-arrow" href="/guides">Read our buying guides <span aria-hidden="true">→</span></a>
+      </p>
+    </div>
+  </section>
+
+  <CtaBand />
+</Base>
+
+<style>
+  .faq-wrap {
+    padding-top: 0;
+  }
+
+  .faq-more {
+    margin-top: 2.5rem;
+  }
+</style>

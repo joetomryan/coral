@@ -3,6 +3,8 @@ import Base from '../layouts/Base.astro';
 import BrandMarquee from '../components/BrandMarquee.astro';
 import ProductSlider from '../components/ProductSlider.astro';
 import Process from '../components/Process.astro';
+import FaqList from '../components/FaqList.astro';
+import { faqs, faqSchema } from '../data/faq';
 import GoogleReviews from '../components/GoogleReviews.astro';
 import CtaBand from '../components/CtaBand.astro';
 import { site } from '../data/site';
@@ -16,6 +18,19 @@ const slides = [
   ...lead.map((slug) => products.find((p) => p.slug === slug)!).filter(Boolean),
   ...products.filter((p) => !lead.includes(p.slug)),
 ];
+const homeFaqs = faqs.filter((f) => f.home);
+const schema = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'WebSite',
+    name: site.name,
+    url: site.url,
+    inLanguage: 'en-IN',
+    publisher: { '@id': `${site.url}/#business` },
+  },
+  faqSchema(homeFaqs),
+];
+
 // Proof numbers count up on scroll; anything that isn't a plain number stays as written.
 const proof = site.proof.map((p) => {
   const m = p.value.match(/^([\d,]+)(\+?)$/);
@@ -25,7 +40,8 @@ const proof = site.proof.map((p) => {
 
 <Base
   title={site.name}
-  description="Made to measure blinds, curtains, smart curtains and shades for homes and offices in Bengaluru. Free home visit. Since 2002."
+  description="Made to measure blinds, curtains, smart curtains and shades for homes and offices in Bangalore (Bengaluru). Free home visit, fitted in about a week. Studio in Kothanur since 2002."
+  schema={schema}
 >
   <!-- Hero -->
   <section class="hero" data-hero>
@@ -77,6 +93,17 @@ const proof = site.proof.map((p) => {
   <BrandMarquee />
 
   <ProductSlider items={slides} />
+
+  <section class="section section--tight">
+    <div class="container home-faq">
+      <div class="stack reveal">
+        <p class="eyebrow">Questions</p>
+        <h2 class="h2">Good to know.</h2>
+        <a class="link-arrow" href="/faq">All questions <span aria-hidden="true">→</span></a>
+      </div>
+      <FaqList items={homeFaqs} />
+    </div>
+  </section>
 
   <GoogleReviews />
 
@@ -216,6 +243,19 @@ const proof = site.proof.map((p) => {
     letter-spacing: 0.14em;
     text-transform: uppercase;
     color: #fff;
+  }
+
+  /* ----- Questions ----- */
+  .home-faq {
+    display: grid;
+    gap: 2.5rem 4rem;
+  }
+
+  @media (min-width: 900px) {
+    .home-faq {
+      grid-template-columns: 1fr 1.6fr;
+      align-items: start;
+    }
   }
 
   /* ----- Statement ----- */

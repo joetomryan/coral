@@ -1,0 +1,85 @@
+---
+import Base from '../../layouts/Base.astro';
+import PageHero from '../../components/PageHero.astro';
+import CtaBand from '../../components/CtaBand.astro';
+import { guides } from '../../data/guides';
+---
+
+<Base
+  title="Guides to blinds and curtains"
+  description="Plain buying guides for blinds and curtains in Bangalore: zebra or roller, blackout or sunscreen, monsoon proof balconies and motorised smart curtains."
+>
+  <PageHero
+    eyebrow="Guides"
+    title="Choose with <em>confidence</em>."
+    lead="Short, honest guides to the questions we answer on home visits every week."
+  />
+
+  <section class="section section--tight guides-wrap">
+    <div class="container">
+      <ol role="list" class="guides reveal-stagger">
+        {
+          guides.map((g, i) => (
+            <li>
+              <a class="guide" href={`/guides/${g.slug}`}>
+                <span class="guide__num">{String(i + 1).padStart(2, '0')}</span>
+                <span class="guide__main">
+                  <span class="h3">{g.title}</span>
+                  <span class="muted">{g.description}</span>
+                </span>
+                <span class="guide__arrow" aria-hidden="true">→</span>
+              </a>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </section>
+
+  <CtaBand />
+</Base>
+
+<style>
+  .guides-wrap {
+    padding-top: 0;
+  }
+
+  .guides {
+    border-top: 1px solid var(--line);
+  }
+
+  .guide {
+    display: grid;
+    grid-template-columns: 3rem 1fr auto;
+    gap: 1rem 1.5rem;
+    align-items: baseline;
+    padding-block: 1.75rem;
+    border-bottom: 1px solid var(--line);
+    transition: background 0.3s var(--ease);
+  }
+
+  .guide__main {
+    display: grid;
+    gap: 0.4rem;
+  }
+
+  .guide__num {
+    font-size: var(--step--1);
+    letter-spacing: 0.1em;
+    color: var(--green);
+    font-weight: 500;
+  }
+
+  .guide__arrow {
+    font-size: 1.25rem;
+    transition: transform 0.3s var(--ease);
+  }
+
+  .guide:hover .guide__arrow {
+    transform: translateX(4px);
+  }
+
+  .guide:hover .h3 {
+    color: var(--green-ink);
+  }
+</style>

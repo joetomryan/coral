@@ -1,7 +1,7 @@
 ---
 import Base from '../layouts/Base.astro';
 import PageHero from '../components/PageHero.astro';
-import { site, whatsappLink } from '../data/site';
+import { site } from '../data/site';
 import { products } from '../data/products';
 
 // Optional: set PUBLIC_FORM_ENDPOINT (e.g. a Web3Forms or Formspree URL) to receive
@@ -12,7 +12,7 @@ const formKey = import.meta.env.PUBLIC_FORM_KEY as string | undefined;
 
 <Base
   title="Contact and free home visit"
-  description="Book a free home visit with Coral Interiors, Kothanur, Bengaluru. Call +91 63629 04441, WhatsApp us, or visit our studio on Hennur Bagalur Road."
+  description="Book a free home visit with Coral Interiors in Kothanur, Bangalore (Bengaluru). Call or WhatsApp +91 63629 04441, or visit our studio on Hennur Bagalur Road."
 >
   <PageHero
     eyebrow="Contact"
@@ -23,7 +23,10 @@ const formKey = import.meta.env.PUBLIC_FORM_KEY as string | undefined;
   <section class="section section--tight">
     <div class="container contact">
       <div class="contact__form" id="book">
-        <h2 class="h3">Book a free visit</h2>
+        <div class="stack" style="--stack: 0.6rem">
+          <h2 class="h3">Book a free visit</h2>
+          <p class="muted">Fill in every field and tap send. Your request opens in WhatsApp, ready to send to us.</p>
+        </div>
         <form
           class="form"
           method="post"
@@ -39,16 +42,26 @@ const formKey = import.meta.env.PUBLIC_FORM_KEY as string | undefined;
           </div>
           <div class="field">
             <label for="phone">Phone</label>
-            <input id="phone" name="phone" type="tel" autocomplete="tel" inputmode="tel" required />
+            <input
+              id="phone"
+              name="phone"
+              type="tel"
+              autocomplete="tel"
+              inputmode="tel"
+              required
+              pattern="^(\+?91[\s]?)?[6-9][0-9\s]{9,11}$"
+              title="A 10 digit mobile number, for example 98765 43210"
+            />
           </div>
           <div class="field">
             <label for="area">Area / locality</label>
-            <input id="area" name="area" placeholder="e.g. Hennur, Hebbal, Whitefield" />
+            <input id="area" name="area" placeholder="For example Hennur, Hebbal, Whitefield" required />
           </div>
           <div class="field">
             <label for="product">Interested in</label>
-            <select id="product" name="product">
-              <option value="">Not sure yet</option>
+            <select id="product" name="product" required>
+              <option value="" disabled selected>Choose one</option>
+              <option value="not-sure">Not sure yet</option>
               {products.map((p) => <option value={p.slug}>{p.name}</option>)}
               <option value="motorisation">Motorisation</option>
               <option value="commercial">Commercial project</option>
@@ -56,7 +69,7 @@ const formKey = import.meta.env.PUBLIC_FORM_KEY as string | undefined;
           </div>
           <div class="field field--full">
             <label for="message">Anything else? (number of windows, timing)</label>
-            <textarea id="message" name="message" rows="4"></textarea>
+            <textarea id="message" name="message" rows="4" required></textarea>
           </div>
           <div class="field--full form__foot">
             <button class="btn" type="submit">{endpoint ? 'Send request' : 'Send on WhatsApp'}</button>
@@ -69,11 +82,11 @@ const formKey = import.meta.env.PUBLIC_FORM_KEY as string | undefined;
         <div class="info-block">
           <p class="eyebrow">Call</p>
           <a href={`tel:${site.phones.office.tel}`}>{site.phones.office.display}</a>
-          <a href={`tel:${site.phones.mobile.tel}`}>{site.phones.mobile.display}</a>
         </div>
         <div class="info-block">
           <p class="eyebrow">WhatsApp</p>
-          <a href={whatsappLink()} target="_blank" rel="noopener">Chat with us</a>
+          <a href="#book">{site.phones.office.display}</a>
+          <span class="muted">Send your request with the form</span>
         </div>
         {
           site.email && (
@@ -117,13 +130,20 @@ const formKey = import.meta.env.PUBLIC_FORM_KEY as string | undefined;
       e.preventDefault();
       const data = new FormData(form);
       const productLabel = select.selectedOptions[0]?.text ?? '';
+      // Where this visitor first found us (recorded in Base.astro), so each enquiry says its source.
+      let source = '';
+      try {
+        const s = JSON.parse(sessionStorage.getItem('coral-source') ?? 'null');
+        if (s) source = `Found us via: ${s.source} (landing: ${s.landing})`;
+      } catch {}
       const lines = [
         'Hi Coral Interiors, I’d like to book a free visit.',
         `Name: ${data.get('name')}`,
         `Phone: ${data.get('phone')}`,
-        data.get('area') && `Area: ${data.get('area')}`,
+        `Area: ${data.get('area')}`,
         `Interested in: ${productLabel}`,
-        data.get('message') && `Notes: ${data.get('message')}`,
+        `Notes: ${data.get('message')}`,
+        source,
       ].filter(Boolean);
       window.open(`https://wa.me/${site.whatsapp}?text=${encodeURIComponent(lines.join('\n'))}`, '_blank', 'noopener');
     });

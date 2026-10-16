@@ -1,6 +1,6 @@
 ---
 import Logo from './Logo.astro';
-import { site, nav, whatsappLink } from '../data/site';
+import { site, nav, enquiryLink } from '../data/site';
 import { products } from '../data/products';
 const year = new Date().getFullYear();
 ---
@@ -40,6 +40,9 @@ const year = new Date().getFullYear();
                 ))
             }
             <li><a href="/motorisation">Motorisation</a></li>
+            <li><a href="/areas">Areas we serve</a></li>
+            <li><a href="/guides">Guides</a></li>
+            <li><a href="/faq">FAQ</a></li>
             <li><a href="/commercial">Commercial</a></li>
             <li><a href="/contact">Contact</a></li>
           </ul>
@@ -57,8 +60,7 @@ const year = new Date().getFullYear();
           <p class="eyebrow">Talk to us</p>
           <ul role="list">
             <li><a href={`tel:${site.phones.office.tel}`}>{site.phones.office.display}</a></li>
-            <li><a href={`tel:${site.phones.mobile.tel}`}>{site.phones.mobile.display}</a></li>
-            <li><a href={whatsappLink()} target="_blank" rel="noopener">WhatsApp</a></li>
+            <li><a href={enquiryLink()}>WhatsApp</a></li>
             {site.email && <li><a href={`mailto:${site.email}`}>{site.email}</a></li>}
           </ul>
           {site.hours.map((h) => <p class="muted footer__hours">{h.days}<br />{h.time}</p>)}

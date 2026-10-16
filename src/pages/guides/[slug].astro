@@ -1,0 +1,136 @@
+---
+import Base from '../../layouts/Base.astro';
+import PageHero from '../../components/PageHero.astro';
+import ProductRows from '../../components/ProductRows.astro';
+import CtaBand from '../../components/CtaBand.astro';
+import { guides, type Guide } from '../../data/guides';
+import { getProduct } from '../../data/products';
+import { site } from '../../data/site';
+
+export function getStaticPaths() {
+  return guides.map((guide) => ({ params: { slug: guide.slug }, props: { guide } }));
+}
+
+interface Props {
+  guide: Guide;
+}
+const { guide } = Astro.props;
+const picks = guide.products.map((s) => getProduct(s)!).filter(Boolean);
+const url = `${site.url}/guides/${guide.slug}`;
+const others = guides.filter((g) => g.slug !== guide.slug);
+
+const schema = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: guide.title,
+    description: guide.description,
+    url,
+    dateModified: guide.updated,
+    datePublished: guide.updated,
+    inLanguage: 'en-IN',
+    author: { '@id': `${site.url}/#business` },
+    publisher: { '@id': `${site.url}/#business` },
+    about: picks.map((p) => p.name),
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Guides', item: `${site.url}/guides` },
+      { '@type': 'ListItem', position: 2, name: guide.title, item: url },
+    ],
+  },
+];
+---
+
+<Base title={guide.title} description={guide.description} schema={schema}>
+  <PageHero eyebrow="Guide" title={guide.title} lead={guide.intro} />
+
+  <article class="section section--tight article-wrap">
+    <div class="container article">
+      {
+        guide.sections.map((s) => (
+          <section class="article__section reveal">
+            <h2 class="h3">{s.heading}</h2>
+            {s.body.map((para) => (
+              <p>{para}</p>
+            ))}
+          </section>
+        ))
+      }
+      <p class="muted article__meta">
+        Written by the {site.name} team, Bangalore. Updated {new Date(guide.updated).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })}.
+      </p>
+    </div>
+  </article>
+
+  <section class="section section--tight section--sand">
+    <div class="container">
+      <div class="section-head">
+        <h2 class="h2">Products in this guide</h2>
+      </div>
+      <ProductRows items={picks} />
+      <div class="more">
+        <p class="eyebrow">More guides</p>
+        <ul role="list">
+          {
+            others.map((g) => (
+              <li>
+                <a class="link-arrow" href={`/guides/${g.slug}`}>
+                  {g.title} <span aria-hidden="true">→</span>
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <CtaBand />
+</Base>
+
+<style>
+  .article-wrap {
+    padding-top: 0;
+  }
+
+  .article {
+    display: grid;
+    gap: 2.5rem;
+  }
+
+  /* Comfortable reading width, left aligned with the page. */
+  .article > * {
+    max-width: 46rem;
+  }
+
+  .article__section {
+    display: grid;
+    gap: 1rem;
+  }
+
+  .article__section p {
+    font-size: var(--step-1);
+    line-height: 1.65;
+    color: var(--ink-soft);
+  }
+
+  .article__meta {
+    font-size: 0.875rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--line);
+  }
+
+  .more {
+    margin-top: 3rem;
+  }
+
+  .more ul {
+    display: grid;
+    justify-items: start;
+    gap: 0.75rem;
+    margin-top: 1rem;
+  }
+</style>

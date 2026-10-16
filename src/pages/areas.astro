@@ -1,0 +1,105 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHero from '../components/PageHero.astro';
+import CtaBand from '../components/CtaBand.astro';
+import { site } from '../data/site';
+import { areaGroups } from '../data/areas';
+---
+
+<Base
+  title="Areas we serve in Bangalore"
+  description="Coral Interiors visits homes and offices across Bangalore (Bengaluru) for free measurement: Hennur, Kothanur, Hebbal, Kalyan Nagar, Whitefield, Indiranagar, Koramangala, HSR Layout and more."
+>
+  <PageHero
+    eyebrow="Areas we serve"
+    title="Anywhere in <em>Bangalore</em>."
+    lead={`We visit homes and workplaces across the city for a free measurement, from our studio in Kothanur on Hennur Bagalur Main Road. These are some of the areas we work in most.`}
+  />
+
+  <section class="section section--tight areas-wrap">
+    <div class="container">
+      <div class="zones reveal-stagger">
+        {
+          areaGroups.map((g) => (
+            <div class="zone">
+              <h2 class="h3">{g.zone}</h2>
+              <ul role="list" class="places">
+                {g.places.map((p) => (
+                  <li>{p}</li>
+                ))}
+              </ul>
+            </div>
+          ))
+        }
+      </div>
+
+      <div class="studio reveal">
+        <div class="stack">
+          <p class="eyebrow">Our studio</p>
+          <address>
+            {site.address.line1}<br />
+            {site.address.line2}<br />
+            {site.address.city} {site.address.postalCode}
+          </address>
+          <p class="muted">{site.hours.map((h) => `${h.days}, ${h.time}`).join('. ')}</p>
+        </div>
+        <div class="btn-row">
+          <a class="btn" href="/contact#book">Book a free visit</a>
+          <a class="btn btn--ghost" href={site.google.mapsPlaceUrl} target="_blank" rel="noopener">Open in Google Maps</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <CtaBand title="Not on the list?" text="We still come to you. Tell us your area in the booking form and we’ll arrange a visit." />
+</Base>
+
+<style>
+  .areas-wrap {
+    padding-top: 0;
+  }
+
+  .zones {
+    display: grid;
+    gap: 2.5rem 3rem;
+    border-top: 1px solid var(--line);
+    padding-top: 2.5rem;
+  }
+
+  .places {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 1.25rem;
+  }
+
+  .places li {
+    padding: 0.4rem 0.9rem;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    font-size: 0.9375rem;
+  }
+
+  .studio {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: end;
+    justify-content: space-between;
+    gap: 2rem;
+    margin-top: clamp(3rem, 2rem + 3vw, 5rem);
+    padding-top: 2.5rem;
+    border-top: 1px solid var(--line);
+  }
+
+  address {
+    font-style: normal;
+    font-size: var(--step-1);
+    color: var(--ink);
+  }
+
+  @media (min-width: 900px) {
+    .zones {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+</style>

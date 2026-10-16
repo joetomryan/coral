@@ -1,5 +1,5 @@
 ---
-import { whatsappLink } from '../data/site';
+import { enquiryLink } from '../data/site';
 
 interface Props {
   title?: string;
@@ -20,9 +20,7 @@ const {
     </div>
     <div class="btn-row">
       <a class="btn btn--light" href="/contact">Book a visit</a>
-      <a class="btn btn--outline-light" href={whatsappLink()} target="_blank" rel="noopener">
-        WhatsApp us
-      </a>
+      <a class="btn btn--outline-light" href={enquiryLink()}>WhatsApp us</a>
     </div>
   </div>
 </section>

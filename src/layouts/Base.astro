@@ -5,25 +5,35 @@ import Footer from '../components/Footer.astro';
 import WhatsAppButton from '../components/WhatsAppButton.astro';
 import PageTransition from '../components/PageTransition.astro';
 import { site } from '../data/site';
+import { products } from '../data/products';
+import { allAreas } from '../data/areas';
 
 interface Props {
   title: string;
   description: string;
   overlayHeader?: boolean;
+  /** Share preview image: a path under public/ (defaults to the site preview card). */
+  image?: string;
   /** Extra JSON-LD objects for this page. */
   schema?: Record<string, unknown>[];
 }
-const { title, description, overlayHeader = false, schema = [] } = Astro.props;
+const { title, description, overlayHeader = false, image, schema = [] } = Astro.props;
 const logoUrl = new URL('/images/logo.png', site.url).href;
-const fullTitle = title === site.name ? `${site.name} | Made to measure blinds in Bengaluru` : `${title} | ${site.name}`;
+const ogImage = new URL(image ?? '/og.jpg', site.url).href;
+const fullTitle =
+  title === site.name ? `${site.name} | Blinds and curtains in Bangalore since ${site.since}` : `${title} | ${site.name}`;
 // Clean URLs: the host serves /about for about.html, so drop the extension.
 const cleanPath = Astro.url.pathname.replace(/(index)?\.html$/, '').replace(/(.)\/$/, '$1');
 const canonical = new URL(cleanPath || '/', site.url).href;
 
+// The business, on every page. Other pages point at it through its @id.
+const businessId = `${site.url}/#business`;
 const business = {
   '@context': 'https://schema.org',
   '@type': 'HomeGoodsStore',
+  '@id': businessId,
   name: site.name,
+  description: site.tagline,
   legalName: site.legalName,
   url: site.url,
   telephone: site.phones.office.tel,
@@ -44,10 +54,24 @@ const business = {
       closes: '18:30',
     },
   ],
-  areaServed: 'Bengaluru',
+  geo: { '@type': 'GeoCoordinates', latitude: site.geo.latitude, longitude: site.geo.longitude },
+  hasMap: site.google.mapsPlaceUrl,
+  areaServed: [
+    { '@type': 'City', name: 'Bangalore', alternateName: 'Bengaluru' },
+    ...allAreas.map((name) => ({ '@type': 'Place', name: `${name}, Bangalore` })),
+  ],
+  knowsAbout: ['Window blinds', 'Curtains', 'Motorised blinds', 'Smart curtains', 'Made to measure window coverings'],
+  hasOfferCatalog: {
+    '@type': 'OfferCatalog',
+    name: 'Blinds and curtains',
+    itemListElement: products.map((p) => ({
+      '@type': 'Offer',
+      itemOffered: { '@type': 'Service', name: p.name, url: `${site.url}/products/${p.slug}` },
+    })),
+  },
   logo: logoUrl,
-  image: logoUrl,
-  sameAs: [site.social.facebook],
+  image: [new URL('/og.jpg', site.url).href, logoUrl],
+  sameAs: [site.social.facebook, site.google.mapsPlaceUrl],
 };
 ---
 
@@ -68,8 +92,10 @@ const business = {
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical} />
     <meta property="og:locale" content="en_IN" />
-    <meta property="og:image" content={new URL('/icon-512.png', site.url).href} />
-    <meta name="twitter:card" content="summary" />
+    <meta property="og:image" content={ogImage} />
+    {!image && <meta property="og:image:width" content="1200" />}
+    {!image && <meta property="og:image:height" content="630" />}
+    <meta name="twitter:card" content="summary_large_image" />
     <script is:inline>
       document.documentElement.classList.add('js');
       // Arrived through a page transition: keep the page white until the curtain opens.
@@ -77,6 +103,31 @@ const business = {
         if (sessionStorage.getItem('pt')) {
           sessionStorage.removeItem('pt');
           if (!matchMedia('(prefers-reduced-motion: reduce)').matches) document.documentElement.classList.add('pt-in');
+        }
+      } catch (e) {}
+      // Remember where this visitor first came from, so a WhatsApp enquiry can say so.
+      try {
+        if (!sessionStorage.getItem('coral-source')) {
+          var q = new URLSearchParams(location.search);
+          var utm = (q.get('utm_source') || '').toLowerCase();
+          var ref = '';
+          try { ref = document.referrer ? new URL(document.referrer).hostname : ''; } catch (e) {}
+          if (ref === location.hostname || /(^|\.)coralblinds\.in$/.test(ref)) ref = '';
+          var hay = utm + ' ' + ref;
+          var map = [
+            ['chatgpt', 'ChatGPT'], ['openai', 'ChatGPT'], ['perplexity', 'Perplexity'], ['gemini', 'Gemini'],
+            ['copilot', 'Copilot'], ['claude', 'Claude'], ['google', 'Google'], ['bing', 'Bing'],
+            ['facebook', 'Facebook'], ['fb', 'Facebook'], ['instagram', 'Instagram'], ['youtube', 'YouTube'],
+            ['justdial', 'Justdial'], ['whatsapp', 'WhatsApp'], ['linkedin', 'LinkedIn']
+          ];
+          var source = 'Direct or WhatsApp link';
+          if (q.has('fbclid')) source = 'Facebook or Instagram';
+          if (q.has('gclid')) source = 'Google Ads';
+          for (var i = 0; i < map.length; i++) {
+            if (hay.indexOf(map[i][0]) !== -1) { source = map[i][1]; break; }
+          }
+          if (source === 'Direct or WhatsApp link' && (utm || ref)) source = utm || ref;
+          sessionStorage.setItem('coral-source', JSON.stringify({ source: source, landing: location.pathname }));
         }
       } catch (e) {}
     </script>

@@ -133,6 +133,10 @@ ul[role='list'] {
   color: #fff;
 }
 
+.section--ink :is(h1, h2, h3, h4) {
+  color: #fff;
+}
+
 .stack > * + * {
   margin-top: var(--stack, 1.25rem);
 }
